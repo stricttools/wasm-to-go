@@ -1,1 +1,2 @@
 {"format_version":1,"id":"18d8f242aa8158d4b4e417d97ed047a789d5349c67814049","commits":["e39b18894a32238fdac8e085739b441dc5630525"],"user_facing":true,"description":"**The fork's module path is `github.com/stricttools/wasm-to-go`.** Install it with `go install github.com/stricttools/wasm-to-go@latest` (and `.../libc-gen@latest`); `github.com/ncruces/wasm2go` keeps naming upstream.","type":"breaking"}
+{"format_version":1,"id":"18d8f242bf609ed9e481a9a1201343b6a9d72ab2ab9ddddb","commits":["5d51ed9e1917e50a0e2cd5b14e37fd2ad93f6313"],"user_facing":false}
