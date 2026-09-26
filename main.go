@@ -87,6 +87,9 @@ func main() {
 }
 
 func getVersion() string {
+	if Version != "" && Version != "dev" {
+		return "v" + Version
+	}
 	if info, ok := debug.ReadBuildInfo(); ok {
 		return info.Main.Version
 	}

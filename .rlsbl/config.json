@@ -1,0 +1,18 @@
+{
+  "targets": [
+    "go"
+  ],
+  "publish_mode": "ci",
+  "pipelines": {
+    "go": {
+      "type": "go",
+      "local": false,
+      "target": "go",
+      "artifact": "binary",
+      "install_paths": [
+        "."
+      ]
+    }
+  },
+  "changelog_format_version_enforced": true
+}

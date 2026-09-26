@@ -30,3 +30,28 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+node_modules/
+__pycache__/
+*.pyc
+*.log
+.DS_Store
+coverage/
+build/
+dist/
+target/
+*.egg-info/
+.rlsbl-notes-*.tmp
+.rlsbl/lock
+.rlsbl-monorepo/lock
+.rlsbl/releases/in-progress.json
+.rlsbl/releases/scrub-result.json
+.rlsbl-monorepo/releasables/*/releases/in-progress.json
+.rlsbl-monorepo/releasables/*/releases/scrub-result.json
+.credentials.json
+.*-cache.json
+.env.local
+*.local-only
+
+# Tracked build scripts of the libc-gen sjlj test (the rlsbl block ignores build/).
+!/libc-gen/test_sjlj/build/
