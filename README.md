@@ -1,12 +1,18 @@
 # A Wasm to Go translator
 
+This is the [stricttools](https://github.com/stricttools) fork of
+[github.com/ncruces/wasm2go](https://github.com/ncruces/wasm2go),
+with the [optimization passes](#optimization-passes) described below.
+Its module path is `github.com/stricttools/wasm-to-go`.
+
 To translate a Wasm module to Go, use the following command:
 ```
 wasm2go < input.wasm > output.go
 ```
 
-The input is a Wasm module, and the output is a single Go source file,
-with no dependencies beyond the standard library.
+The input is a Wasm module, and the output is Go source
+with no dependencies beyond the standard library:
+a single file, or two with [`-unsafe`](#-unsafe-and-two-output-files).
 
 ## Overview
 
@@ -16,6 +22,16 @@ and a `New` function to initialize it.
 
 The methods of the `Module` structure are the Wasm module's exports,
 whereas imports are interfaces that `New` consumes.
+
+A `Module` must be created by `New`, and must not be copied,
+and code outside the translated module must not change its unexported fields
+(code in the same package can reach them).
+The optimization passes rely on this:
+calls through a function table are compiled into direct calls on the receiver,
+so a zero or copied `Module` would make calls where the Wasm module traps,
+or call the functions of another `Module`,
+and functions load an imported memory, which `New` sets up, when they start.
+When a pass relies on it, the generated `Module` type says so in its doc comment.
 
 We assume the input Wasm modules can be trusted.
 At a minimum, you should run Wasm modules through a verifier
@@ -78,12 +94,75 @@ not by how a human would read it.
 For some CPUs, you can generate faster code by using `unsafe`.
 Despite the scary name, the generated code abides by the
 [rules of unsafe](https://pkg.go.dev/unsafe#Pointer),
-and all memory accesses are still bounds checked.
+and every memory access is still bounds checked,
+unless an earlier check on every path to it already proves it in bounds
+(see [bounds checks](#bounds-checks)).
 
 Another knob is whether to attempt to ensure float operations
 [canonicalize NaNs](https://github.com/WebAssembly/design/issues/1463).
 This is tested to work on both `amd64` and `arm64`,
 but is known to be broken on most other CPU architectures.
+
+## Optimization passes
+
+Besides simplifying each function's control flow and temporaries,
+`wasm2go` optimizes the translated code with passes that need facts
+about the whole module, which the translator knows while it translates:
+what each table holds, and which functions can reach `memory.grow`.
+Every pass preserves behavior: the same results, the same memory contents,
+and the same traps (only a trap's message can differ, where Go leaves unspecified
+which of two failing checks in one statement fails first);
+each pass's argument for this is a comment beside its code
+in [internal/passes](internal/passes).
+`-noopt` disables all of them.
+
+### Closed tables and indirect calls
+
+A table is *closed* when the module defines it, does not import it,
+does not export it, and no instruction mutates it:
+no `table.set`, `table.grow`, `table.fill`, or `table.init` on it,
+and no `table.copy` into it.
+Its contents are then what the active element segments `New` applies put there,
+and nothing can change them afterwards.
+
+A `call_indirect` through a closed table is compiled into a `switch`
+over the slots holding a function of the called type,
+each calling that function directly,
+with the original indirect call as the default (for null slots,
+slots of other types, and indexes out of range, which trap as before).
+Calls through tables that are not closed are left alone.
+
+When linking with `wasm-ld`, `-Wl,--export-table` exports the table,
+so it is not closed; leave it out unless the host needs the table.
+
+### Caching the memory
+
+A function that reads the linear memory loads its slice into a local
+variable when it starts, and reloads it after every call that can grow memory
+(if each such call is a statement of its own, as the translator emits them).
+A call can grow memory if it reaches `memory.grow` directly,
+through a closed table (only the functions of the called type it holds),
+through a table that is not closed, through an import,
+or through a provided function (analyzed from its source).
+Shared memories are left alone, since other goroutines may grow them.
+
+### Bounds checks
+
+With `-unsafe`, a load or store whose bounds check an earlier check
+on every path to it already covers (the same memory, the same address,
+and at least as far) uses an unchecked access instead.
+Every access that would trap still traps, at the check that covers it.
+
+### `-unsafe` and two output files
+
+With `-unsafe`, `wasm2go` writes two files, and so requires `-o`:
+`-o output.go` writes `output.go` and `output_generic.go`.
+In `output.go`, built only on the little-endian platforms with unaligned
+memory access (its `//go:build` line lists them), loads and stores are written
+inline, without helper calls; `output_generic.go` holds the same code
+without that expansion, and is built on every other platform.
+`-tags` combine with the build constraint of each file.
+With `-noopt`, the two files differ only in their build constraints.
 
 ## Usage
 
@@ -108,7 +187,7 @@ Usage: wasm2go [option]... [input.wasm]
   -tags string
         go:build tags to include in the generated file
   -unsafe
-        allow importing unsafe
+        allow importing unsafe (requires -o: writes output.go and output_generic.go)
   -version
         print version and exit
 ```
