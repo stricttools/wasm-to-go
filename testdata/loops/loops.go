@@ -4,6 +4,8 @@ package wasm2go
 
 import "encoding/binary"
 
+// A Module must be created by New.
+// Its functions load the imported memory New sets up when they start.
 type Module struct {
 	memory *[]byte
 	memImp Memory
@@ -42,6 +44,7 @@ func (m *Module) fn1() int32 {
 	return m._env.Xrand_i32()
 }
 func (m *Module) Xadd_all(v0, v1 int32) int32 {
+	mem := *m.memory
 	var v2, v3, v4 int32
 	v2 = i32(0)
 l1:
@@ -50,7 +53,7 @@ l1:
 			return v4
 		}
 		v3 = v0 + v2*i32(4)
-		t0 := int32(load32(*m.memory, uint32(v3)))
+		t0 := int32(load32(mem, uint32(v3)))
 		v4 = v4 + t0
 		v2 = v2 + i32(1)
 		goto l1

@@ -22,6 +22,7 @@ type funcCompiler struct {
 	temps  int
 
 	provided bool
+	host     bool // an imported function, implemented by the host
 }
 
 type entryKind int
@@ -629,13 +630,21 @@ func (fn *funcCompiler) cleanup() {
 }
 
 // Runs, once every function is compiled and cleaned up, the passes that
-// need facts about the whole module (closed.go). Like the passes in
+// need facts about the whole module (moduleFacts). Like the passes in
 // cleanup, they are disabled by -noopt.
 func (fn *funcCompiler) optimizeModule(k *moduleFacts) {
 	if *noopt {
 		return
 	}
 	k.dispatched += passes.Dispatch(fn.decl, k.dispatchSite, fn.newTempVal)
+
+	// Other goroutines may grow a shared memory at any time.
+	if fn.memory != nil && !fn.memory.shared {
+		isMem := func(e ast.Expr) bool { return e == fn.memory.selector }
+		if passes.MemLocal(fn.decl, isMem, fn.memory.selector, k.callGrows) {
+			k.memLocals++
+		}
+	}
 }
 
 type funcBlock struct {

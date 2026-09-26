@@ -33,26 +33,32 @@ func (m *wasmMemory) Grow(delta, max int64) int64 {
 	return memory_grow((*[]byte)(m), delta, max)
 }
 func (m *Module) Xld16(v0 int32) int32 {
-	t0 := int32(load16(m.memory, uint32(v0)))
+	mem := m.memory
+	t0 := int32(load16(mem, uint32(v0)))
 	return t0
 }
 func (m *Module) Xld32(v0 int32) int32 {
-	t0 := int32(load32(m.memory, uint32(v0)))
+	mem := m.memory
+	t0 := int32(load32(mem, uint32(v0)))
 	return t0
 }
 func (m *Module) Xld64(v0 int32) int64 {
-	t0 := int64(load64(m.memory, uint32(v0)))
+	mem := m.memory
+	t0 := int64(load64(mem, uint32(v0)))
 	return t0
 }
 func (m *Module) Xld32o(v0 int32) int32 {
-	t0 := int32(load32(m.memory, uint64(uint32(v0))+0xffffffff))
+	mem := m.memory
+	t0 := int32(load32(mem, uint64(uint32(v0))+0xffffffff))
 	return t0
 }
 func (m *Module) Xst32(v0, v1 int32) {
-	store32(m.memory, uint32(v0), uint32(v1))
+	mem := m.memory
+	store32(mem, uint32(v0), uint32(v1))
 }
 func (m *Module) Xst64(v0 int32, v1 int64) {
-	store64(m.memory, uint32(v0), uint64(v1))
+	mem := m.memory
+	store64(mem, uint32(v0), uint64(v1))
 }
 func (m *Module) Xgrow(v0 int32) int32 {
 	t0 := int32(memory_grow(&m.memory, int64(v0), m.maxMem))

@@ -20,8 +20,15 @@ type moduleFacts struct {
 	callee map[ast.Expr]int
 	// Dispatch sites, by table and called Go signature.
 	sites map[dispatchKey]*passes.DispatchSite
+	// Function index by name.
+	byName map[string]int
+	// Which functions can grow memory (grow.go).
+	grows []bool
+
 	// Number of calls rewritten by the dispatch pass.
 	dispatched int
+	// Number of functions that cache the memory in a local.
+	memLocals int
 }
 
 type dispatchKey struct {
@@ -44,6 +51,7 @@ func (t *translator) moduleFacts() *moduleFacts {
 			k.closed[i] = slots
 		}
 	}
+	k.computeGrows()
 	return k
 }
 
@@ -125,6 +133,24 @@ func goSignature(typ funcType) string {
 	return buf.String()
 }
 
+// indirectTargets returns the functions an indirect call can reach, with
+// the slots holding each, if it goes through a closed table: those of the
+// called Go signature.
+func (k *moduleFacts) indirectTargets(ind indirectCall) (map[int][]uint64, bool) {
+	slots, ok := k.closed[ind.table]
+	if !ok {
+		return nil, false
+	}
+	sig := goSignature(ind.typ)
+	targets := map[int][]uint64{}
+	for slot, fn := range slots {
+		if goSignature(k.t.functions[fn].typ) == sig {
+			targets[fn] = append(targets[fn], slot)
+		}
+	}
+	return targets, true
+}
+
 // dispatchSite returns the direct calls an indirect call can make,
 // if it goes through a closed table.
 func (k *moduleFacts) dispatchSite(call *ast.CallExpr) *passes.DispatchSite {
@@ -132,24 +158,17 @@ func (k *moduleFacts) dispatchSite(call *ast.CallExpr) *passes.DispatchSite {
 	if !ok {
 		return nil
 	}
-	slots, ok := k.closed[ind.table]
-	if !ok {
-		return nil
-	}
-	sig := goSignature(ind.typ)
-	key := dispatchKey{ind.table, sig}
+	key := dispatchKey{ind.table, goSignature(ind.typ)}
 	if site, ok := k.sites[key]; ok {
 		return site
 	}
-
-	byFunc := map[int][]uint64{}
-	for slot, fn := range slots {
-		if goSignature(k.t.functions[fn].typ) == sig {
-			byFunc[fn] = append(byFunc[fn], slot)
-		}
+	targets, ok := k.indirectTargets(ind)
+	if !ok {
+		return nil
 	}
+
 	site := &passes.DispatchSite{}
-	for fn, slots := range byFunc {
+	for fn, slots := range targets {
 		slices.Sort(slots)
 		site.Cases = append(site.Cases, passes.DispatchCase{
 			Slots: slots,

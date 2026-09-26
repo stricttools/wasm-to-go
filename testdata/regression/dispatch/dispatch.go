@@ -2,12 +2,10 @@
 
 package wasm2go
 
-// A Module must be created by New and never copied, and code outside
-// the translated module must not change its function tables: calls
-// through a table are compiled into direct calls on the receiver,
-// which must be the Module that New filled the table for. A zero or
-// copied Module would make those calls where the translated code
-// panics, or call the functions of another Module.
+// A Module must be created by New and never copied.
+// Calls through its function tables are compiled into direct calls
+// on the receiver, which must be the Module New filled the tables for,
+// and code outside the translated module must not change the tables.
 type Module struct {
 	t0       []any
 	t1       []any

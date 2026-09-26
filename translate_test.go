@@ -44,25 +44,32 @@ func Test_translate(t *testing.T) {
 	}
 }
 
-// Translates a module together with a provided-imports file, which may
-// reference helpers the module itself does not use.
+// Translates modules together with a provided-imports file, which may
+// reference helpers the module itself does not use (provided_helper),
+// or grow memory (memgrow).
 func Test_translate_provided(t *testing.T) {
-	const path = "testdata/regression/provided_helper/provided_helper"
-	provided = stringFlags{"testdata/regression/provided_helper/provided.go"}
-	t.Cleanup(func() { provided = nil })
+	tests := []string{"regression/provided_helper", "regression/memgrow"}
+	for _, name := range tests {
+		t.Run(name, func(t *testing.T) {
+			dir := "testdata/" + name
+			path := dir + "/" + filepath.Base(name)
+			provided = stringFlags{dir + "/provided.go"}
+			t.Cleanup(func() { provided = nil })
 
-	in, err := os.Open(path + ".wasm")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer in.Close()
+			in, err := os.Open(path + ".wasm")
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer in.Close()
 
-	var out bytes.Buffer
-	if err := translate(in, &out); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(path+".go", out.Bytes(), 0644); err != nil {
-		t.Fatal(err)
+			var out bytes.Buffer
+			if err := translate(in, &out); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(path+".go", out.Bytes(), 0644); err != nil {
+				t.Fatal(err)
+			}
+		})
 	}
 }
 

@@ -79,7 +79,10 @@ type translator struct {
 	data      []dataSegment
 	dylink    *dylinkDef
 	// Facts for the module-wide passes.
-	indirect map[*ast.CallExpr]indirectCall
+	indirect        map[*ast.CallExpr]indirectCall
+	providedDecls   map[string]*ast.FuncDecl
+	providedImports map[string]set[string]
+	helperNames     set[string]
 	// Debug.
 	codeStart     uint64
 	debugSections map[string][]byte
@@ -99,11 +102,14 @@ func translate(r io.Reader, w io.Writer) error {
 	t.provided = set[string]{}
 	t.helpers = set[string]{}
 	t.indirect = map[*ast.CallExpr]indirectCall{}
+	t.providedDecls = map[string]*ast.FuncDecl{}
+	t.providedImports = map[string]set[string]{}
 
 	helperNames, err := t.findHelpers(fset, helpersSrc, helpersAtomicsSrc)
 	if err != nil {
 		return err
 	}
+	t.helperNames = helperNames
 	for _, file := range provided {
 		f, err := parser.ParseFile(fset, file, nil, 0)
 		if err != nil {
@@ -116,6 +122,8 @@ func translate(r io.Reader, w io.Writer) error {
 					if star, ok := fn.Recv.List[0].Type.(*ast.StarExpr); ok {
 						if id, ok := star.X.(*ast.Ident); ok && id.Name == "Module" {
 							t.provided.add(fn.Name.Name)
+							t.providedDecls[fn.Name.Name] = fn
+							t.providedImports[fn.Name.Name] = importNames(f)
 						}
 					}
 				}
@@ -138,6 +146,26 @@ func translate(r io.Reader, w io.Writer) error {
 				break
 			}
 			return err
+		}
+	}
+
+	// Fill in missing names.
+	for i, fn := range t.functions {
+		if fn.decl != nil && fn.decl.Name.Name == "" {
+			fn.decl.Name.Name = "fn" + strconv.Itoa(i)
+		}
+	}
+	if t.memory != nil && t.memory.id.Name == "" {
+		t.memory.id.Name = "memory"
+	}
+	for i, tb := range t.tables {
+		if tb.id.Name == "" {
+			tb.id.Name = "t" + strconv.Itoa(i)
+		}
+	}
+	for i, gv := range t.globals {
+		if gv.id.Name == "" {
+			gv.id.Name = "g" + strconv.Itoa(i)
 		}
 	}
 
@@ -166,35 +194,17 @@ func translate(r io.Reader, w io.Writer) error {
 		t.out.Decls = append(t.out.Decls, t.createDylinkConstants())
 	}
 
+	moduleDecl := t.createModuleStruct(facts)
 	t.out.Decls = append([]ast.Decl{
-		t.createModuleStruct(facts),
+		moduleDecl,
 		t.createNewFunc()},
 		t.out.Decls...)
 
 	if *pkg != "" {
 		t.out.Name = newID(*pkg)
 	}
-	// Fill in missing names.
 	if t.out.Name == nil {
 		t.out.Name = newID("wasm2go")
-	}
-	for i, fn := range t.functions {
-		if fn.decl != nil && fn.decl.Name.Name == "" {
-			fn.decl.Name.Name = "fn" + strconv.Itoa(i)
-		}
-	}
-	if t.memory != nil && t.memory.id.Name == "" {
-		t.memory.id.Name = "memory"
-	}
-	for i, tb := range t.tables {
-		if tb.id.Name == "" {
-			tb.id.Name = "t" + strconv.Itoa(i)
-		}
-	}
-	for i, gv := range t.globals {
-		if gv.id.Name == "" {
-			gv.id.Name = "g" + strconv.Itoa(i)
-		}
 	}
 
 	t.out.Decls = append(t.out.Decls, t.createExportMethods()...)
@@ -285,7 +295,7 @@ func translate(r io.Reader, w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	if facts.dispatched > 0 {
+	if moduleDecl.Doc != nil {
 		// Printing the Module doc comment without positions
 		// leaves it attached to the package clause; gofmt fixes that.
 		src, err := format.Source(out.Bytes())
@@ -528,6 +538,7 @@ func (t *translator) readImportSection() error {
 			fn := funcCompiler{
 				typ:  typ,
 				call: latecall(id),
+				host: true,
 				decl: &ast.FuncDecl{
 					Name: id,
 					Recv: modRecvList,

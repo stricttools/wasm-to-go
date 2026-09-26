@@ -24,13 +24,16 @@ func (m *Module) fn0() int32 {
 	return i32(12345)
 }
 func (m *Module) Xtest() int32 {
+	mem := m.memory
 	t0 := m.fn0()
-	store32(m.memory, uint32(i32(0)), uint32(t0))
-	t1 := int32(load32(m.memory, uint32(i32(0))))
+	mem = m.memory
+	store32(mem, uint32(i32(0)), uint32(t0))
+	t1 := int32(load32(mem, uint32(i32(0))))
 	return t1
 }
 func (m *Module) Xsize() int32 {
-	t0 := int32(len(m.memory) >> 16)
+	mem := m.memory
+	t0 := int32(len(mem) >> 16)
 	return t0
 }
 

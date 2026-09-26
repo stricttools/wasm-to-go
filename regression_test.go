@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	dispatch_test "github.com/stricttools/wasm-to-go/testdata/regression/dispatch"
+	memgrow_test "github.com/stricttools/wasm-to-go/testdata/regression/memgrow"
 	oob_trap_test "github.com/stricttools/wasm-to-go/testdata/regression/oob_trap"
 	provided_helper_test "github.com/stricttools/wasm-to-go/testdata/regression/provided_helper"
 	select_test "github.com/stricttools/wasm-to-go/testdata/regression/select_effect"
@@ -157,3 +158,53 @@ func Test_regression_dispatch(t *testing.T) {
 		t.Errorf("callMutated(1, 5) = %d after table.set, want 15", got)
 	}
 }
+
+// A function that caches the memory in a local (memlocal) reloads it after
+// every call that can grow memory, however the call reaches memory.grow;
+// each export stores to and loads from the page its call added, which
+// panics if the cached memory is stale.
+func Test_regression_memgrow(t *testing.T) {
+	src, err := os.ReadFile("testdata/regression/memgrow/memgrow.go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !*noopt {
+		_, peek, _ := strings.Cut(string(src), "func (m *Module) Xpeek(")
+		peek, _, _ = strings.Cut(peek, "\n}\n")
+		if !strings.Contains(peek, "mem := ") || strings.Contains(peek, "mem = ") {
+			t.Errorf("peek should cache the memory, and never reload it:\n%s", peek)
+		}
+	}
+
+	env := &memgrowEnv{}
+	m := memgrow_test.New(env)
+	env.m = m
+
+	tests := []struct {
+		name string
+		call func() int32
+	}{
+		{"direct", m.Xdirect},
+		{"closed table, slot 0", func() int32 { return m.Xclosed(0) }},
+		{"closed table, slot 1 (no growth)", func() int32 { return m.Xclosed(1) }},
+		{"closed table, slot 2", func() int32 { return m.Xclosed(2) }},
+		{"exported table, changed by the host", func() int32 {
+			(*m.Xtable())[0] = func() int32 { return int32(m.Xmemory().Grow(1, 65536)) }
+			return m.Xopen()
+		}},
+		{"host", m.Xhost},
+		{"provided", m.Xprovided},
+	}
+	for _, tt := range tests {
+		if got := tt.call(); got != 99 {
+			t.Errorf("%s = %d, want 99", tt.name, got)
+		}
+	}
+	if got := m.Xpeek(0); got != 2 {
+		t.Errorf("peek(0) = %d, want 2", got)
+	}
+}
+
+type memgrowEnv struct{ m *memgrow_test.Module }
+
+func (e *memgrowEnv) Xgrow() int32 { return int32(e.m.Xmemory().Grow(1, 65536)) }
