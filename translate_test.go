@@ -44,6 +44,35 @@ func Test_translate(t *testing.T) {
 	}
 }
 
+// Translates modules always with -unsafe, whatever the flag says:
+// their tests exercise what only -unsafe enables.
+func Test_translate_unsafe(t *testing.T) {
+	flag := *unsafe
+	*unsafe = true
+	t.Cleanup(func() { *unsafe = flag })
+
+	tests := []string{"regression/bce"}
+	for _, name := range tests {
+		t.Run(name, func(t *testing.T) {
+			path := "testdata/" + name + "/" + filepath.Base(name)
+
+			in, err := os.Open(path + ".wasm")
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer in.Close()
+
+			var out bytes.Buffer
+			if err := translate(in, &out); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(path+".go", out.Bytes(), 0644); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+}
+
 // Translates modules together with a provided-imports file, which may
 // reference helpers the module itself does not use (provided_helper),
 // or grow memory (memgrow).

@@ -643,6 +643,12 @@ func (fn *funcCompiler) optimizeModule(k *moduleFacts) {
 		isMem := func(e ast.Expr) bool { return e == fn.memory.selector }
 		if passes.MemLocal(fn.decl, isMem, fn.memory.selector, k.callGrows) {
 			k.memLocals++
+			// The unchecked helpers need unsafe.
+			if *unsafe {
+				for _, name := range passes.RemoveBoundsChecks(fn.decl) {
+					fn.helpers.add(name)
+				}
+			}
 		}
 	}
 }

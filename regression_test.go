@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	bce_test "github.com/stricttools/wasm-to-go/testdata/regression/bce"
 	dispatch_test "github.com/stricttools/wasm-to-go/testdata/regression/dispatch"
 	memgrow_test "github.com/stricttools/wasm-to-go/testdata/regression/memgrow"
 	oob_trap_test "github.com/stricttools/wasm-to-go/testdata/regression/oob_trap"
@@ -208,3 +209,58 @@ func Test_regression_memgrow(t *testing.T) {
 type memgrowEnv struct{ m *memgrow_test.Module }
 
 func (e *memgrowEnv) Xgrow() int32 { return int32(e.m.Xmemory().Grow(1, 65536)) }
+
+// With -unsafe, bounds checks an earlier check covers are removed
+// (the sample is always translated with -unsafe); those nothing covers
+// still panic.
+func Test_regression_bce(t *testing.T) {
+	src, err := os.ReadFile("testdata/regression/bce/bce.go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !*noopt {
+		if got := strings.Count(string(src), "u(mem, "); got != 4 {
+			t.Errorf("found %d unchecked accesses, want 4 (sum: 2, inc: 1, copy: 1)", got)
+		}
+	}
+
+	m := bce_test.New()
+	mem := *m.Xmemory().Slice()
+
+	mustPanic := func(name string, f func()) {
+		t.Helper()
+		defer func() {
+			if recover() == nil {
+				t.Errorf("%s: expected an out-of-bounds panic", name)
+			}
+		}()
+		f()
+	}
+
+	for i := range 12 {
+		mem[65524+i] = byte(i + 1)
+	}
+	want := int32(0x04030201 + 0x08070605 + 0x0c0b0a09)
+	if got := m.Xsum(65524); got != want {
+		t.Errorf("sum(65524) = %#x, want %#x", got, want)
+	}
+	mustPanic("sum(65525)", func() { m.Xsum(65525) })
+
+	m.Xinc(65532)
+	if got := m.Xsum(65524); got != want+1 {
+		t.Errorf("sum(65524) = %#x after inc(65532), want %#x", got, want+1)
+	}
+	mustPanic("inc(65533)", func() { m.Xinc(65533) })
+
+	mustPanic("widen(65534)", func() { m.Xwiden(65534) })
+	mustPanic("walk(65528, 3)", func() { m.Xwalk(65528, 3) })
+	if got := m.Xwalk(65528, 2); got != 0x0c0b0a0a+0x08070605 {
+		t.Errorf("walk(65528, 2) = %#x", got)
+	}
+	mustPanic("branch(65532, 1)", func() { m.Xbranch(65532, 1) })
+	mustPanic("branch(65532, 0)", func() { m.Xbranch(65532, 0) })
+	if got := m.Xcopy(65528); got != 0x08070605 {
+		t.Errorf("copy(65528) = %#x", got)
+	}
+	mustPanic("copy(65529)", func() { m.Xcopy(65529) })
+}

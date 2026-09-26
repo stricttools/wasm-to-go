@@ -87,3 +87,78 @@ func store64[T uint32 | uint64](mem []byte, addr T, val uint64) {
 	_ = mem[uint64(addr)+7]
 	*(*uint64)(unsafe.Add(unsafe.Pointer(unsafe.SliceData(mem)), uintptr(addr))) = val
 }
+
+// Unchecked variants of the load and store helpers, used where an earlier
+// check on every path already proved the access in bounds.
+
+//go:nosplit
+func load16u[T uint32 | uint64](mem []byte, addr T) uint16 {
+	if !unalignedOK {
+		return binary.LittleEndian.Uint16(mem[addr:])
+	}
+	val := *(*uint16)(unsafe.Add(unsafe.Pointer(unsafe.SliceData(mem)), uintptr(addr)))
+	if big {
+		return bits.ReverseBytes16(val)
+	}
+	return val
+}
+
+//go:nosplit
+func store16u[T uint32 | uint64](mem []byte, addr T, val uint16) {
+	if !unalignedOK {
+		binary.LittleEndian.PutUint16(mem[addr:], val)
+		return
+	}
+	if big {
+		val = bits.ReverseBytes16(val)
+	}
+	*(*uint16)(unsafe.Add(unsafe.Pointer(unsafe.SliceData(mem)), uintptr(addr))) = val
+}
+
+//go:nosplit
+func load32u[T uint32 | uint64](mem []byte, addr T) uint32 {
+	if !unalignedOK {
+		return binary.LittleEndian.Uint32(mem[addr:])
+	}
+	val := *(*uint32)(unsafe.Add(unsafe.Pointer(unsafe.SliceData(mem)), uintptr(addr)))
+	if big {
+		return bits.ReverseBytes32(val)
+	}
+	return val
+}
+
+//go:nosplit
+func store32u[T uint32 | uint64](mem []byte, addr T, val uint32) {
+	if !unalignedOK {
+		binary.LittleEndian.PutUint32(mem[addr:], val)
+		return
+	}
+	if big {
+		val = bits.ReverseBytes32(val)
+	}
+	*(*uint32)(unsafe.Add(unsafe.Pointer(unsafe.SliceData(mem)), uintptr(addr))) = val
+}
+
+//go:nosplit
+func load64u[T uint32 | uint64](mem []byte, addr T) uint64 {
+	if !unalignedOK {
+		return binary.LittleEndian.Uint64(mem[addr:])
+	}
+	val := *(*uint64)(unsafe.Add(unsafe.Pointer(unsafe.SliceData(mem)), uintptr(addr)))
+	if big {
+		return bits.ReverseBytes64(val)
+	}
+	return val
+}
+
+//go:nosplit
+func store64u[T uint32 | uint64](mem []byte, addr T, val uint64) {
+	if !unalignedOK {
+		binary.LittleEndian.PutUint64(mem[addr:], val)
+		return
+	}
+	if big {
+		val = bits.ReverseBytes64(val)
+	}
+	*(*uint64)(unsafe.Add(unsafe.Pointer(unsafe.SliceData(mem)), uintptr(addr))) = val
+}
