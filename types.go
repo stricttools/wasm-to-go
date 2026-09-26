@@ -128,6 +128,15 @@ type tableDef struct {
 	is64     bool
 	min      uint64
 	max      uint64
+	// mutated: some instruction (table.set, table.grow, table.fill,
+	// table.init, or table.copy into it) can change the table after New.
+	mutated bool
+}
+
+// An indirect call site, through a table, with the called signature.
+type indirectCall struct {
+	table int
+	typ   funcType
 }
 
 func (m *tableDef) stype() string {

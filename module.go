@@ -15,7 +15,7 @@ var modRecvList = &ast.FieldList{List: []*ast.Field{{
 	Names: []*ast.Ident{newID("m")},
 	Type:  &ast.StarExpr{X: newID("Module")}}}}
 
-func (t *translator) createModuleStruct() ast.Decl {
+func (t *translator) createModuleStruct(k *moduleFacts) ast.Decl {
 	var fields []*ast.Field
 	// Tables: owned are []any; imported *[]any.
 	for _, tab := range t.tables {
@@ -75,8 +75,22 @@ func (t *translator) createModuleStruct() ast.Decl {
 		}
 	}
 
+	var doc *ast.CommentGroup
+	if k.dispatched > 0 {
+		// The dispatch pass assumes this.
+		doc = &ast.CommentGroup{List: []*ast.Comment{
+			{Text: "// A Module must be created by New and never copied, and code outside"},
+			{Text: "// the translated module must not change its function tables: calls"},
+			{Text: "// through a table are compiled into direct calls on the receiver,"},
+			{Text: "// which must be the Module that New filled the table for. A zero or"},
+			{Text: "// copied Module would make those calls where the translated code"},
+			{Text: "// panics, or call the functions of another Module."},
+		}}
+	}
+
 	return &ast.GenDecl{
 		Tok: token.TYPE,
+		Doc: doc,
 		Specs: []ast.Spec{
 			&ast.TypeSpec{
 				Name: newID("Module"),

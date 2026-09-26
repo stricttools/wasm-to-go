@@ -78,6 +78,8 @@ type translator struct {
 	start     uint64
 	data      []dataSegment
 	dylink    *dylinkDef
+	// Facts for the module-wide passes.
+	indirect map[*ast.CallExpr]indirectCall
 	// Debug.
 	codeStart     uint64
 	debugSections map[string][]byte
@@ -96,6 +98,7 @@ func translate(r io.Reader, w io.Writer) error {
 	t.packages = set[string]{}
 	t.provided = set[string]{}
 	t.helpers = set[string]{}
+	t.indirect = map[*ast.CallExpr]indirectCall{}
 
 	helperNames, err := t.findHelpers(fset, helpersSrc, helpersAtomicsSrc)
 	if err != nil {
@@ -138,6 +141,14 @@ func translate(r io.Reader, w io.Writer) error {
 		}
 	}
 
+	// Module-wide optimization passes.
+	facts := t.moduleFacts()
+	for i := range t.functions {
+		if fn := &t.functions[i]; fn.translator != nil {
+			fn.optimizeModule(facts)
+		}
+	}
+
 	exported := false
 	for _, exp := range t.exports {
 		if exp.kind == externMemory {
@@ -156,7 +167,7 @@ func translate(r io.Reader, w io.Writer) error {
 	}
 
 	t.out.Decls = append([]ast.Decl{
-		t.createModuleStruct(),
+		t.createModuleStruct(facts),
 		t.createNewFunc()},
 		t.out.Decls...)
 
@@ -273,6 +284,16 @@ func translate(r io.Reader, w io.Writer) error {
 	err = format.Node(&out, fset, &t.out)
 	if err != nil {
 		return err
+	}
+	if facts.dispatched > 0 {
+		// Printing the Module doc comment without positions
+		// leaves it attached to the package clause; gofmt fixes that.
+		src, err := format.Source(out.Bytes())
+		if err != nil {
+			return err
+		}
+		out.Reset()
+		out.Write(src)
 	}
 	if *dwarfline {
 		result, err := injectDwarfLines(out.Bytes(), t.debugSections)

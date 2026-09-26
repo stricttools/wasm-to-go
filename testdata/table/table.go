@@ -2,6 +2,12 @@
 
 package wasm2go
 
+// A Module must be created by New and never copied, and code outside
+// the translated module must not change its function tables: calls
+// through a table are compiled into direct calls on the receiver,
+// which must be the Module that New filled the table for. A zero or
+// copied Module would make those calls where the translated code
+// panics, or call the functions of another Module.
 type Module struct {
 	t0       []any
 	elements [][]any
@@ -36,11 +42,27 @@ func fn1(v0 int32) int32 {
 	return v0 + v0
 }
 func (m *Module) Xtimes2(v0 int32) int32 {
-	t0 := m.t0[uint(i32(16))].(func(int32) int32)(v0)
+	var t0 int32
+	switch t1 := uint(i32(16)); t1 {
+	case 16:
+		t0 = fn1(v0)
+	case 17:
+		t0 = m.fn0(v0)
+	default:
+		t0 = m.t0[t1].(func(int32) int32)(v0)
+	}
 	return t0
 }
 func (m *Module) Xtimes3(v0 int32) int32 {
-	t0 := m.t0[uint(i32(17))].(func(int32) int32)(v0)
+	var t0 int32
+	switch t1 := uint(i32(17)); t1 {
+	case 16:
+		t0 = fn1(v0)
+	case 17:
+		t0 = m.fn0(v0)
+	default:
+		t0 = m.t0[t1].(func(int32) int32)(v0)
+	}
 	return t0
 }
 

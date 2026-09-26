@@ -373,6 +373,7 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 		case 0x10, 0x11, 0x12, 0x13: // call, call_indirect, return_call, return_call_indirect
 			var fun ast.Expr
 			var typ funcType
+			var tableIdx uint64
 
 			switch opcode {
 			case 0x10, 0x12: // call, return_call
@@ -390,7 +391,7 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 				if err != nil {
 					return err
 				}
-				tableIdx, err := readLEB128(t.in)
+				tableIdx, err = readLEB128(t.in)
 				if err != nil {
 					return err
 				}
@@ -413,6 +414,9 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 			}
 
 			call := &ast.CallExpr{Fun: fun, Args: args}
+			if opcode == 0x11 || opcode == 0x13 { // call_indirect, return_call_indirect
+				t.indirect[call] = indirectCall{table: int(tableIdx), typ: typ}
+			}
 
 			switch opcode {
 			case 0x12, 0x13: // return_call, return_call_indirect
@@ -601,6 +605,7 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 			if err != nil {
 				return err
 			}
+			t.tables[i].mutated = true
 			var tab ast.Expr = &ast.SelectorExpr{X: newID("m"), Sel: t.tables[i].id}
 			if t.tables[i].imported {
 				tab = &ast.StarExpr{X: tab}

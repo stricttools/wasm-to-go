@@ -118,6 +118,7 @@ func (t *translator) readOpcodeExtended(fn *funcCompiler) error {
 		src := fn.pop()
 		dst := fn.pop()
 		fn.helpers.add("table_init")
+		t.tables[tableIdx].mutated = true
 		var tab ast.Expr = &ast.SelectorExpr{X: newID("m"), Sel: t.tables[tableIdx].id}
 		if t.tables[tableIdx].imported {
 			tab = &ast.StarExpr{X: tab}
@@ -157,6 +158,7 @@ func (t *translator) readOpcodeExtended(fn *funcCompiler) error {
 		src := fn.pop()
 		dst := fn.pop()
 		fn.helpers.add("table_copy")
+		t.tables[dstIdx].mutated = true
 		var dstTab ast.Expr = &ast.SelectorExpr{X: newID("m"), Sel: t.tables[dstIdx].id}
 		if t.tables[dstIdx].imported {
 			dstTab = &ast.StarExpr{X: dstTab}
@@ -178,6 +180,7 @@ func (t *translator) readOpcodeExtended(fn *funcCompiler) error {
 		delta := fn.pop()
 		val := fn.pop()
 		fn.helpers.add("table_grow")
+		t.tables[idx].mutated = true
 		var tab ast.Expr = &ast.SelectorExpr{X: newID("m"), Sel: t.tables[idx].id}
 		if !t.tables[idx].imported {
 			tab = &ast.UnaryExpr{Op: token.AND, X: tab}
@@ -211,6 +214,7 @@ func (t *translator) readOpcodeExtended(fn *funcCompiler) error {
 		val := fn.pop()
 		dest := fn.pop()
 		fn.helpers.add("table_fill")
+		t.tables[idx].mutated = true
 		var tab ast.Expr = &ast.SelectorExpr{X: newID("m"), Sel: t.tables[idx].id}
 		if t.tables[idx].imported {
 			tab = &ast.StarExpr{X: tab}

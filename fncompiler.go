@@ -628,6 +628,16 @@ func (fn *funcCompiler) cleanup() {
 	passes.RemoveUnusedLocals(fn.decl)
 }
 
+// Runs, once every function is compiled and cleaned up, the passes that
+// need facts about the whole module (closed.go). Like the passes in
+// cleanup, they are disabled by -noopt.
+func (fn *funcCompiler) optimizeModule(k *moduleFacts) {
+	if *noopt {
+		return
+	}
+	k.dispatched += passes.Dispatch(fn.decl, k.dispatchSite, fn.newTempVal)
+}
+
 type funcBlock struct {
 	typ         funcType
 	body        *ast.BlockStmt

@@ -4,8 +4,11 @@ package main
 
 import (
 	_ "embed"
+	"os"
+	"strings"
 	"testing"
 
+	dispatch_test "github.com/stricttools/wasm-to-go/testdata/regression/dispatch"
 	oob_trap_test "github.com/stricttools/wasm-to-go/testdata/regression/oob_trap"
 	provided_helper_test "github.com/stricttools/wasm-to-go/testdata/regression/provided_helper"
 	select_test "github.com/stricttools/wasm-to-go/testdata/regression/select_effect"
@@ -92,5 +95,65 @@ func Test_regression_provided_helper(t *testing.T) {
 
 	if got := m.Xtest(); got != 0x0807060504030201 {
 		t.Errorf("test() = %#x, want 0x0807060504030201 (provided import must be able to call load64)", got)
+	}
+}
+
+// Indirect calls through a closed table become direct calls (dispatch);
+// every slot the dispatch does not list still panics as before, and calls
+// through tables that are exported or mutated are left alone.
+func Test_regression_dispatch(t *testing.T) {
+	src, err := os.ReadFile("testdata/regression/dispatch/dispatch.go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !*noopt {
+		if got := strings.Count(string(src), "switch "); got != 2 {
+			t.Errorf("found %d dispatch switches, want 2 (the calls through the closed table)", got)
+		}
+	}
+
+	m := dispatch_test.New()
+
+	mustPanic := func(name string, f func()) {
+		t.Helper()
+		defer func() {
+			if recover() == nil {
+				t.Errorf("%s: expected a panic", name)
+			}
+		}()
+		f()
+	}
+
+	for slot, want := range map[int32]int32{1: 10, 2: 15, 4: 10} {
+		if got := m.Xcall(slot, 5); got != want {
+			t.Errorf("call(%d, 5) = %d, want %d", slot, got, want)
+		}
+	}
+	if got := m.Xcall0(3); got != 42 {
+		t.Errorf("call0(3) = %d, want 42", got)
+	}
+	mustPanic("null slot", func() { m.Xcall(0, 5) })
+	mustPanic("null slot after the segment", func() { m.Xcall(5, 5) })
+	mustPanic("slot of another type", func() { m.Xcall(3, 5) })
+	mustPanic("slot of another type, other signature", func() { m.Xcall0(1) })
+	mustPanic("slot past the end", func() { m.Xcall(8, 5) })
+	mustPanic("negative slot", func() { m.Xcall(-1, 5) })
+
+	// An exported table can be changed by the host.
+	if got := m.XcallExported(1, 5); got != 10 {
+		t.Errorf("callExported(1, 5) = %d, want 10", got)
+	}
+	(*m.Xexported())[1] = func(v int32) int32 { return v + 100 }
+	if got := m.XcallExported(1, 5); got != 105 {
+		t.Errorf("callExported(1, 5) = %d after the host replaced slot 1, want 105", got)
+	}
+
+	// A table mutated by table.set.
+	if got := m.XcallMutated(1, 5); got != 10 {
+		t.Errorf("callMutated(1, 5) = %d, want 10", got)
+	}
+	m.XsetMutated(1)
+	if got := m.XcallMutated(1, 5); got != 15 {
+		t.Errorf("callMutated(1, 5) = %d after table.set, want 15", got)
 	}
 }
