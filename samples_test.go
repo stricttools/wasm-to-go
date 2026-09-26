@@ -10,13 +10,13 @@ import (
 	"slices"
 	"testing"
 
-	fib_test "github.com/ncruces/wasm2go/testdata/fib"
-	loops_test "github.com/ncruces/wasm2go/testdata/loops"
-	primes_test "github.com/ncruces/wasm2go/testdata/primes"
-	recursion_test "github.com/ncruces/wasm2go/testdata/recursion"
-	stack_test "github.com/ncruces/wasm2go/testdata/stack"
-	table_test "github.com/ncruces/wasm2go/testdata/table"
-	trig_test "github.com/ncruces/wasm2go/testdata/trig"
+	fib_test "github.com/stricttools/wasm-to-go/testdata/fib"
+	loops_test "github.com/stricttools/wasm-to-go/testdata/loops"
+	primes_test "github.com/stricttools/wasm-to-go/testdata/primes"
+	recursion_test "github.com/stricttools/wasm-to-go/testdata/recursion"
+	stack_test "github.com/stricttools/wasm-to-go/testdata/stack"
+	table_test "github.com/stricttools/wasm-to-go/testdata/table"
+	trig_test "github.com/stricttools/wasm-to-go/testdata/trig"
 )
 
 func Test_fib(t *testing.T) {

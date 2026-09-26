@@ -8,7 +8,7 @@ import (
 	"slices"
 	"strconv"
 
-	"github.com/ncruces/wasm2go/internal/mangle"
+	"github.com/stricttools/wasm-to-go/internal/mangle"
 )
 
 var modRecvList = &ast.FieldList{List: []*ast.Field{{

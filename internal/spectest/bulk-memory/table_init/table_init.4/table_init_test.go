@@ -4,8 +4,8 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/ncruces/wasm2go/internal/spectest"
-	a "github.com/ncruces/wasm2go/internal/spectest/bulk-memory/table_init/table_init.0"
+	"github.com/stricttools/wasm-to-go/internal/spectest"
+	a "github.com/stricttools/wasm-to-go/internal/spectest/bulk-memory/table_init/table_init.0"
 )
 
 func Test(t *testing.T) {

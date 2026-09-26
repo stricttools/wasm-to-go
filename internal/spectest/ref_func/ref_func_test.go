@@ -4,9 +4,9 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/ncruces/wasm2go/internal/spectest"
-	ref_func_0 "github.com/ncruces/wasm2go/internal/spectest/ref_func/ref_func.0"
-	ref_func_1 "github.com/ncruces/wasm2go/internal/spectest/ref_func/ref_func.1"
+	"github.com/stricttools/wasm-to-go/internal/spectest"
+	ref_func_0 "github.com/stricttools/wasm-to-go/internal/spectest/ref_func/ref_func.0"
+	ref_func_1 "github.com/stricttools/wasm-to-go/internal/spectest/ref_func/ref_func.1"
 )
 
 func Test(t *testing.T) {

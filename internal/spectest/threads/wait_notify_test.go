@@ -5,8 +5,8 @@ import (
 	"sync"
 	"testing"
 
-	notify "github.com/ncruces/wasm2go/internal/spectest/threads/notify.0"
-	wait "github.com/ncruces/wasm2go/internal/spectest/threads/wait.0"
+	notify "github.com/stricttools/wasm-to-go/internal/spectest/threads/notify.0"
+	wait "github.com/stricttools/wasm-to-go/internal/spectest/threads/wait.0"
 )
 
 func Test_globals(t *testing.T) {

@@ -1,4 +1,4 @@
-module github.com/ncruces/wasm2go
+module github.com/stricttools/wasm-to-go
 
 go 1.26.0
 

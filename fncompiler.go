@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ncruces/wasm2go/internal/passes"
+	"github.com/stricttools/wasm-to-go/internal/passes"
 )
 
 type funcCompiler struct {

@@ -18,9 +18,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ncruces/wasm2go/internal/mangle"
-	"github.com/ncruces/wasm2go/internal/offset"
-	"github.com/ncruces/wasm2go/internal/passes"
+	"github.com/stricttools/wasm-to-go/internal/mangle"
+	"github.com/stricttools/wasm-to-go/internal/offset"
+	"github.com/stricttools/wasm-to-go/internal/passes"
 )
 
 var (

@@ -6,10 +6,10 @@ import (
 	_ "embed"
 	"testing"
 
-	oob_trap_test "github.com/ncruces/wasm2go/testdata/regression/oob_trap"
-	provided_helper_test "github.com/ncruces/wasm2go/testdata/regression/provided_helper"
-	select_test "github.com/ncruces/wasm2go/testdata/regression/select_effect"
-	store_grow_test "github.com/ncruces/wasm2go/testdata/regression/store_grow"
+	oob_trap_test "github.com/stricttools/wasm-to-go/testdata/regression/oob_trap"
+	provided_helper_test "github.com/stricttools/wasm-to-go/testdata/regression/provided_helper"
+	select_test "github.com/stricttools/wasm-to-go/testdata/regression/select_effect"
+	store_grow_test "github.com/stricttools/wasm-to-go/testdata/regression/store_grow"
 )
 
 func Test_regression_select_effect(t *testing.T) {

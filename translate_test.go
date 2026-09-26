@@ -175,7 +175,7 @@ package wasm2go
 import (
 	"testing"
 
-	"github.com/ncruces/wasm2go/internal/spectest"
+	"github.com/stricttools/wasm-to-go/internal/spectest"
 )
 
 func Test(t *testing.T) {

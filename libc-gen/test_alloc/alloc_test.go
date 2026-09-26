@@ -3,9 +3,9 @@ package testalloc
 import (
 	"testing"
 
-	"github.com/ncruces/wasm2go/libc-gen/test_alloc/bump"
-	"github.com/ncruces/wasm2go/libc-gen/test_alloc/sbrk"
-	"github.com/ncruces/wasm2go/libc-gen/test_alloc/tlsf"
+	"github.com/stricttools/wasm-to-go/libc-gen/test_alloc/bump"
+	"github.com/stricttools/wasm-to-go/libc-gen/test_alloc/sbrk"
+	"github.com/stricttools/wasm-to-go/libc-gen/test_alloc/tlsf"
 )
 
 // Memory represents the Wasm memory export.
