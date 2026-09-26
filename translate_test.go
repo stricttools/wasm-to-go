@@ -2,8 +2,11 @@ package main
 
 import (
 	"bytes"
+	"errors"
+	"go/build/constraint"
 	"go/format"
 	"html/template"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -24,20 +27,7 @@ func Test_translate(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			path := "testdata/" + name + "/" + filepath.Base(name)
 
-			in, err := os.Open(path + ".wasm")
-			if err != nil {
-				t.Fatal(err)
-			}
-			defer in.Close()
-
-			var out bytes.Buffer
-			err = translate(in, &out)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			err = os.WriteFile(path+".go", out.Bytes(), 0644)
-			if err != nil {
+			if err := translateFile(path+".wasm", path); err != nil {
 				t.Fatal(err)
 			}
 		})
@@ -56,17 +46,7 @@ func Test_translate_unsafe(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			path := "testdata/" + name + "/" + filepath.Base(name)
 
-			in, err := os.Open(path + ".wasm")
-			if err != nil {
-				t.Fatal(err)
-			}
-			defer in.Close()
-
-			var out bytes.Buffer
-			if err := translate(in, &out); err != nil {
-				t.Fatal(err)
-			}
-			if err := os.WriteFile(path+".go", out.Bytes(), 0644); err != nil {
+			if err := translateFile(path+".wasm", path); err != nil {
 				t.Fatal(err)
 			}
 		})
@@ -85,17 +65,7 @@ func Test_translate_provided(t *testing.T) {
 			provided = stringFlags{dir + "/provided.go"}
 			t.Cleanup(func() { provided = nil })
 
-			in, err := os.Open(path + ".wasm")
-			if err != nil {
-				t.Fatal(err)
-			}
-			defer in.Close()
-
-			var out bytes.Buffer
-			if err := translate(in, &out); err != nil {
-				t.Fatal(err)
-			}
-			if err := os.WriteFile(path+".go", out.Bytes(), 0644); err != nil {
+			if err := translateFile(path+".wasm", path); err != nil {
 				t.Fatal(err)
 			}
 		})
@@ -128,21 +98,7 @@ func Test_translateSpecTest(t *testing.T) {
 			return nil
 		}
 		if ext := filepath.Ext(path); ext == ".wasm" {
-			in, err := os.Open(path)
-			if err != nil {
-				t.Errorf("%s: %v", path, err)
-				return nil
-			}
-			defer in.Close()
-
-			var out bytes.Buffer
-			err = translate(in, &out)
-			if err != nil {
-				t.Errorf("%s: %v", path, err)
-				return nil
-			}
-
-			err = os.WriteFile(strings.TrimRight(path, ext)+".go", out.Bytes(), 0644)
+			err := translateFile(path, strings.TrimRight(path, ext))
 			if err != nil {
 				t.Errorf("%s: %v", path, err)
 				return nil
@@ -156,6 +112,38 @@ func Test_translateSpecTest(t *testing.T) {
 		}
 		return nil
 	})
+}
+
+// translateFile translates the module in file into base.go, the way the
+// command does with `-o base.go`: with -unsafe, into two files, base.go
+// (expanded, for the platforms of passes.ExpandPlatforms) and
+// base_generic.go (for the others). A single file replaces both.
+func translateFile(file, base string) error {
+	in, err := os.Open(file)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	var out, gen bytes.Buffer
+	var generic io.Writer
+	if *unsafe {
+		generic = &gen
+	}
+	if err := translate(in, &out, generic); err != nil {
+		return err
+	}
+	if err := os.WriteFile(base+".go", out.Bytes(), 0644); err != nil {
+		return err
+	}
+	if *unsafe {
+		return os.WriteFile(genericFile(base+".go"), gen.Bytes(), 0644)
+	}
+	err = os.Remove(genericFile(base + ".go"))
+	if errors.Is(err, fs.ErrNotExist) {
+		return nil
+	}
+	return err
 }
 
 func generateSpecTest(path string) error {
@@ -393,4 +381,77 @@ var specHostModules = []string{
 
 	"extended-const/data/data.3",
 	"extended-const/elem/elem.3",
+}
+
+// -unsafe writes two files, so it needs -o; given -o, the error clears.
+func Test_checkOutputFlags(t *testing.T) {
+	saved := *unsafe
+	t.Cleanup(func() { *unsafe, *output = saved, "" })
+
+	*unsafe, *output = true, ""
+	err := checkOutputFlags()
+	if err == nil || !strings.Contains(err.Error(), "-unsafe requires `-o output.go`") ||
+		!strings.Contains(err.Error(), "output_generic.go") {
+		t.Fatalf("checkOutputFlags() = %v, want the -unsafe error naming -o and both files", err)
+	}
+
+	*output = "module.go"
+	if err := checkOutputFlags(); err != nil {
+		t.Errorf("checkOutputFlags() = %v with -o, want nil", err)
+	}
+	if got := genericFile("out/module.go"); got != "out/module_generic.go" {
+		t.Errorf("genericFile = %q", got)
+	}
+}
+
+// With -unsafe, user -tags combine with the platform constraint of each
+// of the two files.
+func Test_translate_tags(t *testing.T) {
+	savedTags, savedUnsafe := *tags, *unsafe
+	t.Cleanup(func() { *tags, *unsafe = savedTags, savedUnsafe })
+	*tags, *unsafe = "foo && !bar", true
+
+	in, err := os.Open("testdata/fib/fib.wasm")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer in.Close()
+	var out, gen bytes.Buffer
+	if err := translate(in, &out, &gen); err != nil {
+		t.Fatal(err)
+	}
+
+	buildLine := func(src []byte) constraint.Expr {
+		for line := range strings.Lines(string(src)) {
+			if constraint.IsGoBuild(line) {
+				expr, err := constraint.Parse(line)
+				if err != nil {
+					t.Fatal(err)
+				}
+				return expr
+			}
+		}
+		t.Fatal("no //go:build line")
+		return nil
+	}
+	expanded, generic := buildLine(out.Bytes()), buildLine(gen.Bytes())
+	for _, tt := range []struct {
+		tags              []string
+		expanded, generic bool
+	}{
+		{[]string{"foo", "amd64"}, true, false},
+		{[]string{"foo", "arm64"}, true, false},
+		{[]string{"foo", "s390x"}, false, true},
+		{[]string{"foo", "riscv64"}, false, true},
+		{[]string{"amd64"}, false, false},
+		{[]string{"foo", "bar", "s390x"}, false, false},
+	} {
+		has := func(tag string) bool { return slices.Contains(tt.tags, tag) }
+		if got := expanded.Eval(has); got != tt.expanded {
+			t.Errorf("%v: expanded file built = %v, want %v (%s)", tt.tags, got, tt.expanded, expanded)
+		}
+		if got := generic.Eval(has); got != tt.generic {
+			t.Errorf("%v: generic file built = %v, want %v (%s)", tt.tags, got, tt.generic, generic)
+		}
+	}
 }

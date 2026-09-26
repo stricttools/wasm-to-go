@@ -214,13 +214,21 @@ func (e *memgrowEnv) Xgrow() int32 { return int32(e.m.Xmemory().Grow(1, 65536)) 
 // (the sample is always translated with -unsafe); those nothing covers
 // still panic.
 func Test_regression_bce(t *testing.T) {
-	src, err := os.ReadFile("testdata/regression/bce/bce.go")
+	generic, err := os.ReadFile("testdata/regression/bce/bce_generic.go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	expanded, err := os.ReadFile("testdata/regression/bce/bce.go")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !*noopt {
-		if got := strings.Count(string(src), "u(mem, "); got != 4 {
+		if got := strings.Count(string(generic), "u(mem, "); got != 4 {
 			t.Errorf("found %d unchecked accesses, want 4 (sum: 2, inc: 1, copy: 1)", got)
+		}
+		// The helper definitions have uintptr(addr); expansions, the address.
+		if got := strings.Count(string(expanded), "unsafe.SliceData(mem)), uintptr(uint"); got != 4 {
+			t.Errorf("found %d expanded unchecked accesses, want 4", got)
 		}
 	}
 
