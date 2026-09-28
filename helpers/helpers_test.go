@@ -3,6 +3,8 @@ package helpers
 import (
 	"fmt"
 	"math"
+	bigf "math/big"
+	"math/rand/v2"
 	"runtime"
 	"strings"
 	"testing"
@@ -1075,5 +1077,31 @@ func Test_i64_mul_wide_s(t *testing.T) {
 				t.Errorf("i64_mul_wide_s(%x, %x) = (%x, %x), want (%x, %x)", tt.x, tt.y, uint64(lo), uint64(hi), tt.lo, tt.hi)
 			}
 		})
+	}
+}
+
+// Compares against math/big's float32 rounding (nearest even), which does
+// not depend on the platform's conversion instructions.
+func Test_f32_convert_i64(t *testing.T) {
+	r := rand.New(rand.NewPCG(1, 2))
+	xs := []uint64{0, 1, 1<<53 - 1, 1 << 53, 1<<53 + 1, 0x800000800001, 0x800000800000,
+		1<<63 - 1, 1 << 63, 1<<64 - 1, 0xffffff7fffffffff, 0xffff7fffff7fffff}
+	for range 100000 {
+		// Random magnitudes, with long runs of ones and zeros near the rounding position.
+		x := r.Uint64() >> r.UintN(64)
+		if r.UintN(2) == 0 {
+			x |= 1<<r.UintN(40) - 1
+		}
+		xs = append(xs, x, -x)
+	}
+	for _, x := range xs {
+		want, _ := new(bigf.Float).SetUint64(x).Float32()
+		if got := f32_convert_i64_u(int64(x)); math.Float32bits(got) != math.Float32bits(want) {
+			t.Fatalf("f32_convert_i64_u(%#x) = %#x, want %#x", x, math.Float32bits(got), math.Float32bits(want))
+		}
+		want, _ = new(bigf.Float).SetInt64(int64(x)).Float32()
+		if got := f32_convert_i64_s(int64(x)); math.Float32bits(got) != math.Float32bits(want) {
+			t.Fatalf("f32_convert_i64_s(%d) = %#x, want %#x", int64(x), math.Float32bits(got), math.Float32bits(want))
+		}
 	}
 }

@@ -208,6 +208,37 @@ func f64_max(x, y float64) float64 {
 	return math.Float64frombits(0x7ff8000000000000)
 }
 
+// Int to float32 conversions of 64-bit integers round once, to nearest
+// even. Go's float32(int64) and float32(uint64) round twice (through
+// float64) on some 32-bit platforms, which is off by one ulp for inputs
+// like 2^47+2^23+1. Here float64 of an integer below 2^53 is exact, and so
+// is scaling by a power of two, so float32() is the only rounding; the bits
+// shifted out are kept as a sticky bit in y's lowest bit, below float32's
+// rounding position.
+
+//go:nosplit
+func f32_convert_i64_u(x int64) float32 {
+	u := uint64(x)
+	if u < 1<<53 {
+		return float32(float64(int64(u)))
+	}
+	s := uint(bits.Len64(u) - 53)
+	y := u >> s
+	if u&(1<<s-1) != 0 {
+		y |= 1
+	}
+	return float32(float64(int64(y)) * math.Float64frombits(uint64(1023+s)<<52))
+}
+
+//go:nosplit
+func f32_convert_i64_s(x int64) float32 {
+	if x < 0 {
+		// -x wraps for math.MinInt64, whose magnitude as a uint64 is right.
+		return -f32_convert_i64_u(-x)
+	}
+	return f32_convert_i64_u(x)
+}
+
 // Float to int conversions.
 
 // All i64 conversions use >= because both MaxInt64 and MaxUint64

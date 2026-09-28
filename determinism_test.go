@@ -5,6 +5,7 @@ package main
 import (
 	"testing"
 
+	f32convert_test "github.com/stricttools/wasm-to-go/testdata/regression/f32convert"
 	nancanon_test "github.com/stricttools/wasm-to-go/testdata/regression/nancanon"
 )
 
@@ -56,6 +57,36 @@ func Test_regression_nancanon(t *testing.T) {
 	} {
 		if tt.got != tt.want {
 			t.Errorf("%s = %#x, want %#x", tt.name, uint64(tt.got), uint64(tt.want))
+		}
+	}
+}
+
+// f32.convert_i64_s and f32.convert_i64_u round once, to nearest even, on
+// every architecture (Go's own conversion rounds twice, through float64,
+// on 386, arm, and mipsle).
+func Test_regression_f32convert(t *testing.T) {
+	m := f32convert_test.New()
+	for _, tt := range []struct {
+		x    uint64
+		s, u uint32 // float32 bits of the signed and the unsigned conversion
+	}{
+		{0, 0, 0},
+		{1, 0x3f800000, 0x3f800000},
+		{0x800000800001, 0x57000001, 0x57000001},     // 2^47+2^23+1: above the tie, rounds up
+		{0x800000800000, 0x57000000, 0x57000000},     // the tie itself, to even
+		{0x20000000000003, 0x5a000000, 0x5a000000},   // 2^53+3
+		{0x7fffffffffffffff, 0x5f000000, 0x5f000000}, // 2^63-1
+		{0x8000008000000001, 0xdeffffff, 0x5f000001}, // -(2^63-2^39-1); 2^63+2^39+1
+		{0x8000000000000000, 0xdf000000, 0x5f000000}, // -2^63; 2^63
+		{0xffffff7fffffffff, 0xd3000000, 0x5f7fffff}, // -(2^39+1); 2^64-2^39-1
+		{0xffffffffffffffff, 0xbf800000, 0x5f800000}, // -1; 2^64-1
+		{0xffff7fffff7fffff, 0xd7000001, 0x5f7fff80}, // -(2^47+2^23+1); 2^64-2^47-2^23-1
+	} {
+		if got := uint32(m.Xs(int64(tt.x))); got != tt.s {
+			t.Errorf("f32.convert_i64_s(%#x) = %#x, want %#x", tt.x, got, tt.s)
+		}
+		if got := uint32(m.Xu(int64(tt.x))); got != tt.u {
+			t.Errorf("f32.convert_i64_u(%#x) = %#x, want %#x", tt.x, got, tt.u)
 		}
 	}
 }

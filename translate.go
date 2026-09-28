@@ -42,6 +42,7 @@ var pureHelpers = set[string]{
 	"f32_abs": {}, "f64_abs": {}, "f32_neg": {}, "f64_neg": {},
 	"f32_copysign": {}, "f32_min": {}, "f32_max": {},
 	"f64_min": {}, "f64_max": {},
+	"f32_convert_i64_s": {}, "f32_convert_i64_u": {},
 	"i32_trunc_sat_f32_s": {}, "i32_trunc_sat_f32_u": {},
 	"i32_trunc_sat_f64_s": {}, "i32_trunc_sat_f64_u": {},
 	"i64_trunc_sat_f32_s": {}, "i64_trunc_sat_f32_u": {},
