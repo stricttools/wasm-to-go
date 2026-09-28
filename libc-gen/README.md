@@ -19,7 +19,7 @@ and host-provided capabilities.
 a minimal C library containing header files,
 and some bits best implemented in C,
 such as a novel `qsort` implementation, STB's `sprintf`,
-or Doug Lea's `malloc`.
+Doug Lea's `malloc`, or musl's `libm`.
 
 2. **Go host functions**:
 a code generator that emits testable Go methods
@@ -56,14 +56,24 @@ Besides, the C component should not grow much beyond:
 - _macros_ and _function declarations_ added to header files;
 - _simple one-liners_ added to source files.
 
-The big exception is `malloc`, as it's best implemented in C.
+The big exceptions are `malloc` and `libm`, as they're best implemented in C.
 I provide 3 alternative implementations:
 - Doug Lea's public domain [allocator](https://gee.cs.oswego.edu/dl/html/malloc.html), configured for Wasm;
 - a simple bump allocator for short lived modules;
 - a newly developed [TLSF](http://www.gii.upv.es/tlsf/main/docs.html) allocator.
 
+The `math.h` functions for `double` that are not compiler builtins
+are [musl](https://musl.libc.org/)'s (`c/libm`, with musl's `COPYRIGHT`),
+compiled into the module by `libc.c` (through the generated `c/libm.c`),
+so they compute the same bits on every CPU once translated
+(Go's `math` package, which host functions would call,
+gives different results on different CPUs).
+[`musl.sh`](musl.sh) downloads musl, checks its SHA-256,
+and copies the sources and regenerates `c/libm.c`;
+it needs the tools of [`tools.sh`](tools.sh).
+[`test_math`](test_math) checks every function's results bit for bit.
+
 The Go component will contain stuff that's best implemented in Go:
-- `math.h` for `double` using package `math`;
 - `string.h` because `bytes.Index`, `IndexByte`, etc are hard to beat.
 
 I will not be adding file I/O to this, or any other OS stuff.
