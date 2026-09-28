@@ -99,10 +99,66 @@ unless an earlier check on every path to it already proves it in bounds
 (see [bounds checks](#bounds-checks)).
 
 Float operations follow the WebAssembly deterministic profile
-(see [NaNs](https://github.com/WebAssembly/design/issues/1463)):
-whenever an operation's result is a NaN, it is the positive canonical NaN,
-whatever NaN the CPU produced;
-`abs`, `neg`, `copysign`, loads, stores, and reinterpretations keep a NaN's bits.
+(see [determinism](#determinism)).
+
+## Determinism
+
+Translated code computes the same bits wherever it runs, within the limits below:
+the same calls give the same results, NaNs included, whatever the CPU.
+There is no option to turn this off.
+
+- **NaN results.** Float operations follow the
+  [deterministic profile](https://webassembly.github.io/spec/core/appendix/profiles.html)
+  of WebAssembly 3.0: whenever the result of `add`, `sub`, `mul`, `div`, `sqrt`,
+  `ceil`, `floor`, `trunc`, `nearest`, `min`, `max`, `promote`, or `demote`
+  is a NaN, it is the positive canonical NaN (`0x7fc00000`, `0x7ff8000000000000`),
+  whatever NaN the CPU produced.
+  Each such operation is wrapped in `f32_canon` or `f64_canon` (or is a helper
+  that returns the canonical NaN, for `min` and `max`); where its result is
+  consumed directly by another such operation, a comparison, or a conversion to
+  integer, the inner wrapper is left out, since it could only change NaN bits
+  the consumer ignores.
+- **Bitwise operations.** `abs`, `neg`, and `copysign` are integer bit operations,
+  and loads, stores, and reinterpretations move bits, so they keep a NaN's bits
+  (Go compiles `-x` and `math.Abs` to instructions that are arithmetic on legacy MIPS).
+- **No fused multiply-add.** Every float operation's result is converted to its type
+  (`float64(x*y)`), and Go never fuses across an explicit conversion,
+  so the translated code needs no compiler flag for this.
+- **Constants.** Float constants are written as their bits, never as Go constants,
+  which Go's constant evaluator would combine with exact arithmetic.
+- **Conversions.** `f32.convert_i64_s` and `f32.convert_i64_u` round once, in helpers:
+  Go's own `float32(int64)` rounds twice on 386, arm, mips, and mipsle.
+
+How this is tested:
+- The spec tests check the deterministic profile: where the spec allows a canonical
+  or an arithmetic NaN, the result must be the positive canonical NaN.
+- `Test_determinism_expected` calls every float instruction, and chains of them,
+  with every kind of operand, as raw bits, and requires the results in
+  [testdata/determinism/expected.txt](testdata/determinism/expected.txt) bit for bit;
+  they are identical to wasmtime's with NaN canonicalization, trap messages included
+  ([scripts/determinism-reference.sh](scripts/determinism-reference.sh) checks this).
+- [scripts/cross-targets.sh](scripts/cross-targets.sh) runs both, with the regression
+  tests, on each target it lists: amd64 (also with fused multiply-add available,
+  and without SSE4.1), 386, wasip1 and js wasm, and the other Linux architectures
+  under qemu-user.
+
+Limits:
+- The guarantee covers the translated module. Imports, host functions, and
+  `-provided` Go code compute what they compute. In particular, `libc-gen` routes C's
+  math functions (`sin`, `exp`, `pow`, and the rest) to Go's `math` package, some of
+  whose functions give different results on different CPUs.
+- On MIPS the positive canonical NaN is a signaling NaN in the legacy NaN encoding;
+  the results are the same anyway, since canonicalization follows every operation.
+  MIPS was checked under qemu-user, which emulates the legacy encoding, not on hardware.
+- Software floating point (`GOARM=5`, `GO386=softfloat`) is not checked.
+- With threads, the results depend on how the threads interleave.
+
+The cost, measured on amd64 when canonicalization was added (medians of interleaved runs):
+QuickJS running a game for 1000 frames took 9.37 s before and 9.13 s after, within noise;
+in microbenchmarks, a polynomial evaluated one step per local variable was 68% slower,
+the same polynomial as one expression 20% slower, a float32 dot product 14% slower,
+and a loop of `sqrt`, `min`, `max`, `floor`, and `promote` 40% faster
+(the `min` and `max` helpers replaced Go's builtins).
 
 ## Optimization passes
 
