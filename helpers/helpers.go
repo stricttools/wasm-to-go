@@ -123,8 +123,9 @@ func i64_rotr(x, y int64) int64 {
 	return int64(bits.RotateLeft64(uint64(x), -int(y)))
 }
 
-// Must be implemented as bitwise operations,
-// like the math versions are for float64.
+// Must be implemented as bitwise operations: abs, neg, and copysign
+// never change a NaN's payload (not even on CPUs whose own absolute value
+// and negation instructions are arithmetic, like legacy MIPS).
 
 //go:nosplit
 func f32_abs(x float32) float32 {
@@ -132,8 +133,43 @@ func f32_abs(x float32) float32 {
 }
 
 //go:nosplit
+func f64_abs(x float64) float64 {
+	return math.Float64frombits(math.Float64bits(x) &^ (1 << 63))
+}
+
+//go:nosplit
+func f32_neg(x float32) float32 {
+	return math.Float32frombits(math.Float32bits(x) ^ (1 << 31))
+}
+
+//go:nosplit
+func f64_neg(x float64) float64 {
+	return math.Float64frombits(math.Float64bits(x) ^ (1 << 63))
+}
+
+//go:nosplit
 func f32_copysign(x, y float32) float32 {
 	return math.Float32frombits(math.Float32bits(x)&^(1<<31) | math.Float32bits(y)&(1<<31))
+}
+
+// The WebAssembly deterministic profile: every operation other than abs,
+// neg, copysign, and the reinterpretations returns the positive canonical
+// NaN whenever its result is a NaN, whatever NaN the CPU produced.
+
+//go:nosplit
+func f32_canon(x float32) float32 {
+	if x != x {
+		return math.Float32frombits(0x7fc00000)
+	}
+	return x
+}
+
+//go:nosplit
+func f64_canon(x float64) float64 {
+	if x != x {
+		return math.Float64frombits(0x7ff8000000000000)
+	}
+	return x
 }
 
 // Must return canonical NaNs,

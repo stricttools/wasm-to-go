@@ -5,18 +5,22 @@ import (
 	"go/token"
 )
 
-// Conversions (and the identity helpers i32 and i64) that cannot panic:
-// a conversion between numeric types never does.
+// Conversions (and the one-operand helpers that are pure functions of
+// their operand's bits: the identity helpers i32 and i64, and the float
+// helpers that canonicalize, negate, or take the absolute value) that
+// cannot panic: a conversion between numeric types never does.
 var safeConversions = set[string]{
 	"int": {}, "int8": {}, "int16": {}, "int32": {}, "int64": {},
 	"uint": {}, "uint8": {}, "uint16": {}, "uint32": {}, "uint64": {},
 	"uintptr": {}, "byte": {}, "float32": {}, "float64": {},
 	"i32": {}, "i64": {},
+	"f32_canon": {}, "f64_canon": {}, "f32_neg": {}, "f64_neg": {}, "f32_abs": {}, "f64_abs": {},
 }
 
 // TrapFree reports whether evaluating e can neither panic, nor have side
 // effects, nor read anything but local variables and constants:
 // identifiers, literals, numeric conversions, the identity helpers i32/i64,
+// the float helpers that canonicalize, negate, or take the absolute value,
 // and unary and binary operators other than division, remainder, and shifts
 // by a non-literal count (a negative shift count panics).
 //

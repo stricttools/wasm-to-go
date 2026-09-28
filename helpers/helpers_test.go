@@ -358,6 +358,49 @@ func Test_f32_abs(t *testing.T) {
 	}
 }
 
+func Test_f64_abs(t *testing.T) {
+	got := f64_abs(math.Float64frombits(0xfff4000000000001))
+	if math.Float64bits(got) != 0x7ff4000000000001 {
+		t.Errorf("f64_abs(-sNaN) = %#x, want 0x7ff4000000000001", math.Float64bits(got))
+	}
+}
+
+func Test_f32_neg(t *testing.T) {
+	got := f32_neg(math.Float32frombits(0x7fa00001))
+	if math.Float32bits(got) != 0xffa00001 {
+		t.Errorf("f32_neg(sNaN) = %#x, want 0xffa00001", math.Float32bits(got))
+	}
+}
+
+func Test_f64_neg(t *testing.T) {
+	got := f64_neg(math.Float64frombits(0x7ff4000000000001))
+	if math.Float64bits(got) != 0xfff4000000000001 {
+		t.Errorf("f64_neg(sNaN) = %#x, want 0xfff4000000000001", math.Float64bits(got))
+	}
+}
+
+func Test_f32_canon(t *testing.T) {
+	for _, x := range []uint32{0xffc00000, 0x7fa00000, 0xffe00123} {
+		if got := math.Float32bits(f32_canon(math.Float32frombits(x))); got != 0x7fc00000 {
+			t.Errorf("f32_canon(%#x) = %#x, want 0x7fc00000", x, got)
+		}
+	}
+	if got := math.Float32bits(f32_canon(math.Float32frombits(0x80000000))); got != 0x80000000 {
+		t.Errorf("f32_canon(-0) = %#x, want -0", got)
+	}
+}
+
+func Test_f64_canon(t *testing.T) {
+	for _, x := range []uint64{0xfff8000000000000, 0x7ff4000000000000, 0xfffc000000000123} {
+		if got := math.Float64bits(f64_canon(math.Float64frombits(x))); got != 0x7ff8000000000000 {
+			t.Errorf("f64_canon(%#x) = %#x, want 0x7ff8000000000000", x, got)
+		}
+	}
+	if got := math.Float64bits(f64_canon(math.Inf(-1))); got != 0xfff0000000000000 {
+		t.Errorf("f64_canon(-Inf) = %#x, want -Inf", got)
+	}
+}
+
 func Test_f32_copysign(t *testing.T) {
 	got := f32_copysign(math.Float32frombits(0x7f800000), math.Float32frombits(0xffc00000))
 	if math.Float32bits(got) != 0xff800000 {

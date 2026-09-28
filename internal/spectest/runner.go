@@ -12,7 +12,9 @@ import (
 )
 
 // TestModule runs the spec's assertions for one module, on every
-// architecture alike.
+// architecture alike. NaN results are checked against the WebAssembly
+// deterministic profile: where the spec allows a canonical or an
+// arithmetic NaN, the translation must return the positive canonical NaN.
 func TestModule(t *testing.T, ctor func() any, jsonPath, name string) {
 	t.Helper()
 
@@ -123,13 +125,10 @@ func runAssertions(t *testing.T, mod reflect.Value, spec *specTest, name string)
 							f := res[i].Interface().(float32)
 							v := math.Float32bits(f)
 							switch exp.Value {
-							case "nan:canonical":
-								if v != 0xffc00000 && v != 0x7fc00000 {
-									t.Errorf("got %x, want nan:canonical", v)
-								}
-							case "nan:arithmetic":
-								if v&0x7fc00000 != 0x7fc00000 {
-									t.Errorf("got %x, want nan:arithmetic", v)
+							case "nan:canonical", "nan:arithmetic":
+								// The deterministic profile: the positive canonical NaN.
+								if v != 0x7fc00000 {
+									t.Errorf("got %x, want 7fc00000 for %s (deterministic profile)", v, exp.Value)
 								}
 							default:
 								i, err := strconv.ParseUint(exp.Value, 10, 32)
@@ -144,13 +143,10 @@ func runAssertions(t *testing.T, mod reflect.Value, spec *specTest, name string)
 							f := res[i].Interface().(float64)
 							v := math.Float64bits(f)
 							switch exp.Value {
-							case "nan:canonical":
-								if v != 0xfff8000000000000 && v != 0x7ff8000000000000 {
-									t.Errorf("got %x, want nan:canonical", v)
-								}
-							case "nan:arithmetic":
-								if v&0x7ff8000000000000 != 0x7ff8000000000000 {
-									t.Errorf("got %x, want nan:arithmetic", v)
+							case "nan:canonical", "nan:arithmetic":
+								// The deterministic profile: the positive canonical NaN.
+								if v != 0x7ff8000000000000 {
+									t.Errorf("got %x, want 7ff8000000000000 for %s (deterministic profile)", v, exp.Value)
 								}
 							default:
 								i, err := strconv.ParseUint(exp.Value, 10, 64)

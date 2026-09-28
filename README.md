@@ -98,10 +98,12 @@ and every memory access is still bounds checked,
 unless an earlier check on every path to it already proves it in bounds
 (see [bounds checks](#bounds-checks)).
 
-Another knob is whether to attempt to ensure float operations
-[canonicalize NaNs](https://github.com/WebAssembly/design/issues/1463).
-This is tested to work on both `amd64` and `arm64`,
-but is known to be broken on most other CPU architectures.
+Float operations follow the WebAssembly deterministic profile
+(see [NaNs](https://github.com/WebAssembly/design/issues/1463)):
+whenever an operation's result is a NaN, it is the positive canonical NaN,
+whatever NaN the CPU produced;
+`abs`, `neg`, `copysign`, loads, stores, and reinterpretations keep a NaN's bits.
+`-nanbox` extends this to `min` and `max`.
 
 ## Optimization passes
 
@@ -173,7 +175,7 @@ Usage: wasm2go [option]... [input.wasm]
   -embed
         go:embed data sections from a .dat file
   -nanbox
-        attempt to canonicalize NaNs
+        min and max return the canonical NaN; constants 0, 1, and -1 are kept out of constant folding
   -nohost
         don't generate interfaces for imports
   -noopt

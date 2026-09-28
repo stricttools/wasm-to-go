@@ -358,24 +358,49 @@ func (fn *funcCompiler) binOpU64(op token.Token) {
 // Requires casting the result,
 // to avoid operations being combined against the Wasm spec.
 func (fn *funcCompiler) binOpF64(op token.Token) {
-	fn.pushPure(
-		convert(&ast.BinaryExpr{
-			Y:  fn.pop(),
-			X:  fn.pop(),
-			Op: op,
-		}, "float64"))
+	y := fn.popNaNBlind()
+	x := fn.popNaNBlind()
+	fn.pushCanon("float64", convert(&ast.BinaryExpr{X: x, Op: op, Y: y}, "float64"))
 }
 
 // Executes a binary float32 operator.
 // Requires casting the result,
 // to avoid operations being combined against the Wasm spec.
 func (fn *funcCompiler) binOpF32(op token.Token) {
-	fn.pushPure(
-		convert(&ast.BinaryExpr{
-			Y:  fn.pop(),
-			X:  fn.pop(),
-			Op: op,
-		}, "float32"))
+	y := fn.popNaNBlind()
+	x := fn.popNaNBlind()
+	fn.pushCanon("float32", convert(&ast.BinaryExpr{X: x, Op: op, Y: y}, "float32"))
+}
+
+// Pushes a float result (of type float32 or float64) canonicalized:
+// a NaN becomes the positive canonical NaN, as the WebAssembly
+// deterministic profile requires of every float operation other than
+// abs, neg, copysign, and the reinterpretations.
+func (fn *funcCompiler) pushCanon(typ string, expr ast.Expr) {
+	name := canonHelper[typ]
+	fn.helpers.add(name)
+	fn.pushPure(&ast.CallExpr{Fun: newID(name), Args: []ast.Expr{expr}})
+}
+
+var canonHelper = map[string]string{"float32": "f32_canon", "float64": "f64_canon"}
+
+// Pops the operand of an operation whose result does not depend on which
+// NaN an operand is: an operation that canonicalizes its own result, a
+// comparison, or a conversion to integer. A canonicalized result still
+// pending on the stack is used without its canonicalization, which could
+// only change the bits of a NaN the operation ignores.
+func (fn *funcCompiler) popNaNBlind() ast.Expr {
+	if !fn.blocks.top().unreachable && len(fn.stack) > 0 {
+		if top := fn.stack.top(); top.kind == entryExpr {
+			if call, ok := top.expr.(*ast.CallExpr); ok && len(call.Args) == 1 {
+				if id, ok := call.Fun.(*ast.Ident); ok && (id.Name == "f32_canon" || id.Name == "f64_canon") {
+					fn.stack.pop()
+					return call.Args[0]
+				}
+			}
+		}
+	}
+	return fn.pop()
 }
 
 // Executes a unary bitwise call.
@@ -391,13 +416,13 @@ func (fn *funcCompiler) bitOp(name string) {
 		}, "int"+bits))
 }
 
-// Executes a unary float64 math call.
+// Executes a unary float64 math call that canonicalizes its result.
 func (fn *funcCompiler) uniMath64(name string) {
-	fn.pushPure(&ast.CallExpr{
+	fn.pushCanon("float64", &ast.CallExpr{
 		Fun: &ast.SelectorExpr{
 			X:   newID("math"),
 			Sel: newID(name)},
-		Args: []ast.Expr{fn.pop()}})
+		Args: []ast.Expr{fn.popNaNBlind()}})
 }
 
 // Executes a binary float64 math call.
@@ -411,15 +436,21 @@ func (fn *funcCompiler) binMath64(name string) {
 		Args: []ast.Expr{x, y}})
 }
 
-// Executes a unary float32 math call.
+// Executes a unary float32 math call that canonicalizes its result.
 func (fn *funcCompiler) uniMath32(name string) {
-	fn.pushPure(
+	fn.pushCanon("float32",
 		convert(&ast.CallExpr{
 			Fun: &ast.SelectorExpr{
 				X:   newID("math"),
 				Sel: newID(name)},
-			Args: []ast.Expr{convert(fn.pop(), "float64")},
+			Args: []ast.Expr{convert(fn.popNaNBlind(), "float64")},
 		}, "float32"))
+}
+
+// Executes a float conversion (promotion or demotion) that canonicalizes
+// its result.
+func (fn *funcCompiler) convertFloat(typ string) {
+	fn.pushCanon(typ, convert(fn.popNaNBlind(), typ))
 }
 
 // Executes a Float32bits call.
@@ -465,10 +496,16 @@ func (fn *funcCompiler) float64frombits() {
 // Executes a unary helper call.
 func (fn *funcCompiler) uniHelper(name string) {
 	fn.helpers.add(name)
+	var x ast.Expr
+	if nanBlindHelpers.has(name) {
+		x = fn.popNaNBlind()
+	} else {
+		x = fn.pop()
+	}
 	fn.pushPureIf(pureHelpers.has(name),
 		&ast.CallExpr{
 			Fun:  newID(name),
-			Args: []ast.Expr{fn.pop()}})
+			Args: []ast.Expr{x}})
 }
 
 // Executes a binary helper call.
@@ -561,7 +598,9 @@ func (fn *funcCompiler) eqzOp() {
 
 // Executes a comparision operation.
 func (fn *funcCompiler) cmpOp(op token.Token) {
-	fn.pushCond(&ast.BinaryExpr{Y: fn.pop(), X: fn.pop(), Op: op})
+	y := fn.popNaNBlind()
+	x := fn.popNaNBlind()
+	fn.pushCond(&ast.BinaryExpr{X: x, Op: op, Y: y})
 }
 
 // Executes a uint32 comparision operation.

@@ -959,7 +959,7 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 		case 0x8b: // f32.abs
 			fn.uniHelper("f32_abs")
 		case 0x8c: // f32.neg
-			fn.pushPure(&ast.UnaryExpr{Op: token.SUB, X: fn.pop()})
+			fn.uniHelper("f32_neg")
 		case 0x8d: // f32.ceil
 			fn.uniMath32("Ceil")
 		case 0x8e: // f32.floor
@@ -994,9 +994,9 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 			fn.binHelper("f32_copysign")
 
 		case 0x99: // f64.abs
-			fn.uniMath64("Abs")
+			fn.uniHelper("f64_abs")
 		case 0x9a: // f64.neg
-			fn.pushPure(&ast.UnaryExpr{Op: token.SUB, X: fn.pop()})
+			fn.uniHelper("f64_neg")
 		case 0x9b: // f64.ceil
 			fn.uniMath64("Ceil")
 		case 0x9c: // f64.floor
@@ -1065,7 +1065,7 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 		case 0xb5: // f32.convert_i64_u
 			fn.convert("uint64", "float32")
 		case 0xb6: // f32.demote_f64
-			fn.convert("float32")
+			fn.convertFloat("float32")
 
 		case 0xb7: // f64.convert_i32_s
 			fn.convert("float64")
@@ -1076,7 +1076,7 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 		case 0xba: // f64.convert_i64_u
 			fn.convert("uint64", "float64")
 		case 0xbb: // f64.promote_f32
-			fn.convert("float64")
+			fn.convertFloat("float64")
 
 		case 0xbc: // i32.reinterpret_f32
 			fn.float32bits()

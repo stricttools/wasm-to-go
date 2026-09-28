@@ -45,29 +45,29 @@ func (m *Module) Xsin(v0 float64) float64 {
 		}
 		t0 := v0
 		v4 = i64_trunc_sat_f64_s(float64(float64(v0*float64(0.6366197723675814)) + math.Copysign(float64(0.5), v0)))
-		v1 = float64(t0 + float64(float64(v4)*float64(-1.5707963267948966)))
+		v1 = f64_canon(float64(t0 + float64(float64(v4)*float64(-1.5707963267948966))))
 		var p1 float64
 	l1:
 		{
 			var p2 float64
-			if math.Abs(v1) > float64(0x1p-27) {
+			if f64_abs(v1) > float64(0x1p-27) {
 				v3 = v3 + i32(1)
-				v1 = float64(v1 * float64(0.5))
+				v1 = f64_canon(float64(v1 * float64(0.5)))
 				goto l1
 			} else {
 				v0 = float64(1)
 			l2:
 				if v3 != 0 {
 					v3 = v3 - i32(1)
-					v2 = float64(v1 * v1)
-					v0 = float64(v0 * v1)
-					v1 = float64(v0 + v0)
-					v0 = float64(float64(1) - float64(v2+v2))
+					v2 = f64_canon(float64(v1 * v1))
+					v0 = f64_canon(float64(v0 * v1))
+					v1 = f64_canon(float64(v0 + v0))
+					v0 = f64_canon(float64(float64(1) - float64(v2+v2)))
 					goto l2
 				} else {
 					switch int32(v4)&i32(3) - i32(1) {
 					case 1:
-						return -v1
+						return f64_neg(v1)
 					case 2:
 						goto l5
 					default:
@@ -77,7 +77,7 @@ func (m *Module) Xsin(v0 float64) float64 {
 				}
 				return v0
 			l5:
-				p2 = -v0
+				p2 = f64_neg(v0)
 			}
 			p1 = p2
 		}
@@ -95,6 +95,24 @@ func i32(x int32) int32 { return x }
 
 //go:nosplit
 func i64(x int64) int64 { return x }
+
+//go:nosplit
+func f64_abs(x float64) float64 {
+	return math.Float64frombits(math.Float64bits(x) &^ (1 << 63))
+}
+
+//go:nosplit
+func f64_neg(x float64) float64 {
+	return math.Float64frombits(math.Float64bits(x) ^ 1<<63)
+}
+
+//go:nosplit
+func f64_canon(x float64) float64 {
+	if x != x {
+		return math.Float64frombits(0x7ff8000000000000)
+	}
+	return x
+}
 
 //go:nosplit
 func i64_trunc_sat_f64_s(f float64) int64 {
