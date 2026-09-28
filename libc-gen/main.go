@@ -22,7 +22,7 @@ import (
 	"github.com/stricttools/wasm-to-go/internal/mangle"
 )
 
-//go:embed c go
+//go:embed all:c go
 var src embed.FS
 
 var (

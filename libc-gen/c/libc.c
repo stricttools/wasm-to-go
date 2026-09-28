@@ -6,6 +6,7 @@
 #include "errno.c"
 #include "fenv.c"
 #include "math.c"
+#include "libm.c"
 #include "stdio.c"
 #include "stdlib.c"
 #include "string.c"

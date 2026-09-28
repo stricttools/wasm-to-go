@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # cross-targets.sh: runs the floating-point spec tests and the determinism
-# test (Test_determinism_expected, with the regression tests of NaN results,
-# conversions, and constants) on every Go target: amd64 natively (at
+# tests (Test_determinism_expected, with the regression tests of NaN results,
+# conversions, and constants, and Test_determinism_libm, libc-gen's C math
+# functions) on every Go target: amd64 natively (at
 # GOAMD64=v1, and at v3, where the CPU has fused multiply-add), amd64 with
 # GODEBUG=cpu.sse41=off, 386 natively, every other Linux GOARCH under
 # qemu-user, wasip1/wasm under wasmtime, and js/wasm under Node.js.
@@ -122,7 +123,7 @@ for t in "${targets[@]}"; do
 	fi
 	run() { env ${clean[@]+"${clean[@]}"} ${env[@]+"${env[@]}"} PATH="$path" GOOS=$goos GOARCH=$goarch go test "${args[@]}" "$@"; }
 	{
-		run -run '^Test_(determinism|regression)_' .
+		run -run '^Test_(determinism|regression)_' . ./libc-gen/test_math/
 		determinism=$?
 		run "${pkgs[@]}"
 		spec=$?

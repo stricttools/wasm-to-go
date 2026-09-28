@@ -44,9 +44,11 @@ double modf(double, double*);
 double nextafter(double, double);
 double pow(double, double);
 double remainder(double, double);
+double remquo(double, double, int*);
 double rint(double);
 double round(double);
 double roundeven(double);
+double scalbn(double, int);
 double sin(double);
 double sinh(double);
 double sqrt(double);
@@ -109,7 +111,8 @@ long lrintf(float);
 #define HUGE_VAL (__builtin_huge_val())
 #define HUGE_VALF (__builtin_huge_valf())
 
-#define FP_FAST_FMA 1
+#define FP_ILOGB0 (-1 - 0x7fffffff)
+#define FP_ILOGBNAN (-1 - 0x7fffffff)
 
 #define FP_NAN 0
 #define FP_INFINITE 1
