@@ -103,7 +103,6 @@ Float operations follow the WebAssembly deterministic profile
 whenever an operation's result is a NaN, it is the positive canonical NaN,
 whatever NaN the CPU produced;
 `abs`, `neg`, `copysign`, loads, stores, and reinterpretations keep a NaN's bits.
-`-nanbox` extends this to `min` and `max`.
 
 ## Optimization passes
 
@@ -175,7 +174,7 @@ Usage: wasm2go [option]... [input.wasm]
   -embed
         go:embed data sections from a .dat file
   -nanbox
-        min and max return the canonical NaN; constants 0, 1, and -1 are kept out of constant folding
+        constants 0, 1, and -1 are kept out of constant folding
   -nohost
         don't generate interfaces for imports
   -noopt

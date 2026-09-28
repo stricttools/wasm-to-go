@@ -41,7 +41,7 @@ var pureHelpers = set[string]{
 	"i64_shl": {}, "i64_shr_s": {}, "i64_shr_u": {}, "i64_rotl": {}, "i64_rotr": {},
 	"f32_abs": {}, "f64_abs": {}, "f32_neg": {}, "f64_neg": {},
 	"f32_copysign": {}, "f32_min": {}, "f32_max": {},
-	"f64_min": {}, "f64_max": {}, "min": {}, "max": {},
+	"f64_min": {}, "f64_max": {},
 	"i32_trunc_sat_f32_s": {}, "i32_trunc_sat_f32_u": {},
 	"i32_trunc_sat_f64_s": {}, "i32_trunc_sat_f64_u": {},
 	"i64_trunc_sat_f32_s": {}, "i64_trunc_sat_f32_u": {},
@@ -49,8 +49,9 @@ var pureHelpers = set[string]{
 }
 
 // These helpers give the same result for every NaN operand,
-// so their operand need not be canonical (see popNaNBlind).
+// so their operands need not be canonical (see popNaNBlind).
 var nanBlindHelpers = set[string]{
+	"f32_min": {}, "f32_max": {}, "f64_min": {}, "f64_max": {},
 	"i32_trunc_f32_s": {}, "i32_trunc_f32_u": {}, "i32_trunc_f64_s": {}, "i32_trunc_f64_u": {},
 	"i64_trunc_f32_s": {}, "i64_trunc_f32_u": {}, "i64_trunc_f64_s": {}, "i64_trunc_f64_u": {},
 	"i32_trunc_sat_f32_s": {}, "i32_trunc_sat_f32_u": {},

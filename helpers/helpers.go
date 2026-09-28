@@ -172,9 +172,9 @@ func f64_canon(x float64) float64 {
 	return x
 }
 
-// Must return canonical NaNs,
-// which they don't on amd64.
-// Only used with nanbox.
+// Return the positive canonical NaN when either operand is a NaN
+// (the builtins return an operand or a CPU-chosen NaN);
+// they order -0 below +0, as the builtins and WebAssembly do.
 
 //go:nosplit
 func f32_min(x, y float32) float32 {

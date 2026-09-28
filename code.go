@@ -979,17 +979,9 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 		case 0x95: // f32.div
 			fn.binOpF32(token.QUO) // go.dev/issue/43577
 		case 0x96: // f32.min
-			if *nanbox {
-				fn.binHelper("f32_min")
-			} else {
-				fn.binBuiltin("min")
-			}
+			fn.binHelper("f32_min")
 		case 0x97: // f32.max
-			if *nanbox {
-				fn.binHelper("f32_max")
-			} else {
-				fn.binBuiltin("max")
-			}
+			fn.binHelper("f32_max")
 		case 0x98: // f32.copysign
 			fn.binHelper("f32_copysign")
 
@@ -1016,17 +1008,9 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 		case 0xa3: // f64.div
 			fn.binOpF64(token.QUO) // go.dev/issue/43577
 		case 0xa4: // f64.min
-			if *nanbox {
-				fn.binHelper("f64_min")
-			} else {
-				fn.binBuiltin("min")
-			}
+			fn.binHelper("f64_min")
 		case 0xa5: // f64.max
-			if *nanbox {
-				fn.binHelper("f64_max")
-			} else {
-				fn.binBuiltin("max")
-			}
+			fn.binHelper("f64_max")
 		case 0xa6: // f64.copysign
 			fn.binMath64("Copysign")
 

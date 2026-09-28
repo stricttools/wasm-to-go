@@ -42,6 +42,18 @@ func (m *Module) Xsub32(v0, v1 int32) int32 {
 func (m *Module) Xnearest32(v0 int32) int32 {
 	return int32(math.Float32bits(f32_canon(float32(math.RoundToEven(float64(math.Float32frombits(uint32(v0))))))))
 }
+func (m *Module) Xmin64(v0, v1 int64) int64 {
+	return int64(math.Float64bits(f64_min(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)))))
+}
+func (m *Module) Xmax64(v0, v1 int64) int64 {
+	return int64(math.Float64bits(f64_max(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)))))
+}
+func (m *Module) Xmin32(v0, v1 int32) int32 {
+	return int32(math.Float32bits(f32_min(math.Float32frombits(uint32(v0)), math.Float32frombits(uint32(v1)))))
+}
+func (m *Module) Xmax32(v0, v1 int32) int32 {
+	return int32(math.Float32bits(f32_max(math.Float32frombits(uint32(v0)), math.Float32frombits(uint32(v1)))))
+}
 func (m *Module) Xneg64(v0 int64) int64 {
 	return int64(math.Float64bits(f64_neg(math.Float64frombits(uint64(v0)))))
 }
@@ -99,6 +111,38 @@ func f64_canon(x float64) float64 {
 		return math.Float64frombits(0x7ff8000000000000)
 	}
 	return x
+}
+
+//go:nosplit
+func f32_min(x, y float32) float32 {
+	if m := min(x, y); m == m {
+		return m
+	}
+	return math.Float32frombits(0x7fc00000)
+}
+
+//go:nosplit
+func f32_max(x, y float32) float32 {
+	if m := max(x, y); m == m {
+		return m
+	}
+	return math.Float32frombits(0x7fc00000)
+}
+
+//go:nosplit
+func f64_min(x, y float64) float64 {
+	if m := min(x, y); m == m {
+		return m
+	}
+	return math.Float64frombits(0x7ff8000000000000)
+}
+
+//go:nosplit
+func f64_max(x, y float64) float64 {
+	if m := max(x, y); m == m {
+		return m
+	}
+	return math.Float64frombits(0x7ff8000000000000)
 }
 
 //go:nosplit

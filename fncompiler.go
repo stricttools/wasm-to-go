@@ -511,8 +511,14 @@ func (fn *funcCompiler) uniHelper(name string) {
 // Executes a binary helper call.
 func (fn *funcCompiler) binHelper(name string) {
 	fn.helpers.add(name)
-	y := fn.pop()
-	x := fn.pop()
+	var x, y ast.Expr
+	if nanBlindHelpers.has(name) {
+		y = fn.popNaNBlind()
+		x = fn.popNaNBlind()
+	} else {
+		y = fn.pop()
+		x = fn.pop()
+	}
 	fn.pushPureIf(pureHelpers.has(name),
 		&ast.CallExpr{
 			Fun:  newID(name),
@@ -572,16 +578,6 @@ func (fn *funcCompiler) bitHelper(name string) {
 		expr = convert(&ast.BinaryExpr{Op: token.SHR, X: convert(x, u), Y: y}, s)
 	}
 	fn.pushPure(expr)
-}
-
-// Executes a binary builtin call.
-func (fn *funcCompiler) binBuiltin(name string) {
-	y := fn.pop()
-	x := fn.pop()
-	fn.pushPureIf(name == "min" || name == "max",
-		&ast.CallExpr{
-			Fun:  newID(name),
-			Args: []ast.Expr{x, y}})
 }
 
 // Executes a zero equality comparison operator.
