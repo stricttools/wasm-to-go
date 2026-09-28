@@ -272,14 +272,6 @@
 
 #include "libm/fdim.c"
 
-#define mul __libm_fma_mul
-#define normalize __libm_fma_normalize
-#include "libm/fma.c"
-#undef mul
-#undef normalize
-#undef ASUINT64
-#undef ZEROINFNAN
-
 #include "libm/fmax.c"
 
 #include "libm/fmin.c"

@@ -19,10 +19,10 @@ SHA256=a9a118bbe84d8764da0ea0d28b3ab3fae8477fc7e4085d90102b8596fc7c75e4
 URL="https://musl.libc.org/releases/musl-$VERSION.tar.gz"
 
 # The functions math.h declares that are not compiler builtins, and what
-# they call.
+# they call, except fma.
 FILES=(
 	acos acosh asin asinh atan atan2 atanh cbrt cos cosh erf exp exp2 expm1
-	fdim fma fmax fmin fmod frexp hypot ilogb j0 j1 jn ldexp lgamma lgamma_r
+	fdim fmax fmin fmod frexp hypot ilogb j0 j1 jn ldexp lgamma lgamma_r
 	log log10 log1p log2 logb modf nextafter pow remainder round sin sinh tan
 	tanh tgamma
 	__cos __expo2 __math_divzero __math_invalid __math_oflow __math_uflow
@@ -30,6 +30,9 @@ FILES=(
 	log_data pow_data remquo scalbn signgam
 )
 HEADERS=(exp_data.h log2_data.h log_data.h pow_data.h)
+# Copied but not compiled: fma is a Go host function (go/math.go), and musl's
+# fma is what scripts/libm-reference.sh checks it against.
+REFERENCE=(fma)
 
 WASI_SDK=tools/wasi-sdk/bin
 tarball="tools/musl-$VERSION.tar.gz"
@@ -48,7 +51,7 @@ cp "$src/COPYRIGHT" "$out/COPYRIGHT"
 for h in "${HEADERS[@]}"; do
 	cp "$src/src/math/$h" "$out/$h"
 done
-for f in "${FILES[@]}"; do
+for f in "${FILES[@]}" "${REFERENCE[@]}"; do
 	cp "$src/src/math/$f.c" "$out/$f.c"
 done
 

@@ -2,17 +2,18 @@
 # cross-targets.sh: runs the floating-point spec tests and the determinism
 # tests (Test_determinism_expected, with the regression tests of NaN results,
 # conversions, and constants, and Test_determinism_libm, libc-gen's C math
-# functions) on every Go target: amd64 natively (at
-# GOAMD64=v1, and at v3, where the CPU has fused multiply-add), amd64 with
-# GODEBUG=cpu.sse41=off, 386 natively, every other Linux GOARCH under
+# functions) on every Go target: amd64 natively (at GOAMD64=v1, and at v3,
+# where the CPU has fused multiply-add), amd64 with GODEBUG=cpu.sse41=off,
+# amd64 with GODEBUG=cpu.fma=off (math.FMA, which libc-gen's fma calls, then
+# computes in software), 386 natively, every other Linux GOARCH under
 # qemu-user, wasip1/wasm under wasmtime, and js/wasm under Node.js.
 #
 # Usage: scripts/cross-targets.sh [-all] [target...]
 #
 #   -all      run the whole spec suite, not only its floating-point part
 #   target    labels to run (default: all of them), from:
-#             amd64 amd64-v3 amd64-nosse41 386 arm arm64 loong64 mips mipsle
-#             mips64 mips64le ppc64 ppc64le riscv64 s390x wasip1 js
+#             amd64 amd64-v3 amd64-nosse41 amd64-nofma 386 arm arm64 loong64
+#             mips mipsle mips64 mips64le ppc64 ppc64le riscv64 s390x wasip1 js
 #
 # Environment:
 #   QEMU_DIR  directory holding qemu-<arch>-static (or qemu-<arch>) binaries;
@@ -40,7 +41,7 @@ if [ "${1:-}" = -all ]; then
 fi
 targets=("$@")
 if [ ${#targets[@]} -eq 0 ]; then
-	targets=(amd64 amd64-v3 amd64-nosse41 386 arm arm64 loong64 mips mipsle mips64 mips64le ppc64 ppc64le riscv64 s390x wasip1 js)
+	targets=(amd64 amd64-v3 amd64-nosse41 amd64-nofma 386 arm arm64 loong64 mips mipsle mips64 mips64le ppc64 ppc64le riscv64 s390x wasip1 js)
 fi
 
 export CGO_ENABLED=0 GOTOOLCHAIN=local GOFLAGS= GODEBUG=
@@ -88,6 +89,7 @@ for t in "${targets[@]}"; do
 	amd64) ;;
 	amd64-v3) goarch=amd64 env=(GOAMD64=v3) ;;
 	amd64-nosse41) goarch=amd64 env=(GODEBUG=cpu.sse41=off) ;;
+	amd64-nofma) goarch=amd64 env=(GODEBUG=cpu.fma=off) ;;
 	386) ;;
 	arm) exec=$(qemu arm) || exit 1 ;;
 	arm64) exec=$(qemu aarch64) || exit 1 ;;

@@ -20,16 +20,18 @@ var edges = []uint64{
 	0x400921fb54442d18,                     // pi
 	0x0000000000000001, 0x0010000000000000, // smallest subnormal and normal
 	0x7fefffffffffffff, 0xffefffffffffffff, // ±largest
-	0x40862e42fefa39ef, // about 709.78, where exp overflows
-	0x44b52d02c7e14af6, // 1e22
+	0x40862e42fefa39ef,                     // about 709.78, where exp overflows
+	0x44b52d02c7e14af6,                     // 1e22
 	0x7ff0000000000000, 0xfff0000000000000, // ±inf
 	0x7ff8000000000000, 0xfff8000000000123, 0x7ff4000000000001, // NaNs
 }
 
-// A subset of edges for fma's three operands.
+// A subset of edges for fma's three operands, with a quiet and a signaling
+// NaN, each with a payload.
 var fmaEdges = []uint64{
 	0x0000000000000000, 0x8000000000000000, 0x3ff0000000000000, 0xbff0000000000000,
 	0x0000000000000001, 0x7fefffffffffffff, 0x7ff0000000000000, 0xfff8000000000123,
+	0x7ff4000000000001,
 }
 
 // splitmix64, for random operands that are the same everywhere.
@@ -193,6 +195,17 @@ func results() []string {
 		p := m.Xfma_(i(a), i(b), 0)
 		c := u(p) ^ 1<<63
 		add("fma", []uint64{a, b, c}, u(m.Xfma_(i(a), i(b), i(c))))
+	}
+	// Products that round to zero, plus a zero: the exact result is the
+	// product, not zero, so the result has the product's sign (musl's fma
+	// returns +0 for a negative product plus +0).
+	for _, ops := range [][3]uint64{
+		{0x8000000000000001, 0x0000000000000001, 0x0000000000000000},
+		{0xa169e96a421dbd0e, 0x01d740a9e2289e23, 0x0000000000000000},
+		{0x0000000000000001, 0x0000000000000001, 0x8000000000000000},
+		{0x8000000000000001, 0x8000000000000001, 0x8000000000000000},
+	} {
+		add("fma", ops[:], u(m.Xfma_(i(ops[0]), i(ops[1]), i(ops[2]))))
 	}
 	return lines
 }

@@ -6,10 +6,22 @@
 # libc-gen/test_math/mathtest.wasm, the module the test's translation was
 # made from, and wasmtime's results must be identical to expected.txt.
 #
+# The module imports fma, a Go host function in the translation (IEEE 754
+# defines its result exactly, and a NaN result is the canonical NaN). Here
+# wasmtime links it to musl's fma (libc-gen/c/libm/fma.c, compiled to
+# WebAssembly with libc-gen's clang, as it was before it became a host
+# function), with two corrections: a NaN result is the canonical NaN (musl
+# returns a NaN third operand unchanged, which the deterministic profile does
+# not), and a finite nonzero product plus a zero is the product, rounded once
+# (musl adds the zero, which turns a negative product that rounds to -0 into
+# +0; IEEE 754 gives the exact result's sign, the product's).
+#
 # Usage: scripts/libm-reference.sh
 #
 # Environment:
 #   WASMTIME  the wasmtime binary (default: wasmtime on PATH)
+#   WASI_SDK  wasi-sdk's bin directory (default: libc-gen/tools/wasi-sdk/bin,
+#             which libc-gen/tools.sh installs)
 #   LOGDIR    where the compiled module and wasmtime's results go (default:
 #             experiments/libm-reference, which git ignores)
 set -uo pipefail
@@ -24,7 +36,28 @@ logdir=${LOGDIR:-$root/experiments/libm-reference}
 mkdir -p "$logdir"
 expected=libc-gen/test_math/expected.txt
 
+wasi_sdk=${WASI_SDK:-$root/libc-gen/tools/wasi-sdk/bin}
+cat >"$logdir/fma.c" <<'EOF'
+#define fma musl_fma
+#include "libm/fma.c"
+#include "libm/scalbn.c"
+#undef fma
+
+// Bit operations, which clang cannot fold away as it could a NaN test.
+__attribute__((export_name("fma"))) double fma_canon(double x, double y, double z) {
+	unsigned long long r = __builtin_bit_cast(unsigned long long, musl_fma(x, y, z));
+	if (z == 0 && x != 0 && y != 0 && __builtin_isfinite(x) && __builtin_isfinite(y))
+		r = __builtin_bit_cast(unsigned long long, x * y);
+	if ((r & 0x7fffffffffffffff) > 0x7ff0000000000000)
+		r = 0x7ff8000000000000;
+	return __builtin_bit_cast(double, r);
+}
+EOF
+"$wasi_sdk/clang" --target=wasm32 -ffreestanding -nostdlib -std=c23 -O2 -w \
+	-include features.h -I libc-gen/c -I libc-gen/c/libm -Wl,--no-entry \
+	-o "$logdir/fma.wasm" "$logdir/fma.c" || exit 1
 "$wasmtime" compile -W nan-canonicalization=y libc-gen/test_math/mathtest.wasm -o "$logdir/mathtest.cwasm" || exit 1
+"$wasmtime" compile -W nan-canonicalization=y "$logdir/fma.wasm" -o "$logdir/fma.cwasm" || exit 1
 
 call() { # call <export> <operand bits>...: prints the result's bits
 	local export=$1 r
@@ -32,7 +65,7 @@ call() { # call <export> <operand bits>...: prints the result's bits
 	local args=()
 	for a in "$@"; do args+=("$((a))"); done
 	r=$("$wasmtime" run --allow-precompiled -W nan-canonicalization=y \
-		--invoke "$export" "$logdir/mathtest.cwasm" "${args[@]}" 2>&1 | grep -v '^warning')
+		--preload env="$logdir/fma.cwasm" --invoke "$export" "$logdir/mathtest.cwasm" "${args[@]}" 2>&1 | grep -v '^warning')
 	printf '0x%x' "$r"
 }
 
