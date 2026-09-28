@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 	"reflect"
-	"runtime"
 	"strconv"
 	"strings"
 	"testing"
@@ -12,6 +11,8 @@ import (
 	"github.com/stricttools/wasm-to-go/internal/mangle"
 )
 
+// TestModule runs the spec's assertions for one module, on every
+// architecture alike.
 func TestModule(t *testing.T, ctor func() any, jsonPath, name string) {
 	t.Helper()
 
@@ -108,11 +109,7 @@ func runAssertions(t *testing.T, mod reflect.Value, spec *specTest, name string)
 								t.Fatal(err)
 							}
 							if i := res[i].Interface().(int32); i != v {
-								if skipFloatBits(name) && isInfOrNaN32(v) && isInfOrNaN32(i) {
-									t.Logf("got %d, want %d", i, v)
-								} else {
-									t.Errorf("got %d, want %d", i, v)
-								}
+								t.Errorf("got %d, want %d", i, v)
 							}
 						case "i64":
 							v, err := parseInt[int64](exp.Value)
@@ -120,11 +117,7 @@ func runAssertions(t *testing.T, mod reflect.Value, spec *specTest, name string)
 								t.Fatal(err)
 							}
 							if i := res[i].Interface().(int64); i != v {
-								if skipFloatBits(name) && isInfOrNaN64(v) && isInfOrNaN64(i) {
-									t.Logf("got %d, want %d", i, v)
-								} else {
-									t.Errorf("got %d, want %d", i, v)
-								}
+								t.Errorf("got %d, want %d", i, v)
 							}
 						case "f32":
 							f := res[i].Interface().(float32)
@@ -132,19 +125,11 @@ func runAssertions(t *testing.T, mod reflect.Value, spec *specTest, name string)
 							switch exp.Value {
 							case "nan:canonical":
 								if v != 0xffc00000 && v != 0x7fc00000 {
-									if skipCanonical() && isNaN32(v) {
-										t.Logf("got %x, want nan:canonical", v)
-									} else {
-										t.Errorf("got %x, want nan:canonical", v)
-									}
+									t.Errorf("got %x, want nan:canonical", v)
 								}
 							case "nan:arithmetic":
 								if v&0x7fc00000 != 0x7fc00000 {
-									if skipCanonical() && isNaN32(v) {
-										t.Logf("got %x, want nan:arithmetic", v)
-									} else {
-										t.Errorf("got %x, want nan:arithmetic", v)
-									}
+									t.Errorf("got %x, want nan:arithmetic", v)
 								}
 							default:
 								i, err := strconv.ParseUint(exp.Value, 10, 32)
@@ -152,11 +137,7 @@ func runAssertions(t *testing.T, mod reflect.Value, spec *specTest, name string)
 									t.Fatal(err)
 								}
 								if v != uint32(i) {
-									if skipFloatBits(name) && isNaN32(v) && isNaN32(uint32(i)) {
-										t.Logf("got %d, want %d", v, uint32(i))
-									} else {
-										t.Errorf("got %d, want %d", v, uint32(i))
-									}
+									t.Errorf("got %d, want %d", v, uint32(i))
 								}
 							}
 						case "f64":
@@ -165,19 +146,11 @@ func runAssertions(t *testing.T, mod reflect.Value, spec *specTest, name string)
 							switch exp.Value {
 							case "nan:canonical":
 								if v != 0xfff8000000000000 && v != 0x7ff8000000000000 {
-									if skipCanonical() && isNaN64(v) {
-										t.Logf("got %x, want nan:canonical", v)
-									} else {
-										t.Errorf("got %x, want nan:canonical", v)
-									}
+									t.Errorf("got %x, want nan:canonical", v)
 								}
 							case "nan:arithmetic":
 								if v&0x7ff8000000000000 != 0x7ff8000000000000 {
-									if skipCanonical() && isNaN64(v) {
-										t.Logf("got %x, want nan:arithmetic", v)
-									} else {
-										t.Errorf("got %x, want nan:arithmetic", v)
-									}
+									t.Errorf("got %x, want nan:arithmetic", v)
 								}
 							default:
 								i, err := strconv.ParseUint(exp.Value, 10, 64)
@@ -185,11 +158,7 @@ func runAssertions(t *testing.T, mod reflect.Value, spec *specTest, name string)
 									t.Fatal(err)
 								}
 								if v != uint64(i) {
-									if skipFloatBits(name) && isNaN64(v) && isNaN64(i) {
-										t.Logf("got %d, want %d", v, uint64(i))
-									} else {
-										t.Errorf("got %d, want %d", v, uint64(i))
-									}
+									t.Errorf("got %d, want %d", v, uint64(i))
 								}
 							}
 						}
@@ -243,39 +212,4 @@ func parseInt[T int32 | int64](s string) (T, error) {
 		return T(u), nil
 	}
 	return 0, err
-}
-
-func isNaN32[T int32 | uint32](bits T) bool {
-	return uint32(bits&0x7FFFFFFF) > 0x7F800000
-}
-
-func isNaN64[T int64 | uint64](bits T) bool {
-	return uint64(bits&0x7FFFFFFFFFFFFFFF) > 0x7FF0000000000000
-}
-
-func isInfOrNaN32[T int32 | uint32](bits T) bool {
-	return uint32(bits&0x7FFFFFFF) >= 0x7F800000
-}
-
-func isInfOrNaN64[T int64 | uint64](bits T) bool {
-	return uint64(bits&0x7FFFFFFFFFFFFFFF) >= 0x7FF0000000000000
-}
-
-// We only check for canonical NaNs on amd64 and arm64.
-func skipCanonical() bool {
-	switch runtime.GOARCH {
-	case "amd64", "arm64":
-		return false
-	}
-	return true
-}
-
-// We skip specific float bit pattern checks (infinities, NaNs) on s390x and MIPS.
-func skipFloatBits(name string) bool {
-	if runtime.GOARCH == "s390x" || strings.HasPrefix(runtime.GOARCH, "mips") {
-		return (strings.Contains(name, "float") ||
-			strings.Contains(name, "f32") ||
-			strings.Contains(name, "f64"))
-	}
-	return false
 }
