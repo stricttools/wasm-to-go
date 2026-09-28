@@ -125,3 +125,12 @@ func Test_strtoul(t *testing.T) {
 		})
 	}
 }
+
+// checkFloat checks floating point equality exactly: equal bits, or both NaN.
+func checkFloat(t *testing.T, got, want float64) {
+	t.Helper()
+	if math.Float64bits(got) != math.Float64bits(want) &&
+		!(math.IsNaN(got) && math.IsNaN(want)) {
+		t.Fatalf("got %v, want %v", got, want)
+	}
+}

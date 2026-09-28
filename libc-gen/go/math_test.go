@@ -54,7 +54,7 @@ func Test_modf(t *testing.T) {
 		wantF float64
 	}{
 		{"positive", 3.14, 3.0, 0.14000000000000012},
-		{"negative", -2.71, -2.0, -0.7100000000000004},
+		{"negative", -2.71, -2.0, -0.71},
 		{"inf", math.Inf(1), math.Inf(1), 0.0},
 		{"-inf", math.Inf(-1), math.Inf(-1), math.Copysign(0, -1)},
 		{"zero", 0.0, 0.0, 0.0},
@@ -113,14 +113,5 @@ func Test_fmin(t *testing.T) {
 	for _, tc := range tests {
 		got := fmin(tc.x, tc.y)
 		checkFloat(t, got, tc.want)
-	}
-}
-
-// checkFloat checks floating point equality exactly, handling NaNs and signed zeros.
-func checkFloat(t *testing.T, got, want float64) {
-	t.Helper()
-	if math.Float64bits(got) != math.Float64bits(want) &&
-		math.IsNaN(got) != math.IsNaN(want) {
-		t.Fatalf("got %v, want %v", got, want)
 	}
 }
