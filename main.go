@@ -20,7 +20,6 @@ var (
 	tags   = flag.String("tags", "", "go:build tags to include in the generated file")
 
 	embed     = flag.Bool("embed", false, "go:embed data sections from a .dat file")
-	nanbox    = flag.Bool("nanbox", false, "constants 0, 1, and -1 are kept out of constant folding")
 	nohost    = flag.Bool("nohost", false, "don't generate interfaces for imports")
 	noopt     = flag.Bool("noopt", false, "disable all optimization passes")
 	unsafe    = flag.Bool("unsafe", false, "allow importing unsafe (requires -o: writes output.go and output_generic.go)")

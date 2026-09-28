@@ -21,12 +21,14 @@ var safeConversions = set[string]{
 // effects, nor read anything but local variables and constants:
 // identifiers, literals, numeric conversions, the identity helpers i32/i64,
 // the float helpers that canonicalize, negate, or take the absolute value,
+// math's bit reinterpretations (math.Float64frombits and the like),
 // and unary and binary operators other than division, remainder, and shifts
 // by a non-literal count (a negative shift count panics).
 //
 // In generated code identifiers are locals, parameters, and constants,
-// never shadowed; fields (selectors), dereferences, indexing and calls
-// other than conversions are rejected.
+// never shadowed, and so is the package name math; fields (selectors),
+// dereferences, indexing and calls other than conversions and math's bit
+// reinterpretations are rejected.
 func TrapFree(e ast.Expr) bool {
 	switch e := e.(type) {
 	case *ast.Ident, *ast.BasicLit:
@@ -49,12 +51,27 @@ func TrapFree(e ast.Expr) bool {
 		}
 		return TrapFree(e.X) && TrapFree(e.Y)
 	case *ast.CallExpr:
-		if id, ok := e.Fun.(*ast.Ident); ok && safeConversions.has(id.Name) &&
-			len(e.Args) == 1 && !e.Ellipsis.IsValid() {
-			return TrapFree(e.Args[0])
+		if len(e.Args) != 1 || e.Ellipsis.IsValid() {
+			return false
+		}
+		switch fun := e.Fun.(type) {
+		case *ast.Ident:
+			if safeConversions.has(fun.Name) {
+				return TrapFree(e.Args[0])
+			}
+		case *ast.SelectorExpr:
+			// Float constants are written math.Float64frombits(0x...).
+			if pkg, ok := fun.X.(*ast.Ident); ok && pkg.Name == "math" && mathBits.has(fun.Sel.Name) {
+				return TrapFree(e.Args[0])
+			}
 		}
 	}
 	return false
+}
+
+// The math functions that reinterpret bits, which never panic.
+var mathBits = set[string]{
+	"Float32bits": {}, "Float32frombits": {}, "Float64bits": {}, "Float64frombits": {},
 }
 
 // cloneTrapFree copies an expression accepted by TrapFree.

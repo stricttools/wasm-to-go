@@ -5,8 +5,6 @@ import (
 	"math"
 	bigf "math/big"
 	"math/rand/v2"
-	"runtime"
-	"strings"
 	"testing"
 )
 
@@ -24,30 +22,6 @@ func Test_i64(t *testing.T) {
 	_ = math.MinInt64 / i64(-1)
 	_ = uint64(i64(-1))
 	_ = int64(1) / i64(0)
-}
-
-func Test_f32_const(t *testing.T) {
-	if strings.HasPrefix(runtime.GOARCH, "mips") {
-		t.SkipNow()
-	}
-	t1 := math.Float32frombits(0x7fa00000)
-	t2 := t1 * f32(1)
-	t3 := math.Float32bits(t2)
-	if t3&0x7fc00000 != 0x7fc00000 {
-		t.Errorf("%x", t3)
-	}
-}
-
-func Test_f64_const(t *testing.T) {
-	if strings.HasPrefix(runtime.GOARCH, "mips") {
-		t.SkipNow()
-	}
-	t1 := math.Float64frombits(0x7ff4000000000000)
-	t2 := t1 * f64(1)
-	t3 := math.Float64bits(t2)
-	if t3&0x7ff8000000000000 != 0x7ff8000000000000 {
-		t.Errorf("%x", t3)
-	}
 }
 
 func Test_i32_div_s(t *testing.T) {

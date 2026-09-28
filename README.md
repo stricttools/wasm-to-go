@@ -80,9 +80,9 @@ Generating human-readable Go code is a non-goal:
   requires frequent type conversions;
 - Go's untyped numeric literals require explicit type conversions;
 - Go's constant evaluator does not match Wasm semantics,
-  requiring workarounds to avoid constant folding/propagation;
+  requiring workarounds to avoid constant folding/propagation:
+  float constants are written as their bits (`math.Float64frombits(0x...)`);
 - float operations require type conversions to avoid being combined;
-- float literals can't represent negative zero, infinities, or `NaN`;
 - Go forbids unused variables/labels/etc.
 
 Many of these introduce unnecessary verbosity,
@@ -173,8 +173,6 @@ Usage: wasm2go [option]... [input.wasm]
         use line numbers from DWARF metadata
   -embed
         go:embed data sections from a .dat file
-  -nanbox
-        constants 0, 1, and -1 are kept out of constant folding
   -nohost
         don't generate interfaces for imports
   -noopt

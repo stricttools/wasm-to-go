@@ -3,8 +3,10 @@
 package main
 
 import (
+	"math"
 	"testing"
 
+	constfold_test "github.com/stricttools/wasm-to-go/testdata/regression/constfold"
 	f32convert_test "github.com/stricttools/wasm-to-go/testdata/regression/f32convert"
 	nancanon_test "github.com/stricttools/wasm-to-go/testdata/regression/nancanon"
 )
@@ -87,6 +89,39 @@ func Test_regression_f32convert(t *testing.T) {
 		}
 		if got := uint32(m.Xu(int64(tt.x))); got != tt.u {
 			t.Errorf("f32.convert_i64_u(%#x) = %#x, want %#x", tt.x, got, tt.u)
+		}
+	}
+}
+
+// Operations on float constants run with IEEE 754 arithmetic at run time
+// (or in the compiler's IEEE folding), never in Go's constant evaluator,
+// which computes exactly, has no negative zero, and refuses to compile an
+// overflow or a division by zero.
+func Test_regression_constfold(t *testing.T) {
+	m := constfold_test.New()
+	b64 := math.Float64bits
+	b32 := math.Float32bits
+	for _, tt := range []struct {
+		name      string
+		got, want uint64
+	}{
+		{"0 * -1", b64(m.Xzero_times_minus_one()), 0x8000000000000000},
+		{"1e-300 * -1e-300", b64(m.Xtiny_times_minus_tiny()), 0x8000000000000000},
+		{"1 / 0 (operand)", b64(m.Xdiv_by_zero(1)), 0x7ff0000000000000},
+		{"-1 / 0 (operand)", b64(m.Xdiv_by_zero(-1)), 0xfff0000000000000},
+		{"0 / 0 (operand)", b64(m.Xdiv_by_zero(0)), canon64},
+		{"1 / 0", b64(m.Xone_div_zero()), 0x7ff0000000000000},
+		{"0 / 0", b64(m.Xzero_div_zero()), canon64},
+		{"1e308 * 10", b64(m.Xoverflow()), 0x7ff0000000000000},
+		{"(1+2^-30) * (1-2^-30) + -1", b64(m.Xrounded_product()), 0},
+		{"-0 + -0", b64(m.Xminus_zero_sum()), 0x8000000000000000},
+		{"float32 0 * -1", uint64(b32(m.Xzero_times_minus_one32())), 0x80000000},
+		{"float32 3e38 * 10", uint64(b32(m.Xoverflow32())), 0x7f800000},
+		{"float32 1 / 0 (operand)", uint64(b32(m.Xdiv_by_zero32(1))), 0x7f800000},
+		{"float32 1 / 3", uint64(b32(m.Xthird32())), 0x3eaaaaab},
+	} {
+		if tt.got != tt.want {
+			t.Errorf("%s = %#x, want %#x", tt.name, tt.got, tt.want)
 		}
 	}
 }

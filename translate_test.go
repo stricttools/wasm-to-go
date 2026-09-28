@@ -21,7 +21,7 @@ import (
 func Test_translate(t *testing.T) {
 	tests := []string{
 		"fib", "loops", "memory", "primes", "recursion", "stack", "table", "trig",
-		"regression/dispatch", "regression/f32convert", "regression/nancanon", "regression/oob_trap", "regression/select_effect", "regression/store_grow", "regression/tee_self_loop",
+		"regression/constfold", "regression/dispatch", "regression/f32convert", "regression/nancanon", "regression/oob_trap", "regression/select_effect", "regression/store_grow", "regression/tee_self_loop",
 	}
 	for _, name := range tests {
 		t.Run(name, func(t *testing.T) {
@@ -74,12 +74,8 @@ func Test_translate_provided(t *testing.T) {
 
 func Test_translateSpecTest(t *testing.T) {
 	name := *pkg
-	*nanbox = true
 	*pkg = "wasm2go"
-	t.Cleanup(func() {
-		*nanbox = false
-		*pkg = name
-	})
+	t.Cleanup(func() { *pkg = name })
 
 	slices.Sort(skipModules)
 	slices.Sort(specHostModules)

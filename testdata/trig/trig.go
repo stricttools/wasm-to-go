@@ -35,7 +35,7 @@ func (m *Module) Xsin(v0 float64) float64 {
 	var v1, v2 float64
 	var v3 int32
 	var v4 int64
-	if v0 == float64(0) {
+	if v0 == math.Float64frombits(0x0) {
 		return v0
 	}
 	v1 = math.Float64frombits(0x7ff8000000000000)
@@ -44,25 +44,25 @@ func (m *Module) Xsin(v0 float64) float64 {
 			goto l0
 		}
 		t0 := v0
-		v4 = i64_trunc_sat_f64_s(float64(float64(v0*float64(0.6366197723675814)) + math.Copysign(float64(0.5), v0)))
-		v1 = f64_canon(float64(t0 + float64(float64(v4)*float64(-1.5707963267948966))))
+		v4 = i64_trunc_sat_f64_s(float64(float64(v0*math.Float64frombits(0x3fe45f306dc9c883)) + math.Copysign(math.Float64frombits(0x3fe0000000000000), v0)))
+		v1 = f64_canon(float64(t0 + float64(float64(v4)*math.Float64frombits(0xbff921fb54442d18))))
 		var p1 float64
 	l1:
 		{
 			var p2 float64
-			if f64_abs(v1) > float64(0x1p-27) {
+			if f64_abs(v1) > math.Float64frombits(0x3e40000000000000) {
 				v3 = v3 + i32(1)
-				v1 = f64_canon(float64(v1 * float64(0.5)))
+				v1 = f64_canon(float64(v1 * math.Float64frombits(0x3fe0000000000000)))
 				goto l1
 			} else {
-				v0 = float64(1)
+				v0 = math.Float64frombits(0x3ff0000000000000)
 			l2:
 				if v3 != 0 {
 					v3 = v3 - i32(1)
 					v2 = f64_canon(float64(v1 * v1))
 					v0 = f64_canon(float64(v0 * v1))
 					v1 = f64_canon(float64(v0 + v0))
-					v0 = f64_canon(float64(float64(1) - float64(v2+v2)))
+					v0 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) - float64(v2+v2)))
 					goto l2
 				} else {
 					switch int32(v4)&i32(3) - i32(1) {

@@ -1004,12 +1004,18 @@ func (t *translator) readConstExpr() (ast.Expr, error) {
 			if err != nil {
 				return nil, err
 			}
+			// Written with math.Float32frombits; function bodies find
+			// their imports when they are complete, initializers here.
+			t.packages.add("math")
 			stack.append(expr)
 		case 0x44: // f64.const
 			expr, err := t.constF64()
 			if err != nil {
 				return nil, err
 			}
+			// Written with math.Float64frombits; function bodies find
+			// their imports when they are complete, initializers here.
+			t.packages.add("math")
 			stack.append(expr)
 		case 0x23: // global.get
 			expr, _, err := t.globalGet()

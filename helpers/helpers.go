@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"math"
 	"math/bits"
-	"runtime"
 	"sync/atomic"
 )
 
@@ -17,22 +16,6 @@ func i32(x int32) int32 { return x }
 
 //go:nosplit
 func i64(x int64) int64 { return x }
-
-// Prevent constant folding/propagation,
-// ensuring correct NaN handling.
-// Only used with nanbox.
-
-//go:nosplit
-func f32(x float32) float32 {
-	runtime.KeepAlive(&x)
-	return x
-}
-
-//go:nosplit
-func f64(x float64) float64 {
-	runtime.KeepAlive(&x)
-	return x
-}
 
 // Detect signed integer overflow.
 // Folded away for constant y.

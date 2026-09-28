@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"go/ast"
 	"go/token"
-	"math"
 	"strconv"
 )
 
@@ -32,24 +31,18 @@ func (t *translator) constI64() (ast.Expr, error) {
 	return &ast.CallExpr{Fun: newID("i64"), Args: a}, nil
 }
 
+// Float constants are written as their bits, math.Float32frombits(0x...)
+// and math.Float64frombits(0x...), never as Go constants: Go's constant
+// evaluator computes exactly, has no negative zero, and refuses to compile
+// an overflow or a division by zero, so an operation on two Go float
+// constants would differ from WebAssembly's IEEE 754 arithmetic. The
+// compiler still folds operations on these values, with IEEE arithmetic.
+
 func (t *translator) constF32() (ast.Expr, error) {
 	var v uint32
 	if err := binary.Read(t.in, binary.LittleEndian, &v); err != nil {
 		return nil, err
 	}
-
-	f := math.Float32frombits(v)
-	if -math.MaxFloat32 <= f && f <= +math.MaxFloat32 && (v == 0 || f != 0) {
-		a := []ast.Expr{&ast.BasicLit{Kind: token.INT, Value: formatFloat(float64(f), 32)}}
-		if (f == 0 || f == 1 || f == -1) && *nanbox {
-			t.helpers.add("f32")
-			// This prevents constant folding/propagation.
-			return &ast.CallExpr{Fun: newID("f32"), Args: a}, nil
-		}
-		return &ast.CallExpr{Fun: newID("float32"), Args: a}, nil
-	}
-
-	// Infinities, NaN, negative zero.
 	return &ast.CallExpr{
 		Fun:  &ast.SelectorExpr{X: newID("math"), Sel: newID("Float32frombits")},
 		Args: []ast.Expr{&ast.BasicLit{Kind: token.INT, Value: "0x" + strconv.FormatUint(uint64(v), 16)}},
@@ -61,19 +54,6 @@ func (t *translator) constF64() (ast.Expr, error) {
 	if err := binary.Read(t.in, binary.LittleEndian, &v); err != nil {
 		return nil, err
 	}
-
-	f := math.Float64frombits(v)
-	if -math.MaxFloat64 <= f && f <= +math.MaxFloat64 && (v == 0 || f != 0) {
-		a := []ast.Expr{&ast.BasicLit{Kind: token.INT, Value: formatFloat(f, 64)}}
-		if (f == 0 || f == 1 || f == -1) && *nanbox {
-			t.helpers.add("f64")
-			// This prevents constant folding/propagation.
-			return &ast.CallExpr{Fun: newID("f64"), Args: a}, nil
-		}
-		return &ast.CallExpr{Fun: newID("float64"), Args: a}, nil
-	}
-
-	// Infinities, NaN, negative zero.
 	return &ast.CallExpr{
 		Fun:  &ast.SelectorExpr{X: newID("math"), Sel: newID("Float64frombits")},
 		Args: []ast.Expr{&ast.BasicLit{Kind: token.INT, Value: "0x" + strconv.FormatUint(v, 16)}},
@@ -113,15 +93,6 @@ func formatInt(i int64) string {
 func formatUint(i uint64) string {
 	dec := strconv.FormatUint(i, 10)
 	hex := "0x" + strconv.FormatUint(i, 16)
-	if complexity(hex) < complexity(dec) {
-		return hex
-	}
-	return dec
-}
-
-func formatFloat(f float64, bits int) string {
-	dec := strconv.FormatFloat(f, 'g', -1, bits)
-	hex := strconv.FormatFloat(f, 'x', -1, bits)
 	if complexity(hex) < complexity(dec) {
 		return hex
 	}
