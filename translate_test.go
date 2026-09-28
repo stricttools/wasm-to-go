@@ -20,7 +20,7 @@ import (
 
 func Test_translate(t *testing.T) {
 	tests := []string{
-		"fib", "loops", "memory", "primes", "recursion", "stack", "table", "trig",
+		"determinism", "fib", "loops", "memory", "primes", "recursion", "stack", "table", "trig",
 		"regression/constfold", "regression/dispatch", "regression/f32convert", "regression/nancanon", "regression/oob_trap", "regression/select_effect", "regression/store_grow", "regression/tee_self_loop",
 	}
 	for _, name := range tests {

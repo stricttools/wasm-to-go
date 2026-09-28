@@ -4,8 +4,11 @@ package main
 
 import (
 	"math"
+	"os"
+	"strings"
 	"testing"
 
+	determinism_test "github.com/stricttools/wasm-to-go/testdata/determinism"
 	constfold_test "github.com/stricttools/wasm-to-go/testdata/regression/constfold"
 	f32convert_test "github.com/stricttools/wasm-to-go/testdata/regression/f32convert"
 	nancanon_test "github.com/stricttools/wasm-to-go/testdata/regression/nancanon"
@@ -123,5 +126,39 @@ func Test_regression_constfold(t *testing.T) {
 		if tt.got != tt.want {
 			t.Errorf("%s = %#x, want %#x", tt.name, tt.got, tt.want)
 		}
+	}
+}
+
+// Every float instruction, fed every kind of operand as raw bits, gives
+// the results in testdata/determinism/expected.txt, bit for bit, on every
+// platform (scripts/cross-targets.sh runs this test on each). The file is
+// identical to wasmtime's results for the same calls with NaN
+// canonicalization, which implements the deterministic profile, trap
+// messages included (scripts/determinism-reference.sh checks this).
+func Test_determinism_expected(t *testing.T) {
+	raw, err := os.ReadFile("testdata/determinism/expected.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	// The chains multiply 1+2^-30 by 1-2^-30 and add -1: 0 when the
+	// product is rounded, and not 0 when a fused multiply-add is used.
+	if math.FMA(1+0x1p-30, 1-0x1p-30, -1) == 0 {
+		t.Fatal("the chains' operands cannot tell a fused multiply-add from a rounded product")
+	}
+	want := strings.Split(strings.TrimSuffix(string(raw), "\n"), "\n")
+	got := determinism_test.Results()
+	if len(got) != len(want) {
+		t.Fatalf("got %d results, want %d", len(got), len(want))
+	}
+	diffs := 0
+	for i := range want {
+		if got[i] != want[i] {
+			if diffs++; diffs <= 20 {
+				t.Errorf("got  %s\nwant %s", got[i], want[i])
+			}
+		}
+	}
+	if diffs > 20 {
+		t.Errorf("%d results differ in all", diffs)
 	}
 }
