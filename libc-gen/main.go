@@ -69,7 +69,7 @@ func main() {
 	if *pkg == "" {
 		*pkg = "wasm2go"
 	}
-	if len(funcs) == 0 {
+	if len(funcs) == 0 && *wasm == "" {
 		return
 	}
 
