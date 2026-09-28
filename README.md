@@ -137,8 +137,9 @@ There is no option to turn this off.
   IEEE 754 defines its result exactly (`x*y+z` rounded once), so every CPU computes
   the same bits, with an instruction or in software, and a NaN result is the positive
   canonical NaN. musl's `fma` compiled into the module was about 15 times slower
-  on amd64, since WebAssembly has no fused multiply-add; it also returned a NaN third operand
-  unchanged, and +0 instead of -0 for a negative product that rounds to zero plus +0.
+  on amd64, since WebAssembly has no fused multiply-add, and it returns a NaN third operand
+  unchanged (before musl 1.2.6 it also returned +0 instead of -0 for a negative product
+  that rounds to zero plus +0).
 
 How this is tested:
 - The spec tests check the deterministic profile: where the spec allows a canonical
@@ -153,7 +154,7 @@ How this is tested:
   [libc-gen/test_math/expected.txt](libc-gen/test_math/expected.txt) bit for bit;
   they are identical to wasmtime's with NaN canonicalization
   ([scripts/libm-reference.sh](scripts/libm-reference.sh) checks this, with `fma`
-  linked to musl's, corrected for the canonical NaN and the sign of zero).
+  linked to musl's, corrected for the canonical NaN).
 - [scripts/cross-targets.sh](scripts/cross-targets.sh) runs these, with the regression
   tests, on each target it lists: amd64 (also with fused multiply-add available,
   without SSE4.1, and with `math.FMA` in software), 386, wasip1 and js wasm,

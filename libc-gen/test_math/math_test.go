@@ -198,7 +198,7 @@ func results() []string {
 	}
 	// Products that round to zero, plus a zero: the exact result is the
 	// product, not zero, so the result has the product's sign (musl's fma
-	// returns +0 for a negative product plus +0).
+	// before musl 1.2.6 returned +0 for a negative product plus +0).
 	for _, ops := range [][3]uint64{
 		{0x8000000000000001, 0x0000000000000001, 0x0000000000000000},
 		{0xa169e96a421dbd0e, 0x01d740a9e2289e23, 0x0000000000000000},

@@ -10,11 +10,12 @@
 # defines its result exactly, and a NaN result is the canonical NaN). Here
 # wasmtime links it to musl's fma (libc-gen/c/libm/fma.c, compiled to
 # WebAssembly with libc-gen's clang, as it was before it became a host
-# function), with two corrections: a NaN result is the canonical NaN (musl
+# function), with one correction: a NaN result is the canonical NaN (musl
 # returns a NaN third operand unchanged, which the deterministic profile does
-# not), and a finite nonzero product plus a zero is the product, rounded once
-# (musl adds the zero, which turns a negative product that rounds to -0 into
-# +0; IEEE 754 gives the exact result's sign, the product's).
+# not). musl's fma needs no other correction since musl 1.2.6, whose fma
+# returns a finite nonzero product plus a zero as the product rounded once,
+# with the product's sign (1.2.5 added the zero, which turned a negative
+# product that rounds to -0 into +0).
 #
 # Usage: scripts/libm-reference.sh
 #
@@ -46,8 +47,6 @@ cat >"$logdir/fma.c" <<'EOF'
 // Bit operations, which clang cannot fold away as it could a NaN test.
 __attribute__((export_name("fma"))) double fma_canon(double x, double y, double z) {
 	unsigned long long r = __builtin_bit_cast(unsigned long long, musl_fma(x, y, z));
-	if (z == 0 && x != 0 && y != 0 && __builtin_isfinite(x) && __builtin_isfinite(y))
-		r = __builtin_bit_cast(unsigned long long, x * y);
 	if ((r & 0x7fffffffffffffff) > 0x7ff0000000000000)
 		r = 0x7ff8000000000000;
 	return __builtin_bit_cast(double, r);

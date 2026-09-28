@@ -3,7 +3,9 @@
 # and generates c/libm.c, which libc.c includes.
 #
 # The tarball is downloaded to tools/ (see tools.sh, which this script needs
-# for clang and llvm-nm) and checked against its SHA-256. The listed source
+# for clang and llvm-nm) and checked against its SHA-256, which was pinned
+# after checking the release's signature (musl-$VERSION.tar.gz.asc) against
+# musl's key, fingerprint 8364 8929 0BB6 B70F 99FF DA05 56BC DB59 3020 450F. The listed source
 # files and musl's COPYRIGHT are copied unchanged; c/libm/libm.h and
 # c/libm/atomic.h replace musl's internal headers and are not touched here.
 #
@@ -14,8 +16,8 @@ set -euo pipefail
 
 cd -P -- "$(dirname -- "$0")"
 
-VERSION=1.2.5
-SHA256=a9a118bbe84d8764da0ea0d28b3ab3fae8477fc7e4085d90102b8596fc7c75e4
+VERSION=1.2.6
+SHA256=d585fd3b613c66151fc3249e8ed44f77020cb5e6c1e635a616d3f9f82460512a
 URL="https://musl.libc.org/releases/musl-$VERSION.tar.gz"
 
 # The functions math.h declares that are not compiler builtins, and what
