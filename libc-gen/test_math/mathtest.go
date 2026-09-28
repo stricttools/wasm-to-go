@@ -64,7 +64,7 @@ func (m *Module) Xacos_(v0 int64) int64 {
 					goto l1
 				}
 				_ = math.Float64frombits(0x3ff921fb54442d18)
-				t4 := fn60(f64_canon(float64(v1 * v1)))
+				t4 := fn63(f64_canon(float64(v1 * v1)))
 				t5 := f64_canon(float64(float64(float64(math.Float64frombits(0x3c91a62633145c07)-float64(v1*t4))-v1) + math.Float64frombits(0x3ff921fb54442d18)))
 				p0 = t5
 				goto l0
@@ -72,7 +72,7 @@ func (m *Module) Xacos_(v0 int64) int64 {
 			if v0 < i64(0) {
 				v2 = f64_canon(float64(float64(v1+math.Float64frombits(0x3ff0000000000000)) * math.Float64frombits(0x3fe0000000000000)))
 				v1 = f64_canon(math.Sqrt(v2))
-				t6 := fn60(v2)
+				t6 := fn63(v2)
 				v2 = f64_canon(float64(math.Float64frombits(0x3ff921fb54442d18) - float64(v1+float64(float64(v1*t6)+math.Float64frombits(0xbc91a62633145c07)))))
 				t7 := f64_canon(float64(v2 + v2))
 				p0 = t7
@@ -81,7 +81,7 @@ func (m *Module) Xacos_(v0 int64) int64 {
 			v1 = f64_canon(float64(float64(math.Float64frombits(0x3ff0000000000000)-v1) * math.Float64frombits(0x3fe0000000000000)))
 			v3 = f64_canon(math.Sqrt(v1))
 			v2 = math.Float64frombits(uint64(int64(math.Float64bits(v3)) & i64(-0x100000000)))
-			t8 := fn60(v1)
+			t8 := fn63(v1)
 			v2 = f64_canon(float64(float64(float64(t8*v3)+float64(float64(v1-float64(v2*v2))/float64(v3+v2))) + v2))
 			p3 = f64_canon(float64(v2 + v2))
 		}
@@ -100,16 +100,16 @@ func (m *Module) Xacosh_(v0 int64) int64 {
 		v2 = int32(int64(uint64(int64(math.Float64bits(v1)))>>52)) & i32(2047)
 		if uint32(v2) <= uint32(i32(1023)) {
 			v1 = f64_canon(float64(v1 + math.Float64frombits(0xbff0000000000000)))
-			t1 := m.fn61(f64_canon(float64(v1 + math.Sqrt(float64(float64(v1*v1)+float64(v1+v1))))))
+			t1 := m.fn64(f64_canon(float64(v1 + math.Sqrt(float64(float64(v1*v1)+float64(v1+v1))))))
 			p0 = t1
 			goto l0
 		}
 		if uint32(v2) <= uint32(i32(1048)) {
-			t2 := m.fn62(f64_canon(float64(float64(v1+v1) + float64(math.Float64frombits(0xbff0000000000000)/float64(v1+math.Sqrt(float64(float64(v1*v1)+math.Float64frombits(0xbff0000000000000))))))))
+			t2 := m.fn65(f64_canon(float64(float64(v1+v1) + float64(math.Float64frombits(0xbff0000000000000)/float64(v1+math.Sqrt(float64(float64(v1*v1)+math.Float64frombits(0xbff0000000000000))))))))
 			p0 = t2
 			goto l0
 		}
-		t3 := m.fn62(v1)
+		t3 := m.fn65(v1)
 		p0 = f64_canon(float64(t3 + math.Float64frombits(0x3fe62e42fefa39ef)))
 	}
 l0:
@@ -137,14 +137,14 @@ func (m *Module) Xasin_(v0 int64) int64 {
 			if uint32(v5+i32(-0x100000)) < uint32(i32(0x3e400000)) {
 				goto l1
 			}
-			t3 := fn60(f64_canon(float64(v1 * v1)))
+			t3 := fn63(f64_canon(float64(v1 * v1)))
 			t4 := f64_canon(float64(float64(v1*t3) + v1))
 			p0 = t4
 			goto l0
 		}
 		v2 = f64_canon(float64(float64(math.Float64frombits(0x3ff0000000000000)-f64_abs(v1)) * math.Float64frombits(0x3fe0000000000000)))
 		v3 = f64_canon(math.Sqrt(v2))
-		t5 := fn60(v2)
+		t5 := fn63(v2)
 		v1 = t5
 		var p6 float64
 		{
@@ -184,19 +184,19 @@ func (m *Module) Xasinh_(v0 int64) int64 {
 	v0 = int64(math.Float64bits(v2))
 	v4 = int32(int64(uint64(v0)>>52)) & i32(2047)
 	if uint32(v4) >= uint32(i32(1049)) {
-		t1 := m.fn62(v1)
+		t1 := m.fn65(v1)
 		v1 = f64_canon(float64(t1 + math.Float64frombits(0x3fe62e42fefa39ef)))
 		goto l0
 	}
 	if uint32(v4) >= uint32(i32(1024)) {
-		t2 := m.fn62(f64_canon(float64(float64(v1+v1) + float64(math.Float64frombits(0x3ff0000000000000)/float64(v1+math.Sqrt(float64(float64(v2*v2)+math.Float64frombits(0x3ff0000000000000))))))))
+		t2 := m.fn65(f64_canon(float64(float64(v1+v1) + float64(math.Float64frombits(0x3ff0000000000000)/float64(v1+math.Sqrt(float64(float64(v2*v2)+math.Float64frombits(0x3ff0000000000000))))))))
 		v1 = t2
 		goto l0
 	}
 	if uint32(v4) >= uint32(i32(997)) {
 		t3 := v1
 		v1 = f64_canon(float64(v2 * v2))
-		t4 := m.fn61(f64_canon(float64(t3 + float64(v1/float64(math.Sqrt(float64(v1+math.Float64frombits(0x3ff0000000000000)))+math.Float64frombits(0x3ff0000000000000))))))
+		t4 := m.fn64(f64_canon(float64(t3 + float64(v1/float64(math.Sqrt(float64(v1+math.Float64frombits(0x3ff0000000000000)))+math.Float64frombits(0x3ff0000000000000))))))
 		v1 = t4
 		goto l0
 	}
@@ -210,7 +210,7 @@ l0:
 	return int64(math.Float64bits(p5))
 }
 func (m *Module) Xatan_(v0 int64) int64 {
-	t0 := m.fn63(math.Float64frombits(uint64(v0)))
+	t0 := m.fn66(math.Float64frombits(uint64(v0)))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xatanh_(v0 int64) int64 {
@@ -234,12 +234,12 @@ func (m *Module) Xatanh_(v0 int64) int64 {
 				goto l0
 			}
 			v2 = f64_canon(float64(v1 + v1))
-			t1 := m.fn61(f64_canon(float64(v2 + float64(float64(v1*v2)/float64(math.Float64frombits(0x3ff0000000000000)-v1)))))
+			t1 := m.fn64(f64_canon(float64(v2 + float64(float64(v1*v2)/float64(math.Float64frombits(0x3ff0000000000000)-v1)))))
 			v1 = f64_canon(float64(t1 * math.Float64frombits(0x3fe0000000000000)))
 			goto l0
 		}
 		v1 = f64_canon(float64(v1 / float64(math.Float64frombits(0x3ff0000000000000)-v1)))
-		t2 := m.fn61(f64_canon(float64(v1 + v1)))
+		t2 := m.fn64(f64_canon(float64(v1 + v1)))
 		v1 = f64_canon(float64(t2 * math.Float64frombits(0x3fe0000000000000)))
 	}
 l0:
@@ -294,7 +294,7 @@ func (m *Module) Xceil_(v0 int64) int64 {
 	return int64(math.Float64bits(f64_canon(math.Ceil(math.Float64frombits(uint64(v0))))))
 }
 func (m *Module) Xcos_(v0 int64) int64 {
-	t0 := m.fn64(math.Float64frombits(uint64(v0)))
+	t0 := m.fn67(math.Float64frombits(uint64(v0)))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xcosh_(v0 int64) int64 {
@@ -314,7 +314,7 @@ func (m *Module) Xcosh_(v0 int64) int64 {
 				p1 = math.Float64frombits(0x3ff0000000000000)
 				goto l0
 			}
-			t2 := m.fn68(v1)
+			t2 := m.fn71(v1)
 			v1 = t2
 			v2 = f64_canon(float64(v1 + math.Float64frombits(0x3ff0000000000000)))
 			t3 := f64_canon(float64(float64(float64(v1*v1)/float64(v2+v2)) + math.Float64frombits(0x3ff0000000000000)))
@@ -322,13 +322,13 @@ func (m *Module) Xcosh_(v0 int64) int64 {
 			goto l0
 		}
 		if uint64(v0) <= uint64(i64(0x40862e41ffffffff)) {
-			t4 := m.fn69(v1)
+			t4 := m.fn72(v1)
 			v1 = t4
 			t5 := f64_canon(float64(float64(v1+float64(math.Float64frombits(0x3ff0000000000000)/v1)) * math.Float64frombits(0x3fe0000000000000)))
 			p1 = t5
 			goto l0
 		}
-		t6 := m.fn70(v1, math.Float64frombits(0x3ff0000000000000))
+		t6 := m.fn73(v1, math.Float64frombits(0x3ff0000000000000))
 		p1 = t6
 	}
 l0:
@@ -363,7 +363,7 @@ func (m *Module) Xerf_(v0 int64) int64 {
 		}
 		v1 = math.Float64frombits(0x3ff0000000000000)
 		if uint32(v3) <= uint32(i32(0x4017ffff)) {
-			t5 := m.fn71(v3, v2)
+			t5 := m.fn74(v3, v2)
 			v1 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) - t5))
 		}
 		p6 := v1
@@ -416,7 +416,7 @@ func (m *Module) Xerfc_(v0 int64) int64 {
 			goto l0
 		}
 		if uint32(v3) <= uint32(i32(0x403bffff)) {
-			t8 := m.fn71(v3, v1)
+			t8 := m.fn74(v3, v1)
 			v1 = t8
 			p9 := f64_canon(float64(math.Float64frombits(0x4000000000000000) - v1))
 			if v0 >= i64(0) {
@@ -435,7 +435,7 @@ l0:
 	return int64(math.Float64bits(p0))
 }
 func (m *Module) Xexp_(v0 int64) int64 {
-	t0 := m.fn69(math.Float64frombits(uint64(v0)))
+	t0 := m.fn72(math.Float64frombits(uint64(v0)))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xexp2_(v0 int64) int64 {
@@ -537,7 +537,7 @@ l0:
 	return int64(math.Float64bits(v1))
 }
 func (m *Module) Xexpm1_(v0 int64) int64 {
-	t0 := m.fn68(math.Float64frombits(uint64(v0)))
+	t0 := m.fn71(math.Float64frombits(uint64(v0)))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xfabs_(v0 int64) int64 {
@@ -547,19 +547,19 @@ func (m *Module) Xfloor_(v0 int64) int64 {
 	return int64(math.Float64bits(f64_canon(math.Floor(math.Float64frombits(uint64(v0))))))
 }
 func (m *Module) Xj0_(v0 int64) int64 {
-	t0 := m.fn75(math.Float64frombits(uint64(v0)))
+	t0 := m.fn78(math.Float64frombits(uint64(v0)))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xj1_(v0 int64) int64 {
-	t0 := m.fn79(math.Float64frombits(uint64(v0)))
+	t0 := m.fn82(math.Float64frombits(uint64(v0)))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xlgamma_(v0 int64) int64 {
-	t0 := m.fn83(math.Float64frombits(uint64(v0)), i32(83224))
+	t0 := m.fn86(math.Float64frombits(uint64(v0)), i32(83224))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xlog_(v0 int64) int64 {
-	t0 := m.fn62(math.Float64frombits(uint64(v0)))
+	t0 := m.fn65(math.Float64frombits(uint64(v0)))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xlog10_(v0 int64) int64 {
@@ -630,7 +630,7 @@ l0:
 	return int64(math.Float64bits(p0))
 }
 func (m *Module) Xlog1p_(v0 int64) int64 {
-	t0 := m.fn61(math.Float64frombits(uint64(v0)))
+	t0 := m.fn64(math.Float64frombits(uint64(v0)))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xlog2_(v0 int64) int64 {
@@ -721,7 +721,7 @@ func (m *Module) Xlogb_(v0 int64) int64 {
 	if uint64(int64(math.Float64bits(v1))<<1) <= uint64(i64(-0x20000000000001)) {
 		var p0 float64
 		if v1 != math.Float64frombits(0x0) {
-			t1 := m.fn74(v1)
+			t1 := m.fn77(v1)
 			p0 = float64(t1)
 		} else {
 			p0 = math.Float64frombits(0xfff0000000000000)
@@ -782,7 +782,7 @@ func (m *Module) Xround_(v0 int64) int64 {
 	return int64(math.Float64bits(v1))
 }
 func (m *Module) Xsin_(v0 int64) int64 {
-	t0 := m.fn77(math.Float64frombits(uint64(v0)))
+	t0 := m.fn80(math.Float64frombits(uint64(v0)))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xsinh_(v0 int64) int64 {
@@ -793,7 +793,7 @@ func (m *Module) Xsinh_(v0 int64) int64 {
 		v1 = f64_abs(v2)
 		v0 = int64(math.Float64bits(v1))
 		if uint64(v0) <= uint64(i64(0x40862e41ffffffff)) {
-			t0 := m.fn68(v1)
+			t0 := m.fn71(v1)
 			v1 = t0
 			if uint64(v0) <= uint64(i64(0x3fefffffffffffff)) {
 				if uint64(v0) < uint64(i64(0x3e50000000000000)) {
@@ -805,7 +805,7 @@ func (m *Module) Xsinh_(v0 int64) int64 {
 			v2 = f64_canon(float64(v3 * float64(v1+float64(v1/float64(v1+math.Float64frombits(0x3ff0000000000000))))))
 			goto l0
 		}
-		t1 := m.fn70(v1, f64_canon(float64(v3+v3)))
+		t1 := m.fn73(v1, f64_canon(float64(v3+v3)))
 		v2 = t1
 	}
 l0:
@@ -834,7 +834,7 @@ func (m *Module) Xtan_(v0 int64) int64 {
 				store64(mem, uint32(t2), math.Float64bits(p1))
 				goto l0
 			}
-			t3 := fn87(v1, math.Float64frombits(0x0), i32(0))
+			t3 := fn91(v1, math.Float64frombits(0x0), i32(0))
 			v1 = t3
 			goto l0
 		}
@@ -842,11 +842,11 @@ func (m *Module) Xtan_(v0 int64) int64 {
 			v1 = f64_canon(float64(v1 - v1))
 			goto l0
 		}
-		t4 := m.fn66(v1, v2)
+		t4 := m.fn69(v1, v2)
 		v3 = t4
 		t5 := math.Float64frombits(load64(mem, uint32(v2)))
 		t6 := math.Float64frombits(load64(mem, uint64(uint32(v2))+8))
-		t7 := fn87(t5, t6, v3&i32(1))
+		t7 := fn91(t5, t6, v3&i32(1))
 		v1 = t7
 	}
 l0:
@@ -868,18 +868,18 @@ func (m *Module) Xtanh_(v0 int64) int64 {
 			v1 = f64_canon(float64(float64(math.Float64frombits(0x8000000000000000)/v1) + math.Float64frombits(0x3ff0000000000000)))
 			goto l0
 		}
-		t1 := m.fn68(f64_canon(float64(v1 + v1)))
+		t1 := m.fn71(f64_canon(float64(v1 + v1)))
 		v1 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) - float64(math.Float64frombits(0x4000000000000000)/float64(t1+math.Float64frombits(0x4000000000000000)))))
 		goto l0
 	}
 	if uint64(v0) >= uint64(i64(0x3fd058af00000000)) {
-		t2 := m.fn68(f64_canon(float64(v1 + v1)))
+		t2 := m.fn71(f64_canon(float64(v1 + v1)))
 		v1 = t2
 		v1 = f64_canon(float64(v1 / float64(v1+math.Float64frombits(0x4000000000000000))))
 		goto l0
 	}
 	if uint64(v0) >= uint64(i64(0x10000000000000)) {
-		t3 := m.fn68(f64_canon(float64(v1 * math.Float64frombits(0xc000000000000000))))
+		t3 := m.fn71(f64_canon(float64(v1 * math.Float64frombits(0xc000000000000000))))
 		v1 = t3
 		v1 = f64_canon(float64(f64_neg(v1) / float64(v1+math.Float64frombits(0x4000000000000000))))
 		goto l0
@@ -993,7 +993,7 @@ func (m *Module) Xtgamma_(v0 int64) int64 {
 		}
 		v5 = p13
 		v6 = f64_canon(float64(v2 + math.Float64frombits(0xbfe0000000000000)))
-		t14 := m.fn69(f64_neg(v4))
+		t14 := m.fn72(f64_neg(v4))
 		v3 = f64_canon(float64(float64(v3/v7) * t14))
 		if v1 < math.Float64frombits(0x0) {
 			v1 = f64_canon(float64(v2 * math.Float64frombits(0x3fe0000000000000)))
@@ -1008,25 +1008,25 @@ func (m *Module) Xtgamma_(v0 int64) int64 {
 			var p15 float64
 			switch v8 - i32(1) {
 			default:
-				t18 := fn67(v1, math.Float64frombits(0x0), i32(0))
+				t18 := fn70(v1, math.Float64frombits(0x0), i32(0))
 				p15 = t18
 				goto l9
 			case 0:
-				t19 := fn65(v1, math.Float64frombits(0x0))
+				t19 := fn68(v1, math.Float64frombits(0x0))
 				p15 = t19
 				goto l9
 			case 1:
-				t20 := fn67(f64_neg(v1), math.Float64frombits(0x0), i32(0))
+				t20 := fn70(f64_neg(v1), math.Float64frombits(0x0), i32(0))
 				p15 = t20
 				goto l9
 			case 2:
-				t21 := fn65(v1, math.Float64frombits(0x0))
+				t21 := fn68(v1, math.Float64frombits(0x0))
 				p15 = f64_neg(t21)
 			}
 		l9:
 			v3 = f64_canon(float64(math.Float64frombits(0xc00921fb54442d18) / float64(t16*float64(t17*p15))))
 		}
-		t22 := m.fn85(v4, f64_canon(float64(v6*math.Float64frombits(0x3fe0000000000000))))
+		t22 := m.fn88(v4, f64_canon(float64(v6*math.Float64frombits(0x3fe0000000000000))))
 		v2 = t22
 		p1 = f64_canon(float64(v2 * float64(v2*float64(v3+float64(float64(float64(v5*math.Float64frombits(0x40181945b9800000))*v3)/v4)))))
 	}
@@ -1038,11 +1038,11 @@ func (m *Module) Xtrunc_(v0 int64) int64 {
 	return int64(math.Float64bits(f64_canon(math.Trunc(math.Float64frombits(uint64(v0))))))
 }
 func (m *Module) Xy0_(v0 int64) int64 {
-	t0 := m.fn78(math.Float64frombits(uint64(v0)))
+	t0 := m.fn81(math.Float64frombits(uint64(v0)))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xy1_(v0 int64) int64 {
-	t0 := m.fn81(math.Float64frombits(uint64(v0)))
+	t0 := m.fn84(math.Float64frombits(uint64(v0)))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xatan2_(v0, v1 int64) int64 {
@@ -1069,7 +1069,7 @@ func (m *Module) Xatan2_(v0, v1 int64) int64 {
 		v5 = int32(int64(uint64(v0) >> 32))
 		v8 = int32(v0)
 		if v8|(v5-i32(0x3ff00000)) == 0 {
-			t3 := m.fn63(v2)
+			t3 := m.fn66(v2)
 			v3 = t3
 			goto l0
 		}
@@ -1119,7 +1119,7 @@ func (m *Module) Xatan2_(v0, v1 int64) int64 {
 							}
 							_ = math.Float64frombits(0x0)
 						}
-						t9 := m.fn63(f64_abs(f64_canon(float64(v2 / v4))))
+						t9 := m.fn66(f64_abs(f64_canon(float64(v2 / v4))))
 						p8 = t9
 					}
 				l6:
@@ -1433,8 +1433,8 @@ func (m *Module) Xhypot_(v0, v1 int64) int64 {
 			v5 = f64_canon(float64(v5 * math.Float64frombits(0x6bb0000000000000)))
 			p5 = math.Float64frombits(0x1430000000000000)
 		l2:
-			m.fn73(v2+i32(24), v2+i32(16), v5)
-			m.fn73(v2+i32(8), v2, v4)
+			m.fn76(v2+i32(24), v2+i32(16), v5)
+			m.fn76(v2+i32(8), v2, v4)
 			t6 := math.Float64frombits(load64(mem, uint32(v2)))
 			t7 := math.Float64frombits(load64(mem, uint64(uint32(v2))+16))
 			t8 := math.Float64frombits(load64(mem, uint64(uint32(v2))+8))
@@ -1526,193 +1526,29 @@ l0:
 	return int64(math.Float64bits(v4))
 }
 func (m *Module) Xpow_(v0, v1 int64) int64 {
-	t0 := m.fn85(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)))
+	t0 := m.fn88(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xremainder_(v0, v1 int64) int64 {
-	mem := m.memory
-	var v2, v3, v4, v5, v6 int32
-	var v7, v8, v9 float64
-	var v10, v11, v12 int64
+	var v2 int32
+	var _ float64
 	t0 := m.g0
-	v5 = t0 - i32(16)
-	m.g0 = v5
-	v7 = math.Float64frombits(uint64(v0))
-	store32(mem, uint64(uint32(v5))+12, uint32(i32(0)))
-	{
-		v8 = math.Float64frombits(uint64(v1))
-		var p1 int32
-		if v8 == math.Float64frombits(0x0) {
-			p1 = 1
-		}
-		var p2 int32
-		if v8 != v8 {
-			p2 = 1
-		}
-		if p1|p2 == 0 {
-			v10 = int64(math.Float64bits(v7))
-			v2 = int32(int64(uint64(v10)>>52)) & i32(2047)
-			if v2 != i32(2047) {
-				goto l0
-			}
-		}
-		v7 = f64_canon(float64(v7 * v8))
-		v7 = f64_canon(float64(v7 / v7))
-		goto l1
-	}
-l0:
-	{
-		if v7 == math.Float64frombits(0x0) {
-			goto l1
-		}
-		v11 = int64(math.Float64bits(v8))
-		v4 = int32(int64(uint64(v11)>>52)) & i32(2047)
-		var p3 int64
-		if v2 == 0 {
-			v0 = v10 << 12
-		l3:
-			if v0 >= i64(0) {
-				v3 = v3 + i32(1)
-				v0 = v0 << 1
-				goto l3
-			}
-			v2 = i32(0) - v3
-			t4 := i64_shl(v10, int64(uint32(v3+i32(1))))
-			p3 = t4
-			goto l4
-		}
-		p3 = v10&i64(0xfffffffffffff) | i64(0x10000000000000)
-	l4:
-		v0 = p3
-		var p5 int64
-		if v4 == 0 {
-			v1 = v11 << 12
-			v3 = i32(0)
-		l5:
-			if v1 >= i64(0) {
-				v3 = v3 + i32(1)
-				v1 = v1 << 1
-				goto l5
-			}
-			v4 = i32(0) - v3
-			t6 := i64_shl(v11, int64(uint32(v3+i32(1))))
-			p5 = t6
-			goto l6
-		}
-		p5 = v11&i64(0xfffffffffffff) | i64(0x10000000000000)
-	l6:
-		v1 = p5
-		var p7 int64
-		{
-			if v2 >= v4 {
-				v3 = i32(0)
-			l7:
-				{
-					v12 = v0 - v1
-					var p8 int32
-					if v12 >= i64(0) {
-						p8 = 1
-					}
-					v6 = p8
-					p9 := v0
-					if v6 != 0 {
-						p9 = v12
-					}
-					v0 = p9
-					v3 = v3 | v6
-					if v2 > v4 {
-						v2 = v2 - i32(1)
-						v3 = v3 << 1
-						v0 = v0 << 1
-						goto l7
-					}
-				}
-				if v0 == 0 {
-					v2 = i32(-60)
-					v0 = i64(0)
-					goto l8
-				}
-				v2 = v4
-			l10:
-				if uint64(v0) > uint64(i64(0xfffffffffffff)) {
-					goto l9
-				}
-				v2 = v2 - i32(1)
-				v0 = v0 << 1
-				goto l10
-			}
-			v3 = i32(0)
-			if v2+i32(1) != v4 {
-				goto l1
-			}
-		l9:
-			if v2 <= i32(0) {
-				goto l8
-			}
-			t10 := v0 - i64(0x10000000000000) | int64(uint32(v2))<<52
-			p7 = t10
-			goto l11
-		}
-	l8:
-		p7 = i64_shr_u(v0, int64(uint32(i32(1)-v2)))
-	l11:
-		v8 = f64_abs(v8)
-		v7 = math.Float64frombits(uint64(p7))
-		{
-			if v2 == v4 {
-				goto l12
-			}
-			if v2+i32(1) != v4 {
-				goto l13
-			}
-			t11 := v8
-			v9 = f64_canon(float64(v7 + v7))
-			if t11 < v9 {
-				goto l12
-			}
-			var p12 int32
-			if v3&i32(1) == 0 {
-				p12 = 1
-			}
-			var p13 int32
-			if v8 != v9 {
-				p13 = 1
-			}
-			if p12|p13 != 0 {
-				goto l13
-			}
-		}
-	l12:
-		v3 = v3 + i32(1)
-		v7 = f64_canon(float64(v7 - v8))
-	l13:
-		t14 := v5
-		v2 = v3 & i32(0x7fffffff)
-		p15 := v2
-		if v10^v11 < i64(0) {
-			p15 = i32(0) - v2
-		}
-		store32(mem, uint64(uint32(t14))+12, uint32(p15))
-		p16 := v7
-		if v10 < i64(0) {
-			p16 = f64_neg(v7)
-		}
-		v7 = p16
-	}
-l1:
-	m.g0 = v5 + i32(16)
-	return int64(math.Float64bits(v7))
+	v2 = t0 - i32(16)
+	m.g0 = v2
+	t1 := m.fn90(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)), v2+i32(12))
+	m.g0 = v2 + i32(16)
+	return int64(math.Float64bits(t1))
 }
 func (m *Module) Xfma_(v0, v1, v2 int64) int64 {
 	t0 := m._fma(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)), math.Float64frombits(uint64(v2)))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xilogb_(v0 int64) int64 {
-	t0 := m.fn74(math.Float64frombits(uint64(v0)))
+	t0 := m.fn77(math.Float64frombits(uint64(v0)))
 	return int64(t0)
 }
-func (m *Module) Xldexp_(v0, v1 int64) int64 {
-	t0 := fn82(math.Float64frombits(uint64(v0)), int32(v1))
+func (m *Module) Xscalbn_(v0, v1 int64) int64 {
+	t0 := fn85(math.Float64frombits(uint64(v0)), int32(v1))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xjn_(v0, v1 int64) int64 {
@@ -1733,7 +1569,7 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 		{
 			v12 = int32(v0)
 			if v12 == 0 {
-				t3 := m.fn75(v2)
+				t3 := m.fn78(v2)
 				p2 = t3
 				goto l0
 			}
@@ -1754,7 +1590,7 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 				if v15 != 0 {
 					p8 = f64_neg(v2)
 				}
-				t9 := m.fn79(p8)
+				t9 := m.fn82(p8)
 				p2 = t9
 				goto l0
 			}
@@ -1776,27 +1612,27 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 				v2 = float64(uint32(v11))
 				if t12 > v2 {
 					if uint32(v10) >= uint32(i32(0x52d00000)) {
-						t13 := m.fn64(v4)
+						t13 := m.fn67(v4)
 						v2 = t13
 						var p14 float64
 						switch v11&i32(3) - i32(1) {
 						default:
-							t15 := m.fn77(v4)
+							t15 := m.fn80(v4)
 							t16 := f64_canon(float64(t15 - v2))
 							p14 = t16
 							goto l6
 						case 0:
-							t17 := m.fn77(v4)
+							t17 := m.fn80(v4)
 							t18 := f64_canon(float64(f64_neg(v2) - t17))
 							p14 = t18
 							goto l6
 						case 1:
-							t19 := m.fn77(v4)
+							t19 := m.fn80(v4)
 							t20 := f64_canon(float64(v2 - t19))
 							p14 = t20
 							goto l6
 						case 2:
-							t21 := m.fn77(v4)
+							t21 := m.fn80(v4)
 							p14 = f64_canon(float64(v2 + t21))
 						}
 					l6:
@@ -1808,9 +1644,9 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 						p22 = v11
 					}
 					v10 = p22
-					t23 := m.fn75(v4)
+					t23 := m.fn78(v4)
 					v2 = t23
-					t24 := m.fn79(v4)
+					t24 := m.fn82(v4)
 					v3 = t24
 					v11 = i32(2)
 				l7:
@@ -1876,7 +1712,7 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 							v10 = v10 - i32(1)
 							goto l10
 						}
-						t29 := m.fn62(f64_abs(v7))
+						t29 := m.fn65(f64_abs(v7))
 						if float64(v8*t29) < math.Float64frombits(0x40862e42fefa39ef) {
 							goto l11
 						}
@@ -1922,9 +1758,9 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 				}
 				v6 = v2
 			l12:
-				t33 := m.fn75(v4)
+				t33 := m.fn78(v4)
 				v2 = t33
-				t34 := m.fn79(v4)
+				t34 := m.fn82(v4)
 				t35 := f64_abs(v2)
 				v7 = t34
 				if t35 >= f64_abs(v7) {
@@ -1981,7 +1817,7 @@ func (m *Module) Xyn_(v0, v1 int64) int64 {
 			_ = math.Float64frombits(0x0)
 			v6 = int32(v0)
 			if v6 == 0 {
-				t6 := m.fn78(v3)
+				t6 := m.fn81(v3)
 				p3 = t6
 				goto l0
 			}
@@ -1992,7 +1828,7 @@ func (m *Module) Xyn_(v0, v1 int64) int64 {
 			}
 			v9 = p7
 			if v9 == 0 {
-				t8 := m.fn81(v3)
+				t8 := m.fn84(v3)
 				v2 = t8
 				p9 := v2
 				if v8 == i32(-0x7fffffff) {
@@ -2003,27 +1839,27 @@ func (m *Module) Xyn_(v0, v1 int64) int64 {
 			}
 			{
 				if uint32(v7) >= uint32(i32(0x52d00000)) {
-					t10 := m.fn77(v3)
+					t10 := m.fn80(v3)
 					v2 = t10
 					var p11 float64
 					switch v9&i32(3) - i32(1) {
 					default:
-						t12 := m.fn64(v3)
+						t12 := m.fn67(v3)
 						t13 := f64_canon(float64(f64_neg(v2) - t12))
 						p11 = t13
 						goto l5
 					case 0:
-						t14 := m.fn64(v3)
+						t14 := m.fn67(v3)
 						t15 := f64_canon(float64(t14 - v2))
 						p11 = t15
 						goto l5
 					case 1:
-						t16 := m.fn64(v3)
+						t16 := m.fn67(v3)
 						t17 := f64_canon(float64(v2 + t16))
 						p11 = t17
 						goto l5
 					case 2:
-						t18 := m.fn64(v3)
+						t18 := m.fn67(v3)
 						p11 = f64_canon(float64(v2 - t18))
 					}
 				l5:
@@ -2031,9 +1867,9 @@ func (m *Module) Xyn_(v0, v1 int64) int64 {
 					goto l6
 				}
 				v7 = i32(0)
-				t19 := m.fn78(v3)
+				t19 := m.fn81(v3)
 				v4 = t19
-				t20 := m.fn81(v3)
+				t20 := m.fn84(v3)
 				v2 = t20
 				v6 = i32(2)
 			l7:
@@ -2085,7 +1921,7 @@ func (m *Module) Xfrexp_(v0 int64) int64 {
 	v1 = t0 - i32(16)
 	m.g0 = v1
 	store32(mem, uint64(uint32(v1))+12, uint32(i32(0)))
-	t1 := m.fn72(math.Float64frombits(uint64(v0)), v1+i32(12))
+	t1 := m.fn75(math.Float64frombits(uint64(v0)), v1+i32(12))
 	m.g0 = v1 + i32(16)
 	return int64(math.Float64bits(t1))
 }
@@ -2096,7 +1932,7 @@ func (m *Module) Xfrexp_2(v0 int64) int64 {
 	v1 = t0 - i32(16)
 	m.g0 = v1
 	store32(mem, uint64(uint32(v1))+12, uint32(i32(0)))
-	_ = m.fn72(math.Float64frombits(uint64(v0)), v1+i32(12))
+	_ = m.fn75(math.Float64frombits(uint64(v0)), v1+i32(12))
 	t2 := int64(int32(load32(mem, uint64(uint32(v1))+12)))
 	m.g0 = v1 + i32(16)
 	return t2
@@ -2109,7 +1945,7 @@ func (m *Module) Xmodf_(v0 int64) int64 {
 	v1 = t0 - i32(16)
 	m.g0 = v1
 	store64(mem, uint64(uint32(v1))+8, uint64(i64(0)))
-	t1 := m.fn84(math.Float64frombits(uint64(v0)), v1+i32(8))
+	t1 := m.fn87(math.Float64frombits(uint64(v0)), v1+i32(8))
 	m.g0 = v1 + i32(16)
 	return int64(math.Float64bits(t1))
 }
@@ -2120,7 +1956,7 @@ func (m *Module) Xmodf_2(v0 int64) int64 {
 	v1 = t0 - i32(16)
 	m.g0 = v1
 	store64(mem, uint64(uint32(v1))+8, uint64(i64(0)))
-	_ = m.fn84(math.Float64frombits(uint64(v0)), v1+i32(8))
+	_ = m.fn87(math.Float64frombits(uint64(v0)), v1+i32(8))
 	t2 := int64(load64(mem, uint64(uint32(v1))+8))
 	m.g0 = v1 + i32(16)
 	return t2
@@ -2133,7 +1969,7 @@ func (m *Module) Xlgamma_r_(v0 int64) int64 {
 	v1 = t0 - i32(16)
 	m.g0 = v1
 	store32(mem, uint64(uint32(v1))+12, uint32(i32(0)))
-	t1 := m.fn83(math.Float64frombits(uint64(v0)), v1+i32(12))
+	t1 := m.fn86(math.Float64frombits(uint64(v0)), v1+i32(12))
 	m.g0 = v1 + i32(16)
 	return int64(math.Float64bits(t1))
 }
@@ -2144,15 +1980,46 @@ func (m *Module) Xlgamma_r_2(v0 int64) int64 {
 	v1 = t0 - i32(16)
 	m.g0 = v1
 	store32(mem, uint64(uint32(v1))+12, uint32(i32(0)))
-	_ = m.fn83(math.Float64frombits(uint64(v0)), v1+i32(12))
+	_ = m.fn86(math.Float64frombits(uint64(v0)), v1+i32(12))
 	t2 := int64(int32(load32(mem, uint64(uint32(v1))+12)))
 	m.g0 = v1 + i32(16)
 	return t2
 }
-func fn60(v0 float64) float64 {
+func (m *Module) Xremquo_(v0, v1 int64) int64 {
+	mem := m.memory
+	var v2 int32
+	var _ float64
+	t0 := m.g0
+	v2 = t0 - i32(16)
+	m.g0 = v2
+	store32(mem, uint64(uint32(v2))+12, uint32(i32(0)))
+	t1 := m.fn90(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)), v2+i32(12))
+	m.g0 = v2 + i32(16)
+	return int64(math.Float64bits(t1))
+}
+func (m *Module) Xremquo_2(v0, v1 int64) int64 {
+	mem := m.memory
+	var v2 int32
+	t0 := m.g0
+	v2 = t0 - i32(16)
+	m.g0 = v2
+	store32(mem, uint64(uint32(v2))+12, uint32(i32(0)))
+	_ = m.fn90(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)), v2+i32(12))
+	t2 := int64(int32(load32(mem, uint64(uint32(v2))+12)))
+	m.g0 = v2 + i32(16)
+	return t2
+}
+func (m *Module) Xlgamma_2(v0 int64) int64 {
+	mem := m.memory
+	store32(mem, uint32(i32(83224)), uint32(i32(0)))
+	_ = m.fn86(math.Float64frombits(uint64(v0)), i32(83224))
+	t1 := int64(int32(load32(mem, uint32(i32(83224)))))
+	return t1
+}
+func fn63(v0 float64) float64 {
 	return f64_canon(float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*math.Float64frombits(0x3f023de10dfdf709))+math.Float64frombits(0x3f49efe07501b288)))+math.Float64frombits(0xbfa48228b5688f3b)))+math.Float64frombits(0x3fc9c1550e884455)))+math.Float64frombits(0xbfd4d61203eb6f7d)))+math.Float64frombits(0x3fc5555555555555))) / float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*math.Float64frombits(0x3fb3b8c5b12e9282))+math.Float64frombits(0xbfe6066c1b8d0159)))+math.Float64frombits(0x40002ae59c598ac8)))+math.Float64frombits(0xc0033a271c8a2d4b)))+math.Float64frombits(0x3ff0000000000000))))
 }
-func (m *Module) fn61(v0 float64) float64 {
+func (m *Module) fn64(v0 float64) float64 {
 	mem := m.memory
 	var v1, v2, v3, v4, v5 float64
 	var v6, v7 int32
@@ -2222,7 +2089,7 @@ func (m *Module) fn61(v0 float64) float64 {
 l1:
 	return v0
 }
-func (m *Module) fn62(v0 float64) float64 {
+func (m *Module) fn65(v0 float64) float64 {
 	mem := m.memory
 	var v1, v2, v3, v4, v5 float64
 	var v6, v7 int64
@@ -2291,7 +2158,7 @@ func (m *Module) fn62(v0 float64) float64 {
 l0:
 	return v0
 }
-func (m *Module) fn63(v0 float64) float64 {
+func (m *Module) fn66(v0 float64) float64 {
 	mem := m.memory
 	var v1, v2, v3 float64
 	var v4, v5 int32
@@ -2358,7 +2225,7 @@ func (m *Module) fn63(v0 float64) float64 {
 l0:
 	return v0
 }
-func (m *Module) fn64(v0 float64) float64 {
+func (m *Module) fn67(v0 float64) float64 {
 	mem := m.memory
 	var v1 float64
 	var v2, v3 int32
@@ -2374,7 +2241,7 @@ func (m *Module) fn64(v0 float64) float64 {
 				p1 = math.Float64frombits(0x3ff0000000000000)
 				goto l0
 			}
-			t2 := fn65(v0, math.Float64frombits(0x0))
+			t2 := fn68(v0, math.Float64frombits(0x0))
 			p1 = t2
 			goto l0
 		}
@@ -2383,7 +2250,7 @@ func (m *Module) fn64(v0 float64) float64 {
 			p1 = t3
 			goto l0
 		}
-		t4 := m.fn66(v0, v2)
+		t4 := m.fn69(v0, v2)
 		v3 = t4
 		t5 := math.Float64frombits(load64(mem, uint64(uint32(v2))+8))
 		v0 = t5
@@ -2391,21 +2258,21 @@ func (m *Module) fn64(v0 float64) float64 {
 		v1 = t6
 		switch v3&i32(3) - i32(1) {
 		default:
-			t7 := fn65(v1, v0)
+			t7 := fn68(v1, v0)
 			p1 = t7
 			goto l0
 		case 0:
-			t8 := fn67(v1, v0, i32(1))
+			t8 := fn70(v1, v0, i32(1))
 			t9 := f64_neg(t8)
 			p1 = t9
 			goto l0
 		case 1:
-			t10 := fn65(v1, v0)
+			t10 := fn68(v1, v0)
 			t11 := f64_neg(t10)
 			p1 = t11
 			goto l0
 		case 2:
-			t12 := fn67(v1, v0, i32(1))
+			t12 := fn70(v1, v0, i32(1))
 			p1 = t12
 		}
 	}
@@ -2413,7 +2280,7 @@ l0:
 	m.g0 = v2 + i32(16)
 	return p1
 }
-func fn65(v0, v1 float64) float64 {
+func fn68(v0, v1 float64) float64 {
 	var v2, v3, v4 float64
 	v2 = f64_canon(float64(v0 * v0))
 	v3 = f64_canon(float64(v2 * math.Float64frombits(0x3fe0000000000000)))
@@ -2425,7 +2292,7 @@ func fn65(v0, v1 float64) float64 {
 	v3 = f64_canon(float64(v2 * v2))
 	return f64_canon(float64(t0 + float64(t1+float64(float64(t2*float64(t3+float64(float64(v3*v3)*float64(float64(v2*float64(float64(v2*math.Float64frombits(0xbda8fae9be8838d4))+math.Float64frombits(0x3e21ee9ebdb4b1c4)))+math.Float64frombits(0xbe927e4f809c52ad)))))-float64(v0*v1)))))
 }
-func (m *Module) fn66(v0 float64, v1 int32) int32 {
+func (m *Module) fn69(v0 float64, v1 int32) int32 {
 	mem := m.memory
 	var v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25 int32
 	var v26, v27, v28, v29 float64
@@ -2723,7 +2590,7 @@ func (m *Module) fn66(v0 float64, v1 int32) int32 {
 					v4 = v4 - i32(8)
 					goto l10
 				}
-				t38 := fn82(v0, v11)
+				t38 := fn85(v0, v11)
 				v0 = t38
 				v0 = f64_canon(float64(float64(math.Floor(float64(v0*math.Float64frombits(0x3fc0000000000000)))*math.Float64frombits(0xc020000000000000)) + v0))
 				v14 = i32_trunc_sat_f64_s(v0)
@@ -2817,7 +2684,7 @@ func (m *Module) fn66(v0 float64, v1 int32) int32 {
 							if v5 == 0 {
 								goto l13
 							}
-							t50 := fn82(math.Float64frombits(0x3ff0000000000000), v11)
+							t50 := fn85(math.Float64frombits(0x3ff0000000000000), v11)
 							v0 = f64_canon(float64(v0 - t50))
 							goto l13
 						}
@@ -2906,7 +2773,7 @@ func (m *Module) fn66(v0 float64, v1 int32) int32 {
 				}
 			}
 			{
-				t60 := fn82(v0, i32(24)-v15)
+				t60 := fn85(v0, i32(24)-v15)
 				v0 = t60
 				if v0 >= math.Float64frombits(0x4170000000000000) {
 					t61 := v7 + i32(480) + v2<<2
@@ -2923,7 +2790,7 @@ func (m *Module) fn66(v0 float64, v1 int32) int32 {
 		l23:
 			v4 = v7 + v2<<3
 			v6 = v7 + i32(480) + v2<<2
-			t62 := fn82(math.Float64frombits(0x3ff0000000000000), v11)
+			t62 := fn85(math.Float64frombits(0x3ff0000000000000), v11)
 			v0 = t62
 			v3 = v2
 		l33:
@@ -3030,7 +2897,7 @@ l1:
 	m.g0 = v10 + i32(48)
 	return v2
 }
-func fn67(v0, v1 float64, v2 int32) float64 {
+func fn70(v0, v1 float64, v2 int32) float64 {
 	var v3, v4, v5 float64
 	v3 = f64_canon(float64(v0 * v0))
 	v5 = f64_canon(float64(float64(float64(v3*float64(v3*v3))*float64(float64(v3*math.Float64frombits(0x3de5d93a5acfd57c))+math.Float64frombits(0xbe5ae5e68a2b9ceb))) + float64(float64(v3*float64(float64(v3*math.Float64frombits(0x3ec71de357b1fe7d))+math.Float64frombits(0xbf2a01a019c161d5)))+math.Float64frombits(0x3f8111111110f8a6))))
@@ -3040,7 +2907,7 @@ func fn67(v0, v1 float64, v2 int32) float64 {
 	}
 	return f64_canon(float64(v0 - float64(float64(float64(v3*float64(float64(v1*math.Float64frombits(0x3fe0000000000000))-float64(v4*v5)))-v1)+float64(v4*math.Float64frombits(0x3fc5555555555549)))))
 }
-func (m *Module) fn68(v0 float64) float64 {
+func (m *Module) fn71(v0 float64) float64 {
 	mem := m.memory
 	var v1, v2 int32
 	var v3, v4, v5, v6 float64
@@ -3145,7 +3012,7 @@ func (m *Module) fn68(v0 float64) float64 {
 l0:
 	return v0
 }
-func (m *Module) fn69(v0 float64) float64 {
+func (m *Module) fn72(v0 float64) float64 {
 	mem := m.memory
 	var v1, v2, v3 float64
 	var v4, v5, v6 int32
@@ -3226,11 +3093,11 @@ func (m *Module) fn69(v0 float64) float64 {
 l1:
 	return p1
 }
-func (m *Module) fn70(v0, v1 float64) float64 {
-	t0 := m.fn69(f64_canon(float64(v0 + math.Float64frombits(0xc0962066151add8b))))
+func (m *Module) fn73(v0, v1 float64) float64 {
+	t0 := m.fn72(f64_canon(float64(v0 + math.Float64frombits(0xc0962066151add8b))))
 	return f64_canon(float64(float64(float64(v1*math.Float64frombits(0x7fc0000000000000))*t0) * math.Float64frombits(0x7fc0000000000000)))
 }
-func (m *Module) fn71(v0 int32, v1 float64) float64 {
+func (m *Module) fn74(v0 int32, v1 float64) float64 {
 	var v2, v3 float64
 	v3 = f64_abs(v1)
 	if uint32(v0) <= uint32(i32(0x3ff3ffff)) {
@@ -3239,7 +3106,7 @@ func (m *Module) fn71(v0 int32, v1 float64) float64 {
 	}
 	v1 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / float64(v1*v1)))
 	v2 = math.Float64frombits(uint64(int64(math.Float64bits(v3)) & i64(0x7fffffff00000000)))
-	t0 := m.fn69(f64_canon(float64(math.Float64frombits(0xbfe2000000000000) - float64(v2*v2))))
+	t0 := m.fn72(f64_canon(float64(math.Float64frombits(0xbfe2000000000000) - float64(v2*v2))))
 	t2 := f64_canon(float64(float64(v2-v3) * float64(v3+v2)))
 	var p1 float64
 	if uint32(v0) <= uint32(i32(0x4006db6c)) {
@@ -3251,10 +3118,10 @@ func (m *Module) fn71(v0 int32, v1 float64) float64 {
 	v2 = f64_canon(float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*math.Float64frombits(0xc03670e242712d62))+math.Float64frombits(0x407da874e79fe763)))+math.Float64frombits(0x40a3f219cedf3be6)))+math.Float64frombits(0x40a8ffb7688c246a)))+math.Float64frombits(0x409802eb189d5118)))+math.Float64frombits(0x40745cae221b9f0a))) + math.Float64frombits(0x403e568b261d5190)))
 	p1 = f64_canon(float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*math.Float64frombits(0xc07e384e9bdc383f))+math.Float64frombits(0xc09004616a2e5992)))+math.Float64frombits(0xc083ec881375f228)))+math.Float64frombits(0xc064145d43c5ed98)))+math.Float64frombits(0xc031c209555f995a)))+math.Float64frombits(0xbfe993ba70c285de))) + math.Float64frombits(0xbf84341239e86f4a)))
 l0:
-	t4 := m.fn69(f64_canon(float64(t2 + float64(p1/float64(float64(v1*v2)+math.Float64frombits(0x3ff0000000000000))))))
+	t4 := m.fn72(f64_canon(float64(t2 + float64(p1/float64(float64(v1*v2)+math.Float64frombits(0x3ff0000000000000))))))
 	return f64_canon(float64(float64(t0*t4) / v3))
 }
-func (m *Module) fn72(v0 float64, v1 int32) float64 {
+func (m *Module) fn75(v0 float64, v1 int32) float64 {
 	mem := m.memory
 	var v2 int32
 	var v3 int64
@@ -3267,7 +3134,7 @@ func (m *Module) fn72(v0 float64, v1 int32) float64 {
 			if v0 == math.Float64frombits(0x0) {
 				p0 = i32(0)
 			} else {
-				t2 := m.fn72(f64_canon(float64(v0*math.Float64frombits(0x43f0000000000000))), v1)
+				t2 := m.fn75(f64_canon(float64(v0*math.Float64frombits(0x43f0000000000000))), v1)
 				v0 = t2
 				t3 := int32(load32(mem, uint32(v1)))
 				p0 = t3 + i32(-64)
@@ -3280,7 +3147,7 @@ func (m *Module) fn72(v0 float64, v1 int32) float64 {
 	}
 	return v0
 }
-func (m *Module) fn73(v0, v1 int32, v2 float64) {
+func (m *Module) fn76(v0, v1 int32, v2 float64) {
 	mem := m.memory
 	var v3, v4 float64
 	t0 := v0
@@ -3293,7 +3160,7 @@ func (m *Module) fn73(v0, v1 int32, v2 float64) {
 	v3 = f64_canon(float64(t2 - v2))
 	store64(mem, uint32(t1), math.Float64bits(f64_canon(float64(float64(v3*v3)+float64(float64(float64(v2+v2)*v3)+float64(float64(v2*v2)-v4))))))
 }
-func (m *Module) fn74(v0 float64) int32 {
+func (m *Module) fn77(v0 float64) int32 {
 	mem := m.memory
 	var v1, v2 int32
 	var v3 int64
@@ -3332,7 +3199,7 @@ l0:
 l2:
 	return v1
 }
-func (m *Module) fn75(v0 float64) float64 {
+func (m *Module) fn78(v0 float64) float64 {
 	var v1 float64
 	var v2 int32
 	v2 = int32(int64(uint64(int64(math.Float64bits(v0)))>>32)) & i32(0x7fffffff)
@@ -3341,7 +3208,7 @@ func (m *Module) fn75(v0 float64) float64 {
 	}
 	v1 = f64_abs(v0)
 	if uint32(v2) >= uint32(i32(0x40000000)) {
-		t0 := m.fn76(v2, v1, i32(0))
+		t0 := m.fn79(v2, v1, i32(0))
 		return t0
 	}
 	if uint32(v2) >= uint32(i32(0x3f200000)) {
@@ -3356,13 +3223,13 @@ func (m *Module) fn75(v0 float64) float64 {
 	}
 	return f64_canon(float64(math.Float64frombits(0x3ff0000000000000) - p2))
 }
-func (m *Module) fn76(v0 int32, v1 float64, v2 int32) float64 {
+func (m *Module) fn79(v0 int32, v1 float64, v2 int32) float64 {
 	mem := m.memory
 	var v3, v4, v5, v6 float64
 	var v7, v8, v9 int32
-	t0 := m.fn77(v1)
+	t0 := m.fn80(v1)
 	v3 = t0
-	t1 := m.fn64(v1)
+	t1 := m.fn67(v1)
 	t2 := v3
 	v4 = t1
 	p3 := v4
@@ -3375,7 +3242,7 @@ func (m *Module) fn76(v0 int32, v1 float64, v2 int32) float64 {
 		if uint32(v0) > uint32(i32(0x7fdfffff)) {
 			goto l0
 		}
-		t4 := m.fn64(f64_canon(float64(v1 + v1)))
+		t4 := m.fn67(f64_canon(float64(v1 + v1)))
 		v4 = f64_neg(t4)
 		if float64(v3*v5) < math.Float64frombits(0x0) {
 			t5 := v4
@@ -3489,7 +3356,7 @@ func (m *Module) fn76(v0 int32, v1 float64, v2 int32) float64 {
 l0:
 	return f64_canon(float64(float64(v6*math.Float64frombits(0x3fe20dd750429b6d)) / math.Sqrt(v1)))
 }
-func (m *Module) fn77(v0 float64) float64 {
+func (m *Module) fn80(v0 float64) float64 {
 	mem := m.memory
 	var v1, v2 int32
 	var v3 float64
@@ -3508,7 +3375,7 @@ func (m *Module) fn77(v0 float64) float64 {
 				store64(mem, uint32(t2), math.Float64bits(p1))
 				goto l0
 			}
-			t3 := fn67(v0, math.Float64frombits(0x0), i32(0))
+			t3 := fn70(v0, math.Float64frombits(0x0), i32(0))
 			v0 = t3
 			goto l0
 		}
@@ -3516,7 +3383,7 @@ func (m *Module) fn77(v0 float64) float64 {
 			v0 = f64_canon(float64(v0 - v0))
 			goto l0
 		}
-		t4 := m.fn66(v0, v1)
+		t4 := m.fn69(v0, v1)
 		v2 = t4
 		t5 := math.Float64frombits(load64(mem, uint64(uint32(v1))+8))
 		v0 = t5
@@ -3524,19 +3391,19 @@ func (m *Module) fn77(v0 float64) float64 {
 		v3 = t6
 		switch v2&i32(3) - i32(1) {
 		default:
-			t7 := fn67(v3, v0, i32(1))
+			t7 := fn70(v3, v0, i32(1))
 			v0 = t7
 			goto l0
 		case 0:
-			t8 := fn65(v3, v0)
+			t8 := fn68(v3, v0)
 			v0 = t8
 			goto l0
 		case 1:
-			t9 := fn67(v3, v0, i32(1))
+			t9 := fn70(v3, v0, i32(1))
 			v0 = f64_neg(t9)
 			goto l0
 		case 2:
-			t10 := fn65(v3, v0)
+			t10 := fn68(v3, v0)
 			v0 = f64_neg(t10)
 		}
 	}
@@ -3544,7 +3411,7 @@ l0:
 	m.g0 = v1 + i32(16)
 	return v0
 }
-func (m *Module) fn78(v0 float64) float64 {
+func (m *Module) fn81(v0 float64) float64 {
 	var v1 int64
 	var v2 int32
 	v1 = int64(math.Float64bits(v0))
@@ -3559,20 +3426,20 @@ func (m *Module) fn78(v0 float64) float64 {
 		return f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / v0))
 	}
 	if uint64(v1) >= uint64(i64(0x4000000000000000)) {
-		t0 := m.fn76(v2, v0, i32(1))
+		t0 := m.fn79(v2, v0, i32(1))
 		return t0
 	}
 	if uint64(v1) >= uint64(i64(0x3e40000000000000)) {
-		t1 := m.fn75(v0)
-		t2 := m.fn62(v0)
+		t1 := m.fn78(v0)
+		t2 := m.fn65(v0)
 		t3 := f64_canon(float64(float64(t1*t2) * math.Float64frombits(0x3fe45f306dc9c883)))
 		v0 = f64_canon(float64(v0 * v0))
 		return f64_canon(float64(t3 + float64(float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*math.Float64frombits(0xbdc5e43d693fb3c8))+math.Float64frombits(0x3e5500573b4eabd4)))+math.Float64frombits(0xbecffea773d25cad)))+math.Float64frombits(0x3f36c54d20b29b6b)))+math.Float64frombits(0xbf8c4ce8b16cfa97)))+math.Float64frombits(0x3fc69d019de9e3fc)))+math.Float64frombits(0xbfb2e4d699cbd01f))/float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*math.Float64frombits(0x3dfe50183bd6d9ef))+math.Float64frombits(0x3e91642d7ff202fd)))+math.Float64frombits(0x3f13ecbbf578c6c1)))+math.Float64frombits(0x3f8a127091c9c71a)))+math.Float64frombits(0x3ff0000000000000)))))
 	}
-	t4 := m.fn62(v0)
+	t4 := m.fn65(v0)
 	return f64_canon(float64(float64(t4*math.Float64frombits(0x3fe45f306dc9c883)) + math.Float64frombits(0xbfb2e4d699cbd01f)))
 }
-func (m *Module) fn79(v0 float64) float64 {
+func (m *Module) fn82(v0 float64) float64 {
 	var v1 int32
 	var v2 int64
 	v2 = int64(math.Float64bits(v0))
@@ -3581,7 +3448,7 @@ func (m *Module) fn79(v0 float64) float64 {
 		return f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / float64(v0*v0)))
 	}
 	if uint32(v1) >= uint32(i32(0x40000000)) {
-		t0 := m.fn80(v1, f64_abs(v0), i32(0), int32(int64(uint64(v2)>>63)))
+		t0 := m.fn83(v1, f64_abs(v0), i32(0), int32(int64(uint64(v2)>>63)))
 		return t0
 	}
 	t2 := v0
@@ -3594,18 +3461,18 @@ func (m *Module) fn79(v0 float64) float64 {
 	}
 	return f64_canon(float64(t2 * float64(p1+math.Float64frombits(0x3fe0000000000000))))
 }
-func (m *Module) fn80(v0 int32, v1 float64, v2, v3 int32) float64 {
+func (m *Module) fn83(v0 int32, v1 float64, v2, v3 int32) float64 {
 	mem := m.memory
 	var v4, v5, v6, v7 float64
 	var v8, v9, v10 int32
-	t0 := m.fn77(v1)
+	t0 := m.fn80(v1)
 	v5 = t0
 	p1 := v5
 	if v2 != 0 {
 		p1 = f64_neg(v5)
 	}
 	v4 = p1
-	t2 := m.fn64(v1)
+	t2 := m.fn67(v1)
 	t3 := v4
 	v6 = t2
 	v7 = f64_canon(float64(t3 - v6))
@@ -3613,7 +3480,7 @@ func (m *Module) fn80(v0 int32, v1 float64, v2, v3 int32) float64 {
 		if uint32(v0) > uint32(i32(0x7fdfffff)) {
 			goto l0
 		}
-		t4 := m.fn64(f64_canon(float64(v1 + v1)))
+		t4 := m.fn67(f64_canon(float64(v1 + v1)))
 		v5 = t4
 		if float64(v4*v6) > math.Float64frombits(0x0) {
 			t5 := v5
@@ -3731,7 +3598,7 @@ l0:
 	}
 	return f64_canon(float64(float64(p41*math.Float64frombits(0x3fe20dd750429b6d)) / math.Sqrt(v1)))
 }
-func (m *Module) fn81(v0 float64) float64 {
+func (m *Module) fn84(v0 float64) float64 {
 	var v1 float64
 	var v2 int64
 	var v3 int32
@@ -3747,7 +3614,7 @@ func (m *Module) fn81(v0 float64) float64 {
 		return f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / v0))
 	}
 	if uint64(v2) >= uint64(i64(0x4000000000000000)) {
-		t0 := m.fn80(v3, v0, i32(1), i32(0))
+		t0 := m.fn83(v3, v0, i32(1), i32(0))
 		return t0
 	}
 	if uint64(v2) <= uint64(i64(0x3c8fffffffffffff)) {
@@ -3755,11 +3622,11 @@ func (m *Module) fn81(v0 float64) float64 {
 	}
 	t1 := v0
 	v1 = f64_canon(float64(v0 * v0))
-	t2 := m.fn79(v0)
-	t3 := m.fn62(v0)
+	t2 := m.fn82(v0)
+	t3 := m.fn65(v0)
 	return f64_canon(float64(float64(t1*float64(float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*math.Float64frombits(0xbe78ac00569105b8))+math.Float64frombits(0x3ef8ab038fa6b88e)))+math.Float64frombits(0xbf5f55e54844f50f)))+math.Float64frombits(0x3fa9d3c776292cd1)))+math.Float64frombits(0xbfc91866143cbc8a))/float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*math.Float64frombits(0x3db25039daca772a))+math.Float64frombits(0x3e3abf1d5ba69a86)))+math.Float64frombits(0x3eb6c05a894e8ca6)))+math.Float64frombits(0x3f2a8c896c257764)))+math.Float64frombits(0x3f94650d3f4da9f0)))+math.Float64frombits(0x3ff0000000000000)))) + float64(float64(float64(t2*t3)+float64(math.Float64frombits(0xbff0000000000000)/v0))*math.Float64frombits(0x3fe45f306dc9c883))))
 }
-func fn82(v0 float64, v1 int32) float64 {
+func fn85(v0 float64, v1 int32) float64 {
 	{
 		if v1 >= i32(1024) {
 			v0 = f64_canon(float64(v0 * math.Float64frombits(0x7fe0000000000000)))
@@ -3793,7 +3660,7 @@ func fn82(v0 float64, v1 int32) float64 {
 l0:
 	return f64_canon(float64(v0 * math.Float64frombits(uint64(int64(uint32(v1+i32(1023)))<<52))))
 }
-func (m *Module) fn83(v0 float64, v1 int32) float64 {
+func (m *Module) fn86(v0 float64, v1 int32) float64 {
 	mem := m.memory
 	var v2, v3, v4, v5 float64
 	var v6, v7 int32
@@ -3809,7 +3676,7 @@ func (m *Module) fn83(v0 float64, v1 int32) float64 {
 			store32(mem, uint32(v1), uint32(i32(-1)))
 			v0 = f64_neg(v0)
 		}
-		t0 := m.fn62(v0)
+		t0 := m.fn65(v0)
 		return f64_neg(t0)
 	}
 	if v8 < i64(0) {
@@ -3821,19 +3688,19 @@ func (m *Module) fn83(v0 float64, v1 int32) float64 {
 		var p1 float64
 		switch v7 - i32(1) {
 		default:
-			t2 := fn67(v2, math.Float64frombits(0x0), i32(0))
+			t2 := fn70(v2, math.Float64frombits(0x0), i32(0))
 			p1 = t2
 			goto l4
 		case 0:
-			t3 := fn65(v2, math.Float64frombits(0x0))
+			t3 := fn68(v2, math.Float64frombits(0x0))
 			p1 = t3
 			goto l4
 		case 1:
-			t4 := fn67(f64_neg(v2), math.Float64frombits(0x0), i32(0))
+			t4 := fn70(f64_neg(v2), math.Float64frombits(0x0), i32(0))
 			p1 = t4
 			goto l4
 		case 2:
-			t5 := fn65(v2, math.Float64frombits(0x0))
+			t5 := fn68(v2, math.Float64frombits(0x0))
 			p1 = f64_neg(t5)
 		}
 	l4:
@@ -3848,7 +3715,7 @@ func (m *Module) fn83(v0 float64, v1 int32) float64 {
 		}
 		v2 = f64_neg(v2)
 	l5:
-		t6 := m.fn62(f64_canon(float64(math.Float64frombits(0x400921fb54442d18) / float64(v2*v0))))
+		t6 := m.fn65(f64_canon(float64(math.Float64frombits(0x400921fb54442d18) / float64(v2*v0))))
 		v5 = t6
 	}
 	{
@@ -3873,7 +3740,7 @@ func (m *Module) fn83(v0 float64, v1 int32) float64 {
 					var p10 float64
 					if uint32(v6) <= uint32(i32(0x3feccccc)) {
 						v3 = math.Float64frombits(0x3ff0000000000000)
-						t11 := m.fn62(v0)
+						t11 := m.fn65(v0)
 						v2 = f64_neg(t11)
 						t12 := v2
 						if uint32(v6) > uint32(i32(1072130371)) {
@@ -3942,12 +3809,12 @@ func (m *Module) fn83(v0 float64, v1 int32) float64 {
 				v3 = f64_canon(float64(float64(v0+math.Float64frombits(0x4008000000000000)) * v3))
 				fallthrough
 			case 0:
-				t17 := m.fn62(f64_canon(float64(float64(v0+math.Float64frombits(0x4000000000000000)) * v3)))
+				t17 := m.fn65(f64_canon(float64(float64(v0+math.Float64frombits(0x4000000000000000)) * v3)))
 				v2 = f64_canon(float64(v2 + t17))
 				goto l6
 			}
 		}
-		t18 := m.fn62(v0)
+		t18 := m.fn65(v0)
 		v3 = t18
 		if uint32(v6) <= uint32(i32(0x438fffff)) {
 			v2 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / v0))
@@ -3964,7 +3831,7 @@ l6:
 	}
 	return p19
 }
-func (m *Module) fn84(v0 float64, v1 int32) float64 {
+func (m *Module) fn87(v0 float64, v1 int32) float64 {
 	mem := m.memory
 	var v2, v3 int64
 	var v4, v5 int32
@@ -4005,7 +3872,7 @@ func (m *Module) fn84(v0 float64, v1 int32) float64 {
 l0:
 	return v0
 }
-func (m *Module) fn85(v0, v1 float64) float64 {
+func (m *Module) fn88(v0, v1 float64) float64 {
 	mem := m.memory
 	var v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 float64
 	var v12, v13, v14 int64
@@ -4080,7 +3947,7 @@ func (m *Module) fn85(v0, v1 float64) float64 {
 			if uint64(v12<<1-i64(1)) >= uint64(i64(-0x20000000000001)) {
 				v2 = f64_canon(float64(v0 * v0))
 				if v12 < i64(0) {
-					t11 := fn86(v13)
+					t11 := fn89(v13)
 					p12 := v2
 					if t11 == i32(1) {
 						p12 = f64_neg(v2)
@@ -4096,7 +3963,7 @@ func (m *Module) fn85(v0, v1 float64) float64 {
 				goto l1
 			}
 			if v12 < i64(0) {
-				t14 := fn86(v13)
+				t14 := fn89(v13)
 				v17 = t14
 				if v17 == 0 {
 					v0 = f64_canon(float64(v0 - v0))
@@ -4280,7 +4147,7 @@ l1:
 	m.g0 = v15 + i32(16)
 	return v2
 }
-func fn86(v0 int64) int32 {
+func fn89(v0 int64) int32 {
 	var v1 int32
 	var v2 int64
 	var p0 int32
@@ -4308,7 +4175,171 @@ func fn86(v0 int64) int32 {
 l0:
 	return p0
 }
-func fn87(v0, v1 float64, v2 int32) float64 {
+func (m *Module) fn90(v0, v1 float64, v2 int32) float64 {
+	mem := m.memory
+	var v3, v4, v5, v6 int32
+	var v7, v8, v9, v10, v11 int64
+	var v12 float64
+	store32(mem, uint32(v2), uint32(i32(0)))
+	{
+		var p0 int32
+		if v1 == math.Float64frombits(0x0) {
+			p0 = 1
+		}
+		var p1 int32
+		if v1 != v1 {
+			p1 = 1
+		}
+		if p0|p1 == 0 {
+			v9 = int64(math.Float64bits(v0))
+			v4 = int32(int64(uint64(v9)>>52)) & i32(2047)
+			if v4 != i32(2047) {
+				{
+					if v0 == math.Float64frombits(0x0) {
+						goto l1
+					}
+					v10 = int64(math.Float64bits(v1))
+					v5 = int32(int64(uint64(v10)>>52)) & i32(2047)
+					var p2 int64
+					if v4 == 0 {
+						v7 = v9 << 12
+					l2:
+						if v7 >= i64(0) {
+							v3 = v3 + i32(1)
+							v7 = v7 << 1
+							goto l2
+						}
+						v4 = i32(0) - v3
+						t3 := i64_shl(v9, int64(uint32(v3+i32(1))))
+						p2 = t3
+						goto l3
+					}
+					p2 = v9&i64(0xfffffffffffff) | i64(0x10000000000000)
+				l3:
+					v7 = p2
+					var p4 int64
+					if v5 == 0 {
+						v8 = v10 << 12
+						v3 = i32(0)
+					l4:
+						if v8 >= i64(0) {
+							v3 = v3 + i32(1)
+							v8 = v8 << 1
+							goto l4
+						}
+						v5 = i32(0) - v3
+						t5 := i64_shl(v10, int64(uint32(v3+i32(1))))
+						p4 = t5
+						goto l5
+					}
+					p4 = v10&i64(0xfffffffffffff) | i64(0x10000000000000)
+				l5:
+					v8 = p4
+					var p6 int64
+					{
+						if v4 >= v5 {
+							v3 = i32(0)
+						l6:
+							{
+								v11 = v7 - v8
+								var p7 int32
+								if v11 >= i64(0) {
+									p7 = 1
+								}
+								v6 = p7
+								p8 := v7
+								if v6 != 0 {
+									p8 = v11
+								}
+								v7 = p8
+								v3 = v3 | v6
+								if v4 > v5 {
+									v4 = v4 - i32(1)
+									v3 = v3 << 1
+									v7 = v7 << 1
+									goto l6
+								}
+							}
+							if v7 == 0 {
+								v4 = i32(-60)
+								v7 = i64(0)
+								goto l7
+							}
+							v4 = v5
+						l9:
+							if uint64(v7) > uint64(i64(0xfffffffffffff)) {
+								goto l8
+							}
+							v4 = v4 - i32(1)
+							v7 = v7 << 1
+							goto l9
+						}
+						v3 = i32(0)
+						if v4+i32(1) != v5 {
+							goto l1
+						}
+					l8:
+						if v4 <= i32(0) {
+							goto l7
+						}
+						t9 := v7 - i64(0x10000000000000) | int64(uint32(v4))<<52
+						p6 = t9
+						goto l10
+					}
+				l7:
+					p6 = i64_shr_u(v7, int64(uint32(i32(1)-v4)))
+				l10:
+					v12 = f64_abs(v1)
+					v1 = math.Float64frombits(uint64(p6))
+					{
+						if v4 == v5 {
+							goto l11
+						}
+						if v4+i32(1) != v5 {
+							goto l12
+						}
+						v0 = f64_canon(float64(v1 + v1))
+						if v0 > v12 {
+							goto l11
+						}
+						var p10 int32
+						if v3&i32(1) == 0 {
+							p10 = 1
+						}
+						var p11 int32
+						if v0 != v12 {
+							p11 = 1
+						}
+						if p10|p11 != 0 {
+							goto l12
+						}
+					}
+				l11:
+					v3 = v3 + i32(1)
+					v1 = f64_canon(float64(v1 - v12))
+				l12:
+					t12 := v2
+					v2 = v3 & i32(0x7fffffff)
+					p13 := v2
+					if v9^v10 < i64(0) {
+						p13 = i32(0) - v2
+					}
+					store32(mem, uint32(t12), uint32(p13))
+					p14 := v1
+					if v9 < i64(0) {
+						p14 = f64_neg(v1)
+					}
+					v0 = p14
+				}
+			l1:
+				return v0
+			}
+		}
+		v0 = f64_canon(float64(v0 * v1))
+		return f64_canon(float64(v0 / v0))
+	}
+}
+func fn91(v0, v1 float64, v2 int32) float64 {
 	var v3, v4, v5 float64
 	var v6 int64
 	var v7, v8 int32
@@ -4368,6 +4399,9 @@ func fn87(v0, v1 float64, v2 int32) float64 {
 		v1 = f64_canon(float64(float64(t16*float64(float64(t17*float64(t18-float64(v1-v0)))+float64(float64(v3*v1)+math.Float64frombits(0x3ff0000000000000)))) + v3))
 	}
 	return v1
+}
+func (m *Module) Xldexp_(v0, v1 int64) int64 {
+	return m.Xscalbn_(v0, v1)
 }
 func (m *Module) Xmemory() Memory {
 	return (*wasmMemory)(&m.memory)

@@ -92,7 +92,7 @@ func results() []string {
 	one := []struct {
 		name string
 		f    func(int64) int64
-		f2   func(int64) int64 // the second result, for frexp, modf, and lgamma_r
+		f2   func(int64) int64 // the second result, for frexp, modf, and lgamma_r, and signgam after lgamma
 	}{
 		{"acos", m.Xacos_, nil}, {"acosh", m.Xacosh_, nil}, {"asin", m.Xasin_, nil},
 		{"asinh", m.Xasinh_, nil}, {"atan", m.Xatan_, nil}, {"atanh", m.Xatanh_, nil},
@@ -101,7 +101,7 @@ func results() []string {
 		{"exp", m.Xexp_, nil}, {"exp2", m.Xexp2_, nil}, {"expm1", m.Xexpm1_, nil},
 		{"fabs", m.Xfabs_, nil}, {"floor", m.Xfloor_, nil}, {"frexp", m.Xfrexp_, m.Xfrexp_2},
 		{"ilogb", m.Xilogb_, nil}, {"j0", m.Xj0_, nil}, {"j1", m.Xj1_, nil},
-		{"lgamma", m.Xlgamma_, nil}, {"lgamma_r", m.Xlgamma_r_, m.Xlgamma_r_2},
+		{"lgamma", m.Xlgamma_, m.Xlgamma_2}, {"lgamma_r", m.Xlgamma_r_, m.Xlgamma_r_2},
 		{"llrint", m.Xllrint_, nil}, {"log", m.Xlog_, nil}, {"log10", m.Xlog10_, nil},
 		{"log1p", m.Xlog1p_, nil}, {"log2", m.Xlog2_, nil}, {"logb", m.Xlogb_, nil},
 		{"lrint", m.Xlrint_, nil}, {"modf", m.Xmodf_, m.Xmodf_2}, {"rint", m.Xrint_, nil},
@@ -206,6 +206,30 @@ func results() []string {
 		{0x8000000000000001, 0x8000000000000001, 0x8000000000000000},
 	} {
 		add("fma", ops[:], u(m.Xfma_(i(ops[0]), i(ops[1]), i(ops[2]))))
+	}
+
+	// remquo has a second result, the low bits of the quotient.
+	r = rng(len(lines))
+	for _, a := range edges {
+		for _, b := range edges {
+			add("remquo", []uint64{a, b}, u(m.Xremquo_(i(a), i(b))), u(m.Xremquo_2(i(a), i(b))))
+		}
+	}
+	for range randoms {
+		a, b := r.operand(), r.operand()
+		add("remquo", []uint64{a, b}, u(m.Xremquo_(i(a), i(b))), u(m.Xremquo_2(i(a), i(b))))
+	}
+
+	// scalbn, which ldexp calls, over the operands and ints of ldexp.
+	r = rng(len(lines))
+	ops := append([]uint64(nil), edges...)
+	for range randoms / 4 {
+		ops = append(ops, r.operand())
+	}
+	for _, n := range append(ints[:len(ints):len(ints)], extremes...) {
+		for _, x := range ops {
+			add("scalbn", []uint64{x, n}, u(m.Xscalbn_(i(x), i(n))))
+		}
 	}
 	return lines
 }

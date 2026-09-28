@@ -23,16 +23,22 @@ F2(nextafter) F2(pow) F2(remainder)
 EXPORT(fma_)(int64_t a, int64_t b, int64_t c) { return B(fma(D(a), D(b), D(c))); }
 EXPORT(ilogb_)(int64_t a) { return ilogb(D(a)); }
 EXPORT(ldexp_)(int64_t a, int64_t n) { return B(ldexp(D(a), (int)n)); }
+EXPORT(scalbn_)(int64_t a, int64_t n) { return B(scalbn(D(a), (int)n)); }
 EXPORT(jn_)(int64_t n, int64_t a) { return B(jn((int)n, D(a))); }
 EXPORT(yn_)(int64_t n, int64_t a) { return B(yn((int)n, D(a))); }
 EXPORT(lrint_)(int64_t a) { return lrint(D(a)); }
 EXPORT(llrint_)(int64_t a) { return llrint(D(a)); }
 
-// frexp, modf, and lgamma_r have a second result, which the _2 functions
-// return (frexp leaves it unset for infinities and NaNs, so it starts at 0).
+// frexp, modf, lgamma_r, and remquo have a second result, which the _2
+// functions return (frexp leaves it unset for infinities and NaNs, so it
+// starts at 0), and lgamma sets signgam, which lgamma_2 returns.
 EXPORT(frexp_)(int64_t a) { int e = 0; return B(frexp(D(a), &e)); }
 EXPORT(frexp_2)(int64_t a) { int e = 0; frexp(D(a), &e); return e; }
 EXPORT(modf_)(int64_t a) { double i = 0; return B(modf(D(a), &i)); }
 EXPORT(modf_2)(int64_t a) { double i = 0; modf(D(a), &i); return B(i); }
 EXPORT(lgamma_r_)(int64_t a) { int s = 0; return B(lgamma_r(D(a), &s)); }
 EXPORT(lgamma_r_2)(int64_t a) { int s = 0; lgamma_r(D(a), &s); return s; }
+EXPORT(remquo_)(int64_t a, int64_t b) { int q = 0; return B(remquo(D(a), D(b), &q)); }
+EXPORT(remquo_2)(int64_t a, int64_t b) { int q = 0; remquo(D(a), D(b), &q); return q; }
+extern int signgam;
+EXPORT(lgamma_2)(int64_t a) { signgam = 0; lgamma(D(a)); return signgam; }
