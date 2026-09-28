@@ -38,6 +38,8 @@ __pycache__/
 .DS_Store
 coverage/
 build/
+# libc-gen's test modules keep their C sources and build scripts in build/.
+!libc-gen/test_*/build/
 dist/
 target/
 *.egg-info/
