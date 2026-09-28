@@ -128,11 +128,17 @@ There is no option to turn this off.
   which Go's constant evaluator would combine with exact arithmetic.
 - **Conversions.** `f32.convert_i64_s` and `f32.convert_i64_u` round once, in helpers:
   Go's own `float32(int64)` rounds twice on 386, arm, mips, and mipsle.
-- **C math functions.** [`libc-gen`](libc-gen/README.md)'s `sin`, `exp`, `pow`, `fma`,
+- **C math functions.** [`libc-gen`](libc-gen/README.md)'s `sin`, `exp`, `pow`,
   and the other `math.h` functions that are not compiler builtins are musl's libm,
   compiled into the module with the C code that calls them, so the guarantee covers them.
-  A NaN they return is the canonical NaN, its negation, or an operand passed through
-  unchanged, as musl's code decides, and the same on every CPU.
+  A NaN they return is the canonical NaN, its negation, or a NaN operand's bits,
+  unchanged or with another sign, as musl's code decides, and the same on every CPU.
+  `fma` is the exception: it is a host function calling Go's `math.FMA`.
+  IEEE 754 defines its result exactly (`x*y+z` rounded once), so every CPU computes
+  the same bits, with an instruction or in software, and a NaN result is the positive
+  canonical NaN. musl's `fma` compiled into the module was about 15 times slower
+  on amd64, since WebAssembly has no fused multiply-add; it also returned a NaN third operand
+  unchanged, and +0 instead of -0 for a negative product that rounds to zero plus +0.
 
 How this is tested:
 - The spec tests check the deterministic profile: where the spec allows a canonical
@@ -146,15 +152,16 @@ How this is tested:
   operands and requires the results in
   [libc-gen/test_math/expected.txt](libc-gen/test_math/expected.txt) bit for bit;
   they are identical to wasmtime's with NaN canonicalization
-  ([scripts/libm-reference.sh](scripts/libm-reference.sh) checks this).
+  ([scripts/libm-reference.sh](scripts/libm-reference.sh) checks this, with `fma`
+  linked to musl's, corrected for the canonical NaN and the sign of zero).
 - [scripts/cross-targets.sh](scripts/cross-targets.sh) runs these, with the regression
   tests, on each target it lists: amd64 (also with fused multiply-add available,
-  and without SSE4.1), 386, wasip1 and js wasm, and the other Linux architectures
-  under qemu-user.
+  without SSE4.1, and with `math.FMA` in software), 386, wasip1 and js wasm,
+  and the other Linux architectures under qemu-user.
 
 Limits:
-- The guarantee covers the translated module. Imports, host functions, and
-  `-provided` Go code compute what they compute.
+- The guarantee covers the translated module and `libc-gen`'s `fma`. Other imports,
+  host functions, and `-provided` Go code compute what they compute.
 - On MIPS the positive canonical NaN is a signaling NaN in the legacy NaN encoding;
   the results are the same anyway, since canonicalization follows every operation.
   MIPS was checked under qemu-user, which emulates the legacy encoding, not on hardware.
@@ -173,8 +180,10 @@ package changed their speed on amd64 as follows (nanoseconds per call in a loop,
 medians of interleaved runs, Go's `math` then musl's):
 `sin` 9.0 and 16.1, `cos` 10.7 and 16.2, `tan` 9.7 and 24.7, `atan2` 12.3 and 18.0,
 `tanh` 15.0 and 22.9, `exp` 10.9 and 7.9, `log` 9.7 and 9.1, `pow` 55.4 and 23.1,
-`fmod` 19.0 and 7.1, and `fma` 1.7 and 37.1 (WebAssembly has no fused multiply-add
-instruction, so musl's `fma` is integer arithmetic).
+and `fmod` 19.0 and 7.1.
+`fma` calls Go's `math.FMA` instead of musl's `fma`, which took 34.8 ns per call
+where `math.FMA` takes 2.3 ns, and 14.1 ns with `math.FMA` in software
+(`GODEBUG=cpu.fma=off`, as on CPUs without the instruction).
 QuickJS built with wasi-sdk is not affected: it links wasi-libc, whose libm is musl's
 compiled into the module, and imports no math functions.
 

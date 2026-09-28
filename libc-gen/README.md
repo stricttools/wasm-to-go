@@ -68,13 +68,19 @@ compiled into the module by `libc.c` (through the generated `c/libm.c`),
 so they compute the same bits on every CPU once translated
 (Go's `math` package, which host functions would call,
 gives different results on different CPUs).
+`fma` is the exception, a host function calling Go's `math.FMA`:
+IEEE 754 defines its result exactly, so it is the same on every CPU,
+and it is many times faster than musl's `fma` compiled to WebAssembly,
+which has no fused multiply-add (`musl.sh` still copies musl's `fma.c`,
+which [`scripts/libm-reference.sh`](../scripts/libm-reference.sh) checks it against).
 [`musl.sh`](musl.sh) downloads musl, checks its SHA-256,
 and copies the sources and regenerates `c/libm.c`;
 it needs the tools of [`tools.sh`](tools.sh).
 [`test_math`](test_math) checks every function's results bit for bit.
 
 The Go component will contain stuff that's best implemented in Go:
-- `string.h` because `bytes.Index`, `IndexByte`, etc are hard to beat.
+- `string.h` because `bytes.Index`, `IndexByte`, etc are hard to beat;
+- `fma` because `math.FMA` is exact and uses the CPU's instruction where there is one.
 
 I will not be adding file I/O to this, or any other OS stuff.
 
