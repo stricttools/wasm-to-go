@@ -13,15 +13,15 @@ func fn0(v0, v1 int32) int32 {
 	return v0 - v1
 }
 func (m *Module) Xstack_func_call() int32 {
-	t0 := fn0(i32(91), i32(23))
+	t0 := fn0(int32(91), int32(23))
 	return t0
 }
 func (m *Module) Xgreater(v0, v1 int32) int32 {
 	var p0 int32
 	if v0 > v1 {
-		p0 = i32(1)
+		p0 = int32(1)
 	} else {
-		p0 = i32(0)
+		p0 = int32(0)
 	}
 	return p0
 }

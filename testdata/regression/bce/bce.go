@@ -46,7 +46,7 @@ func (m *Module) Xsum(v0 int32) int32 {
 func (m *Module) Xinc(v0 int32) {
 	mem := m.memory
 	t0 := int32(*(*uint32)(unsafe.Add(unsafe.Pointer(&mem[uint64(uint32(v0))+3]), -3)))
-	*(*uint32)(unsafe.Add(unsafe.Pointer(unsafe.SliceData(mem)), uintptr(uint32(v0)))) = uint32(t0 + i32(1))
+	*(*uint32)(unsafe.Add(unsafe.Pointer(unsafe.SliceData(mem)), uintptr(uint32(v0)))) = uint32(t0 + int32(1))
 }
 func (m *Module) Xwiden(v0 int32) int64 {
 	mem := m.memory
@@ -61,8 +61,8 @@ l0:
 	{
 		t0 := int32(*(*uint32)(unsafe.Add(unsafe.Pointer(&mem[uint64(uint32(v0))+3]), -3)))
 		v2 = v2 + t0
-		v0 = v0 + i32(4)
-		v1 = v1 - i32(1)
+		v0 = v0 + int32(4)
+		v1 = v1 - int32(1)
 		if v1 != 0 {
 			goto l0
 		}

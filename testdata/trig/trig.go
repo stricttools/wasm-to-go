@@ -40,7 +40,7 @@ func (m *Module) Xsin(v0 float64) float64 {
 	}
 	v1 = math.Float64frombits(0x7ff8000000000000)
 	{
-		if uint64(int64(math.Float64bits(v0))&i64(0x7fffffffffffffff)) > uint64(i64(0x7fefffffffffffff)) {
+		if uint64(int64(math.Float64bits(v0))&int64(0x7fffffffffffffff)) > uint64(int64(0x7fefffffffffffff)) {
 			goto l0
 		}
 		t0 := v0
@@ -51,21 +51,21 @@ func (m *Module) Xsin(v0 float64) float64 {
 		{
 			var p2 float64
 			if f64_abs(v1) > math.Float64frombits(0x3e40000000000000) {
-				v3 = v3 + i32(1)
+				v3 = v3 + int32(1)
 				v1 = f64_canon(float64(v1 * math.Float64frombits(0x3fe0000000000000)))
 				goto l1
 			} else {
 				v0 = math.Float64frombits(0x3ff0000000000000)
 			l2:
 				if v3 != 0 {
-					v3 = v3 - i32(1)
+					v3 = v3 - int32(1)
 					v2 = f64_canon(float64(v1 * v1))
 					v0 = f64_canon(float64(v0 * v1))
 					v1 = f64_canon(float64(v0 + v0))
 					v0 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) - float64(v2+v2)))
 					goto l2
 				} else {
-					switch int32(v4)&i32(3) - i32(1) {
+					switch int32(v4)&int32(3) - int32(1) {
 					case 1:
 						return f64_neg(v1)
 					case 2:

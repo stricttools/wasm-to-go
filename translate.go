@@ -193,6 +193,9 @@ func translate(r io.Reader, w, generic io.Writer) error {
 	for i := range t.functions {
 		if fn := &t.functions[i]; fn.translator != nil {
 			fn.optimizeModule(facts)
+			if !*noopt {
+				passes.Literals(fn.decl)
+			}
 		}
 	}
 

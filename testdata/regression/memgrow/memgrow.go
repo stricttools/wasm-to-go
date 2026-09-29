@@ -60,11 +60,11 @@ func (m *Module) fn0() int32 {
 	return m._env.Xgrow()
 }
 func (m *Module) fn3() int32 {
-	t0 := int32(memory_grow(&m.memory, int64(i32(1)), m.maxMem))
+	t0 := int32(memory_grow(&m.memory, int64(int32(1)), m.maxMem))
 	return t0
 }
 func fn4() int32 {
-	return i32(0)
+	return int32(0)
 }
 func (m *Module) fn5() int32 {
 	t0 := m.fn3()
@@ -73,18 +73,18 @@ func (m *Module) fn5() int32 {
 func (m *Module) Xdirect() int32 {
 	mem := m.memory
 	var v0 int32
-	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(i32(1)))
+	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(int32(1)))
 	t0 := m.fn5()
 	mem = m.memory
 	v0 = t0
-	binary.LittleEndian.PutUint32(mem[uint32(v0*i32(65536)):], uint32(i32(99)))
-	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v0*i32(65536)):]))
+	binary.LittleEndian.PutUint32(mem[uint32(v0*int32(65536)):], uint32(int32(99)))
+	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v0*int32(65536)):]))
 	return t1
 }
 func (m *Module) Xclosed(v0 int32) int32 {
 	mem := m.memory
 	var v1 int32
-	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(i32(1)))
+	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(int32(1)))
 	var t0 int32
 	switch t2 := uint(v0); t2 {
 	case 0:
@@ -100,46 +100,46 @@ func (m *Module) Xclosed(v0 int32) int32 {
 		mem = m.memory
 	}
 	v1 = t0
-	binary.LittleEndian.PutUint32(mem[uint32(v1*i32(65536)):], uint32(i32(99)))
-	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v1*i32(65536)):]))
+	binary.LittleEndian.PutUint32(mem[uint32(v1*int32(65536)):], uint32(int32(99)))
+	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v1*int32(65536)):]))
 	return t1
 }
 func (m *Module) Xopen() int32 {
 	mem := m.memory
 	var v0 int32
-	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(i32(1)))
+	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(int32(1)))
 	t0 := m.t1[uint(i32(0))].(func() int32)()
 	mem = m.memory
 	v0 = t0
-	binary.LittleEndian.PutUint32(mem[uint32(v0*i32(65536)):], uint32(i32(99)))
-	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v0*i32(65536)):]))
+	binary.LittleEndian.PutUint32(mem[uint32(v0*int32(65536)):], uint32(int32(99)))
+	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v0*int32(65536)):]))
 	return t1
 }
 func (m *Module) Xhost() int32 {
 	mem := m.memory
 	var v0 int32
-	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(i32(1)))
+	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(int32(1)))
 	t0 := m.fn0()
 	mem = m.memory
 	v0 = t0
-	binary.LittleEndian.PutUint32(mem[uint32(v0*i32(65536)):], uint32(i32(99)))
-	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v0*i32(65536)):]))
+	binary.LittleEndian.PutUint32(mem[uint32(v0*int32(65536)):], uint32(int32(99)))
+	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v0*int32(65536)):]))
 	return t1
 }
 func (m *Module) Xprovided() int32 {
 	mem := m.memory
 	var v0 int32
-	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(i32(1)))
+	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(int32(1)))
 	t0 := m._pgrow()
 	mem = m.memory
 	v0 = t0
-	binary.LittleEndian.PutUint32(mem[uint32(v0*i32(65536)):], uint32(i32(99)))
-	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v0*i32(65536)):]))
+	binary.LittleEndian.PutUint32(mem[uint32(v0*int32(65536)):], uint32(int32(99)))
+	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v0*int32(65536)):]))
 	return t1
 }
 func (m *Module) Xpeek(v0 int32) int32 {
 	mem := m.memory
-	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(i32(1)))
+	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(int32(1)))
 	t0 := m._ppeek(v0)
 	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(i32(0)):]))
 	return t0 + t1

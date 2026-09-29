@@ -13,12 +13,12 @@ func New() *Module {
 }
 func (m *Module) fn0() int32 {
 	t0 := m.g0
-	m.g0 = t0 + i32(1)
-	return i32(100)
+	m.g0 = t0 + int32(1)
+	return int32(100)
 }
 func (m *Module) Xtest(v0 int32) int32 {
 	t0 := m.fn0()
-	p1 := i32(5)
+	p1 := int32(5)
 	if v0 != 0 {
 		p1 = t0
 	}

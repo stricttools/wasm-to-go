@@ -231,6 +231,14 @@ through a table that is not closed, through an import,
 or through a provided function (analyzed from its source).
 Shared memories are left alone, since other goroutines may grow them.
 
+### Constants
+
+An integer constant is a call of the `i32` or `i64` helper, `i32(5)`,
+which keeps it out of Go's constant evaluator, only where it could become
+an operand of a Go constant expression; where it is combined with a
+variable, passed to a function, assigned, or returned, it is a Go constant,
+`int32(5)`, which the compiler handles without an inlined call.
+
 ### Memory accesses
 
 Loads and stores are written as calls of `encoding/binary`'s little-endian

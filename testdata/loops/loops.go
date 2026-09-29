@@ -46,16 +46,16 @@ func (m *Module) fn1() int32 {
 func (m *Module) Xadd_all(v0, v1 int32) int32 {
 	mem := *m.memory
 	var v2, v3, v4 int32
-	v2 = i32(0)
+	v2 = int32(0)
 l1:
 	{
 		if v2 >= v1 {
 			return v4
 		}
-		v3 = v0 + v2*i32(4)
+		v3 = v0 + v2*int32(4)
 		t0 := int32(binary.LittleEndian.Uint32(mem[uint32(v3):]))
 		v4 = v4 + t0
-		v2 = v2 + i32(1)
+		v2 = v2 + int32(1)
 		goto l1
 	}
 }
@@ -65,8 +65,8 @@ l0:
 	{
 		t0 := m.fn1()
 		v0 = t0
-		t1 := int32(uint32(v0) % uint32(i32(10)))
-		if t1 != i32(0) {
+		t1 := int32(uint32(v0) % uint32(int32(10)))
+		if t1 != int32(0) {
 			goto l0
 		}
 	}
@@ -74,7 +74,7 @@ l0:
 }
 func (m *Module) Xfirst_power_over_limit(v0, v1 int32) int32 {
 	var v2 int32
-	v2 = i32(1)
+	v2 = int32(1)
 l1:
 	if v2 > v1 {
 		return v2

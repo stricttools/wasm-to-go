@@ -31,10 +31,10 @@ func fn0(v0 int32) int32 {
 	return v0 + v0
 }
 func fn1(v0 int32) int32 {
-	return v0 * i32(3)
+	return v0 * int32(3)
 }
 func fn2() int32 {
-	return i32(42)
+	return int32(42)
 }
 func (m *Module) Xcall(v0, v1 int32) int32 {
 	var t0 int32
