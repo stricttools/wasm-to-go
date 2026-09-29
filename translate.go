@@ -249,6 +249,10 @@ func translate(r io.Reader, w, generic io.Writer) error {
 		}
 	}
 
+	// The file for every platform (or the only file) accesses memory
+	// through the helpers' bodies; the expanded file through Expand's.
+	restore := t.lowerAccesses()
+
 	// Set imports.
 	if len(t.packages) > 0 {
 		specs := make([]ast.Spec, 0, len(t.data))
@@ -327,6 +331,7 @@ func translate(r io.Reader, w, generic io.Writer) error {
 	if err := t.print(generic, fset, others.String(), moduleDecl); err != nil {
 		return err
 	}
+	restore()
 	if !*noopt {
 		sites := 0
 		for i := range t.functions {
@@ -339,6 +344,30 @@ func translate(r io.Reader, w, generic io.Writer) error {
 		}
 	}
 	return t.print(w, fset, expanded.String(), moduleDecl)
+}
+
+// Replaces the memory access helper calls of every translated function
+// with the helpers' bodies (passes.Lower), unless -noopt, and returns a
+// function that restores the calls.
+func (t *translator) lowerAccesses() (restore func()) {
+	var undos []func()
+	if *noopt {
+		return func() {}
+	}
+	for i := range t.functions {
+		if fn := &t.functions[i]; fn.translator != nil {
+			undo, sites := passes.Lower(fn.decl)
+			undos = append(undos, undo)
+			if sites > 0 {
+				t.packages.add("encoding/binary")
+			}
+		}
+	}
+	return func() {
+		for _, undo := range undos {
+			undo()
+		}
+	}
 }
 
 // Prints the Go file, under the build constraint tags if any.

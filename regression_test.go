@@ -223,8 +223,10 @@ func Test_regression_bce(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !*noopt {
-		if got := strings.Count(string(generic), "u(mem, "); got != 4 {
-			t.Errorf("found %d unchecked accesses, want 4 (sum: 2, inc: 1, copy: 1)", got)
+		// The generic file accesses memory through the helpers' portable
+		// bodies (passes.Lower), which check every access.
+		if got := strings.Count(string(generic), "u(mem, "); got != 0 {
+			t.Errorf("found %d unchecked helper calls in the generic file, want 0", got)
 		}
 		// The helper definitions have uintptr(addr); expansions, the address.
 		if got := strings.Count(string(expanded), "unsafe.SliceData(mem)), uintptr(uint"); got != 4 {

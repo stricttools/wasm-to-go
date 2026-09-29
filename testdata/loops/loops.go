@@ -53,7 +53,7 @@ l1:
 			return v4
 		}
 		v3 = v0 + v2*i32(4)
-		t0 := int32(load32(mem, uint32(v3)))
+		t0 := int32(binary.LittleEndian.Uint32(mem[uint32(v3):]))
 		v4 = v4 + t0
 		v2 = v2 + i32(1)
 		goto l1

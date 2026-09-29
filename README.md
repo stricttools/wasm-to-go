@@ -231,12 +231,23 @@ through a table that is not closed, through an import,
 or through a provided function (analyzed from its source).
 Shared memories are left alone, since other goroutines may grow them.
 
+### Memory accesses
+
+Loads and stores are written as calls of `encoding/binary`'s little-endian
+functions on the memory's slice, `binary.LittleEndian.Uint32(mem[a:])`,
+not as calls of helper functions: the Go compiler gives every inlined call
+its own copies of the callee's parameters, named variables with debug
+information, and a module makes tens of thousands of memory accesses.
+With `-unsafe`, `output.go` writes them inline with `unsafe` instead
+(see [below](#-unsafe-and-two-output-files)).
+
 ### Bounds checks
 
-With `-unsafe`, a load or store whose bounds check an earlier check
+With `-unsafe`, in `output.go`, a load or store whose bounds check an earlier check
 on every path to it already covers (the same memory, the same address,
 and at least as far) uses an unchecked access instead.
 Every access that would trap still traps, at the check that covers it.
+`output_generic.go` checks every access.
 
 ### `-unsafe` and two output files
 
@@ -244,8 +255,8 @@ With `-unsafe`, `wasm2go` writes two files, and so requires `-o`:
 `-o output.go` writes `output.go` and `output_generic.go`.
 In `output.go`, built only on the little-endian platforms with unaligned
 memory access (its `//go:build` line lists them), loads and stores are written
-inline, without helper calls; `output_generic.go` holds the same code
-without that expansion, and is built on every other platform.
+inline with `unsafe`; `output_generic.go` holds the same code
+with the portable accesses of `encoding/binary`, and is built on every other platform.
 `-tags` combine with the build constraint of each file.
 With `-noopt`, the two files differ only in their build constraints.
 

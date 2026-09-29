@@ -48,7 +48,7 @@ func (m *Module) Xwasm_fill(v0, v1, v2 int32) {
 }
 func (m *Module) Xread_as_i32(v0 int32) int32 {
 	mem := m.memory
-	t0 := int32(load32(mem, uint32(v0)))
+	t0 := int32(binary.LittleEndian.Uint32(mem[uint32(v0):]))
 	return t0
 }
 func (m *Module) Xread_as_i8u(v0 int32) int32 {
