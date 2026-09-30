@@ -104,6 +104,12 @@ type translator struct {
 	providedFiles []*ast.File
 	providedPaths map[string]string
 	helperNames   set[string]
+	// Whether the module has recursive functions, which bound the Go
+	// stack (stackbound.go).
+	stackBound bool
+	// The functions exported by a wrapper that restores the bound's count
+	// (stackbound.go).
+	stackEntries set[int]
 	// Debug.
 	codeStart     uint64
 	debugSections map[string][]byte
@@ -219,6 +225,8 @@ func translate(r io.Reader, w, generic io.Writer, sub func(rel string) (io.Write
 			}
 		}
 	}
+
+	t.stackBound = t.boundStack()
 
 	exported := false
 	for _, exp := range t.exports {

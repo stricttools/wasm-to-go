@@ -7,13 +7,19 @@ import (
 	"github.com/stricttools/wasm-to-go/testdata/packages/recursion/internal/instance"
 )
 
-func Xis_even(m *instance.Module, v0 int32) int32 {
+func Fn1(m *instance.Module, v0 int32) int32 {
+	if m.StackUsed += 1006; m.StackUsed > 201326592 {
+		panic("call stack exhausted")
+	}
 	var p0 int32
 	if v0 == 0 {
 		p0 = int32(1)
 	} else {
-		t1 := functions2.Xis_odd(m, v0-int32(1))
+		t1 := functions2.Fn2(m, v0-int32(1))
 		p0 = t1
 	}
-	return p0
+	{
+		m.StackUsed -= 1006
+		return p0
+	}
 }

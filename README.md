@@ -190,6 +190,67 @@ where `math.FMA` takes 2.3 ns, and 14.1 ns with `math.FMA` in software
 QuickJS built with wasi-sdk is not affected: it links wasi-libc, whose libm is musl's
 compiled into the module, and imports no math functions.
 
+## The Go stack
+
+Every Wasm call is a Go call, so a module's recursion grows the goroutine's stack,
+and Go ends the whole program, with an error no `recover` catches,
+when a goroutine's stack outgrows its maximum
+(1 GB on 64-bit platforms, 250 MB on 32-bit ones).
+A C program's own stack limit does not prevent this:
+it measures the shadow stack in linear memory,
+which a function whose variables all live in Wasm locals does not use.
+So translated code bounds its own recursion, and traps before Go's limit,
+with the same result on every platform.
+
+The functions in a cycle of the module's call graph
+(calls through tables count as calls of every function of the called type
+a table may hold) keep a count in the `Module`:
+each adds its charge when it starts, subtracts it when it returns,
+and panics with `call stack exhausted` when the count exceeds
+`maxStack` (192 MiB, in [stackbound.go](stackbound.go)).
+A function's charge is an estimate of its Go frame,
+8 bytes for each of its parameters, results, and variables plus 64
+(an upper estimate: the Go compiler shares slots between variables),
+and at least `maxStack / maxFrames` (`maxFrames` is 200,000),
+so no more than 200,000 of these frames are live at once.
+Functions outside every cycle charge nothing:
+a chain of them is no deeper than the call graph.
+A function that recursion reaches keeps its `Module` receiver,
+where the translator would otherwise have removed it as unused.
+
+How the limits were chosen:
+- `maxStack` keeps the estimate under Go's smallest maximum, 250 MB.
+  The regression test lowers the maximum to that and recurses without end
+  through a function, a table, and a function that uses nothing of its module:
+  each traps.
+- `maxFrames` keeps the frames within what WebAssembly engines running Go allow:
+  Node.js ended Go's js/wasm programs with a segmentation fault when a panic
+  unwound about 600,000 frames (500,000 unwound), and wasmtime,
+  with the 8 MiB stack Go's `go_wasip1_wasm_exec` gives it,
+  exhausted its stack at about 600,000 frames.
+- QuickJS-ng with its default 1 MiB limit on its (shadow) stack
+  ends every recursion with its own catchable error before the bound:
+  measured over plain calls, getters, callbacks of `Array.prototype.map`,
+  `sort`, and `replace`, the `JSON.parse` reviver, Proxy traps, bound functions,
+  constructors, generators, deeply nested JSON, regular expressions,
+  and source text, the most any needed was 116 MiB (deeply nested parentheses
+  in source text, whose parser frames are small and many).
+
+An export that reaches recursion sets the count back to its value at the call
+when the call returns or traps (a trap unwinds frames that never subtract
+their charge), so the module stays usable after a trap, as a Wasm instance does;
+such an export is a method of its own even where the translator would
+otherwise have given the exported function the export's name.
+The count costs 1 to 4 percent on QuickJS's benchmark workloads.
+Recursion through the host (an import that calls an export)
+is not counted; the host's code bounds it.
+
+Tail calls (`return_call`) do not reuse their caller's frame,
+so a chain of them counts like any recursion:
+the spec tests' tail calls deeper than the bound
+(`beyondStackBound` in [internal/spectest/runner.go](internal/spectest/runner.go))
+are checked to trap.
+
 ## Optimization passes
 
 Besides simplifying each function's control flow and temporaries,

@@ -3,41 +3,78 @@
 package wasm2go
 
 type Module struct {
+	stackUsed int64
 }
 
 func New() *Module {
 	m := new(Module)
 	return m
 }
-func (m *Module) Xfactorial(v0 int32) int32 {
+func (m *Module) fn0(v0 int32) int32 {
+	if m.stackUsed += 1006; m.stackUsed > 201326592 {
+		panic("call stack exhausted")
+	}
 	var p0 int32
 	if v0 <= int32(1) {
 		p0 = int32(1)
 	} else {
-		t1 := m.Xfactorial(v0 - int32(1))
+		t1 := m.fn0(v0 - int32(1))
 		p0 = v0 * t1
 	}
-	return p0
+	{
+		m.stackUsed -= 1006
+		return p0
+	}
 }
-func (m *Module) Xis_even(v0 int32) int32 {
+func (m *Module) fn1(v0 int32) int32 {
+	if m.stackUsed += 1006; m.stackUsed > 201326592 {
+		panic("call stack exhausted")
+	}
 	var p0 int32
 	if v0 == 0 {
 		p0 = int32(1)
 	} else {
-		t1 := m.Xis_odd(v0 - int32(1))
+		t1 := m.fn2(v0 - int32(1))
 		p0 = t1
 	}
-	return p0
+	{
+		m.stackUsed -= 1006
+		return p0
+	}
 }
-func (m *Module) Xis_odd(v0 int32) int32 {
+func (m *Module) fn2(v0 int32) int32 {
+	if m.stackUsed += 1006; m.stackUsed > 201326592 {
+		panic("call stack exhausted")
+	}
 	var p0 int32
 	if v0 == 0 {
 		p0 = int32(0)
 	} else {
-		t1 := m.Xis_even(v0 - int32(1))
+		t1 := m.fn1(v0 - int32(1))
 		p0 = t1
 	}
-	return p0
+	{
+		m.stackUsed -= 1006
+		return p0
+	}
+}
+func (m *Module) Xfactorial(v0 int32) int32 {
+	defer func(used int64) {
+		m.stackUsed = used
+	}(m.stackUsed)
+	return m.fn0(v0)
+}
+func (m *Module) Xis_even(v0 int32) int32 {
+	defer func(used int64) {
+		m.stackUsed = used
+	}(m.stackUsed)
+	return m.fn1(v0)
+}
+func (m *Module) Xis_odd(v0 int32) int32 {
+	defer func(used int64) {
+		m.stackUsed = used
+	}(m.stackUsed)
+	return m.fn2(v0)
 }
 
 //go:nosplit

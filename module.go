@@ -64,6 +64,12 @@ func (t *translator) createModuleStruct(k *moduleFacts) *ast.GenDecl {
 			Names: []*ast.Ident{g.id},
 			Type:  typ})
 	}
+	// The Go stack bound (stackbound.go).
+	if t.stackBound {
+		fields = append(fields, &ast.Field{
+			Names: []*ast.Ident{newID(stackUsedField)},
+			Type:  newID("int64")})
+	}
 	// Imported modules.
 	seen := set[string]{}
 	for _, imp := range t.imports {
@@ -506,10 +512,13 @@ func (t *translator) createExportMethods() []ast.Decl {
 			for i := range fn.typ.params {
 				call.Args = append(call.Args, localVar(i))
 			}
+			if t.stackEntries.has(exp.index) {
+				decl.Body.List = append(decl.Body.List, restoreStackUsed())
+			}
 			if len(fn.typ.results) == 0 {
-				decl.Body.List = []ast.Stmt{&ast.ExprStmt{X: call}}
+				decl.Body.List = append(decl.Body.List, &ast.ExprStmt{X: call})
 			} else {
-				decl.Body.List = []ast.Stmt{&ast.ReturnStmt{Results: []ast.Expr{call}}}
+				decl.Body.List = append(decl.Body.List, &ast.ReturnStmt{Results: []ast.Expr{call}})
 			}
 		case externTable:
 			tab := t.tables[exp.index]

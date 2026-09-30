@@ -4,13 +4,19 @@ package functions3
 
 import "github.com/stricttools/wasm-to-go/testdata/packages/recursion/internal/instance"
 
-func Xfactorial(m *instance.Module, v0 int32) int32 {
+func Fn0(m *instance.Module, v0 int32) int32 {
+	if m.StackUsed += 1006; m.StackUsed > 201326592 {
+		panic("call stack exhausted")
+	}
 	var p0 int32
 	if v0 <= int32(1) {
 		p0 = int32(1)
 	} else {
-		t1 := Xfactorial(m, v0-int32(1))
+		t1 := Fn0(m, v0-int32(1))
 		p0 = v0 * t1
 	}
-	return p0
+	{
+		m.StackUsed -= 1006
+		return p0
+	}
 }

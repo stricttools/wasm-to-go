@@ -4,8 +4,11 @@ package instance
 
 // Module is the state of an instance of the module: the output package's Module holds one.
 type Module struct {
+	T0        []any
+	Elements  [][]any
+	G0        int32
 	StackUsed int64
 }
 
 // The functions called from a package that precedes theirs, set by the output package when it is initialized.
-var Fn1 func(m *Module, v0 int32) int32
+var Fn4 func(m *Module, v0 int32) int32

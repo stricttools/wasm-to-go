@@ -18,14 +18,23 @@ func New() *Module {
 	return m
 }
 func (m *Module) Xfactorial(v0 int32) int32 {
-	return wasm2go_functions3.Xfactorial(&m.instance, v0)
+	defer func(used int64) {
+		m.instance.StackUsed = used
+	}(m.instance.StackUsed)
+	return wasm2go_functions3.Fn0(&m.instance, v0)
 }
 func (m *Module) Xis_even(v0 int32) int32 {
-	return wasm2go_functions1.Xis_even(&m.instance, v0)
+	defer func(used int64) {
+		m.instance.StackUsed = used
+	}(m.instance.StackUsed)
+	return wasm2go_functions1.Fn1(&m.instance, v0)
 }
 func (m *Module) Xis_odd(v0 int32) int32 {
-	return wasm2go_functions2.Xis_odd(&m.instance, v0)
+	defer func(used int64) {
+		m.instance.StackUsed = used
+	}(m.instance.StackUsed)
+	return wasm2go_functions2.Fn2(&m.instance, v0)
 }
 func init() {
-	wasm2go_instance.Xis_even = wasm2go_functions1.Xis_even
+	wasm2go_instance.Fn1 = wasm2go_functions1.Fn1
 }

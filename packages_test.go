@@ -37,8 +37,10 @@ func Test_packages_layout(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	// is_even and is_odd call each other.
-	if !strings.Contains(string(src), "Xis_even func(") {
+	// is_even and is_odd call each other. Both are recursive, so their
+	// exports are wrappers and the functions keep their own names
+	// (stackbound.go): is_even is fn1.
+	if !strings.Contains(string(src), "Fn1 func(") {
 		t.Errorf("the instance package has no variable for the backward call of is_even:\n%s", src)
 	}
 }
