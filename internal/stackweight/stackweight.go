@@ -53,9 +53,9 @@ type Function struct {
 type Result struct {
 	Module    []byte
 	Functions []Function // the functions with code, in index order
-	// Floor is the lowest value __stack_pointer may take before a
+	// Lowest is the lowest value __stack_pointer may take before a
 	// charging function traps: its initial value less StackLimit.
-	Floor int64
+	Lowest int64
 }
 
 type section struct {
@@ -83,8 +83,8 @@ func Weigh(wasm []byte, opt Options) (*Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	floor := int64(m.spInit) - opt.StackLimit
-	if floor < 0 {
+	lowest := int64(m.spInit) - opt.StackLimit
+	if lowest < 0 {
 		return nil, fmt.Errorf("__stack_pointer starts at %d, so a stack limit of %d bytes would reach below address 0; lower the stack limit or give the module a larger stack", m.spInit, opt.StackLimit)
 	}
 	code, err := m.bodies()
@@ -113,15 +113,15 @@ func Weigh(wasm []byte, opt Options) (*Result, error) {
 		// The charge is rounded up to 16 bytes, the stack's alignment in
 		// clang's C ABI, so the module's own frames stay aligned.
 		fns[i].Charge = (fns[i].Estimate*opt.StackLimit/opt.NativeStack + 15) &^ 15
-		if fns[i].Charge > floor || fns[i].Charge >= 1<<31 {
-			return nil, fmt.Errorf("function %d would charge %d bytes, more than the %d bytes below the stack limit; lower the stack limit or raise the native stack", fns[i].Index, fns[i].Charge, floor)
+		if fns[i].Charge > lowest || fns[i].Charge >= 1<<31 {
+			return nil, fmt.Errorf("function %d would charge %d bytes, more than the %d bytes below the stack limit; lower the stack limit or raise the native stack", fns[i].Index, fns[i].Charge, lowest)
 		}
 	}
-	out, err := m.rewrite(code, fns, floor, opt)
+	out, err := m.rewrite(code, fns, lowest, opt)
 	if err != nil {
 		return nil, err
 	}
-	return &Result{Module: out, Functions: fns, Floor: floor}, nil
+	return &Result{Module: out, Functions: fns, Lowest: lowest}, nil
 }
 
 func parse(b []byte) (*module, error) {
@@ -393,7 +393,7 @@ func (m *module) callees(b []byte) ([]int, error) {
 }
 
 // rewrite adds the charges and the custom section.
-func (m *module) rewrite(code []body, fns []Function, floor int64, opt Options) ([]byte, error) {
+func (m *module) rewrite(code []body, fns []Function, lowest int64, opt Options) ([]byte, error) {
 	var extra []funcType // block types appended to the type section
 	blockType := func(results []byte) []byte {
 		switch len(results) {
@@ -422,7 +422,7 @@ func (m *module) rewrite(code []body, fns []Function, floor int64, opt Options) 
 		b := c.body
 		if fns[i].Recursive {
 			var err error
-			if b, err = m.charge(b, fns[i].Charge, floor, blockType(m.types[m.funcTypes[i]].results)); err != nil {
+			if b, err = m.charge(b, fns[i].Charge, lowest, blockType(m.types[m.funcTypes[i]].results)); err != nil {
 				return nil, fmt.Errorf("function %d: %w", fns[i].Index, err)
 			}
 		}
@@ -465,10 +465,10 @@ func (m *module) rewrite(code []body, fns []Function, floor int64, opt Options) 
 }
 
 // charge returns a recursive function's body charging w bytes: at entry it
-// lowers __stack_pointer by w and traps below floor; before every return,
+// lowers __stack_pointer by w and traps below lowest; before every return,
 // and at the end of the code, which a block wrapping the code makes the
 // target of every branch to the function's own label, it raises it by w.
-func (m *module) charge(b []byte, w, floor int64, blockType []byte) ([]byte, error) {
+func (m *module) charge(b []byte, w, lowest int64, blockType []byte) ([]byte, error) {
 	r := code(b)
 	start := r.pos
 	var returns []int
@@ -491,12 +491,12 @@ func (m *module) charge(b []byte, w, floor int64, blockType []byte) ([]byte, err
 	var o bytes.Buffer
 	o.Write(b[:start])
 	o.Write(adjust(0x6b)) // i32.sub
-	// global.get sp; i32.const floor; i32.lt_s; if; unreachable; end:
+	// global.get sp; i32.const lowest; i32.lt_s; if; unreachable; end:
 	// signed, so a stack pointer that wrapped below 0 traps too.
 	o.WriteByte(0x23)
 	o.Write(sp)
 	o.WriteByte(0x41)
-	o.Write(sleb(int32(floor)))
+	o.Write(sleb(int32(lowest)))
 	o.Write([]byte{0x48, 0x04, 0x40, 0x00, 0x0b})
 	o.WriteByte(0x02)
 	o.Write(blockType)

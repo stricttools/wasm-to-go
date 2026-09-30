@@ -69,7 +69,7 @@ func Test_stack_weight(t *testing.T) {
 	if got, want := *m.Xcount(), int32(stackWeightOptions.StackLimit)/forever; got != want {
 		t.Errorf("forever() trapped after %d levels, want %d", got, want)
 	}
-	if got, want := res.Floor, int64(top)-stackWeightOptions.StackLimit; got != want {
-		t.Errorf("the pass's floor is %d, want %d", got, want)
+	if got, want := res.Lowest, int64(top)-stackWeightOptions.StackLimit; got != want {
+		t.Errorf("the pass's lowest stack pointer is %d, want %d", got, want)
 	}
 }
