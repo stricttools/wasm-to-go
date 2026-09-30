@@ -11,12 +11,12 @@ import (
 func Xdirect(m *instance.Module) int32 {
 	mem := m.Memory
 	var v0 int32
-	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(i32(1)))
+	binary.LittleEndian.PutUint32((*[4]byte)(mem[uint64(uint32(i32(0))) : uint64(uint32(i32(0)))+4])[:], uint32(i32(1)))
 	t0 := functions7.Fn5(m)
 	mem = m.Memory
 	v0 = t0
-	binary.LittleEndian.PutUint32(mem[uint32(v0*int32(65536)):], uint32(i32(99)))
-	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v0*int32(65536)):]))
+	binary.LittleEndian.PutUint32((*[4]byte)(mem[uint64(uint32(v0*int32(65536))) : uint64(uint32(v0*int32(65536)))+4])[:], uint32(i32(99)))
+	t1 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0*int32(65536))) : uint64(uint32(v0*int32(65536)))+4])[:]))
 	return t1
 }
 

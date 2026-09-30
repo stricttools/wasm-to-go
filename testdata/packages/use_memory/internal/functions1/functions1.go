@@ -16,7 +16,7 @@ l1:
 		if uint32(v0) >= uint32(t0) {
 			return v1
 		}
-		t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v0<<16):]))
+		t1 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0<<16)) : uint64(uint32(v0<<16))+4])[:]))
 		v1 = v1 + t1
 		v0 = v0 + int32(1)
 		goto l1

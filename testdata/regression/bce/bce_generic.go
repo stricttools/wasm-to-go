@@ -63,20 +63,20 @@ func (m *wasmMemory) Grow(delta, max int64) int64 {
 }
 func (m *Module) Xsum(v0 int32) int32 {
 	mem := m.memory
-	t0 := int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v0))+8:]))
-	t1 := int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v0))+4:]))
-	t2 := int32(binary.LittleEndian.Uint32(mem[uint32(v0):]))
+	t0 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0))+8 : uint64(uint32(v0))+8+4])[:]))
+	t1 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0))+4 : uint64(uint32(v0))+4+4])[:]))
+	t2 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[:]))
 	return t0 + t1 + t2
 }
 func (m *Module) Xinc(v0 int32) {
 	mem := m.memory
-	t0 := int32(binary.LittleEndian.Uint32(mem[uint32(v0):]))
-	binary.LittleEndian.PutUint32(mem[uint32(v0):], uint32(t0+int32(1)))
+	t0 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[:]))
+	binary.LittleEndian.PutUint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[:], uint32(t0+int32(1)))
 }
 func (m *Module) Xwiden(v0 int32) int64 {
 	mem := m.memory
-	_ = int32(binary.LittleEndian.Uint16(mem[uint32(v0):]))
-	t1 := int64(binary.LittleEndian.Uint64(mem[uint32(v0):]))
+	_ = int32(binary.LittleEndian.Uint16((*[2]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+2])[:]))
+	t1 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[:]))
 	return t1
 }
 func (m *Module) Xwalk(v0, v1 int32) int32 {
@@ -84,7 +84,7 @@ func (m *Module) Xwalk(v0, v1 int32) int32 {
 	var v2 int32
 l0:
 	{
-		t0 := int32(binary.LittleEndian.Uint32(mem[uint32(v0):]))
+		t0 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[:]))
 		v2 = v2 + t0
 		v0 = v0 + int32(4)
 		v1 = v1 - int32(1)
@@ -97,17 +97,17 @@ l0:
 func (m *Module) Xbranch(v0, v1 int32) int32 {
 	mem := m.memory
 	if v1 != 0 {
-		_ = int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v0))+4:]))
+		_ = int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0))+4 : uint64(uint32(v0))+4+4])[:]))
 	}
-	t1 := int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v0))+4:]))
+	t1 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0))+4 : uint64(uint32(v0))+4+4])[:]))
 	return t1
 }
 func (m *Module) Xcopy(v0 int32) int32 {
 	mem := m.memory
 	var v1 int32
-	_ = int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v0))+4:]))
+	_ = int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0))+4 : uint64(uint32(v0))+4+4])[:]))
 	v1 = v0
-	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v1):]))
+	t1 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v1)) : uint64(uint32(v1))+4])[:]))
 	return t1
 }
 func (m *Module) Xmemory() Memory {

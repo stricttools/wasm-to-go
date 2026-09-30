@@ -45,7 +45,7 @@ func Test_stack_weight_module(t *testing.T) {
 func Test_translate(t *testing.T) {
 	tests := []string{
 		"determinism", "fib", "loops", "memory", "primes", "recursion", "stack", "table", "trig",
-		"regression/bulk_bounds", "regression/bulk_bounds_imported", "regression/constfold", "regression/dispatch", "regression/f32convert", "regression/nancanon", "regression/oob_trap", "regression/select_effect", "regression/stack_bound", "regression/stack_weight", "regression/store_grow", "regression/tee_self_loop", "regression/use_memory",
+		"regression/bulk_bounds", "regression/bulk_bounds_imported", "regression/constfold", "regression/dispatch", "regression/f32convert", "regression/nancanon", "regression/oob_trap", "regression/oob_trap_imported", "regression/select_effect", "regression/stack_bound", "regression/stack_weight", "regression/store_grow", "regression/tee_self_loop", "regression/use_memory",
 	}
 	for _, name := range tests {
 		t.Run(name, func(t *testing.T) {
@@ -115,20 +115,20 @@ func Test_translate_packages(t *testing.T) {
 	}
 }
 
-// Translates modules with -byte-accesses, as if every function were big,
-// into testdata/bytes: every memory access is written as byte operations,
-// and the tests of bytes_test.go run the one-package modules' tests on
-// them.
+// Translates modules as if every function were big, into testdata/bytes:
+// every memory access is written as byte operations, and the tests of
+// bytes_test.go run the one-package modules' tests on them.
 func Test_translate_bytes(t *testing.T) {
-	size, bytes, flag := bigFunctionSize, *byteAccesses, *unsafe
-	bigFunctionSize, *byteAccesses = 0, true
-	t.Cleanup(func() { bigFunctionSize, *byteAccesses, *unsafe = size, bytes, flag })
+	size, flag := bigFunctionSize, *unsafe
+	bigFunctionSize = 0
+	t.Cleanup(func() { bigFunctionSize, *unsafe = size, flag })
 
 	tests := []struct {
 		name, wasm string
 		unsafe     bool
 	}{
 		{name: "oob_trap", wasm: "testdata/regression/oob_trap/oob_trap.wasm"},
+		{name: "oob_trap_imported", wasm: "testdata/regression/oob_trap_imported/oob_trap_imported.wasm"},
 		{name: "bce", wasm: "testdata/regression/bce/bce.wasm", unsafe: true},
 	}
 	for _, tt := range tests {

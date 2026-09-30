@@ -14,7 +14,7 @@ func Xwalk(m *instance.Module, v0, v1 int32) int32 {
 	var v2 int32
 l0:
 	{
-		t0 := int32(binary.LittleEndian.Uint32(mem[uint32(v0):]))
+		t0 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[:]))
 		v2 = v2 + t0
 		v0 = v0 + int32(4)
 		v1 = v1 - int32(1)

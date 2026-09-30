@@ -25,9 +25,8 @@ var (
 	unsafe    = flag.Bool("unsafe", false, "allow importing unsafe (requires -o: writes output.go and output_generic.go)")
 	dwarfline = flag.Bool("dwarfline", false, "use line numbers from DWARF metadata")
 
-	importPath   = flag.String("importpath", "", "import path of the directory of -o; required when the module is written as several packages")
-	byteAccesses = flag.Bool("byte-accesses", false, "in functions the Go compiler considers big, write memory accesses as byte operations, which need no inlining: faster code, more compile memory (see the README)")
-	version      = flag.Bool("version", false, "print version and exit")
+	importPath = flag.String("importpath", "", "import path of the directory of -o; required when the module is written as several packages")
+	version    = flag.Bool("version", false, "print version and exit")
 
 	provided  stringFlags
 	embedFile string

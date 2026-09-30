@@ -95,8 +95,8 @@ func (m *Module) Xcopysign64(v0, v1 int64) int64 {
 }
 func (m *Module) Xstoreload64(v0 int64) int64 {
 	mem := m.memory
-	binary.LittleEndian.PutUint64(mem[uint32(i32(8)):], math.Float64bits(math.Float64frombits(uint64(v0))))
-	t0 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(i32(8)):]))
+	binary.LittleEndian.PutUint64((*[8]byte)(mem[uint64(uint32(i32(8))) : uint64(uint32(i32(8)))+8])[:], math.Float64bits(math.Float64frombits(uint64(v0))))
+	t0 := math.Float64frombits(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(8))) : uint64(uint32(i32(8)))+8])[:]))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xnegsum64(v0, v1 int64) int64 {

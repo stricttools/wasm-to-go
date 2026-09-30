@@ -12,6 +12,7 @@ import (
 	dispatch_test "github.com/stricttools/wasm-to-go/testdata/regression/dispatch"
 	memgrow_test "github.com/stricttools/wasm-to-go/testdata/regression/memgrow"
 	oob_trap_test "github.com/stricttools/wasm-to-go/testdata/regression/oob_trap"
+	oob_trap_imported_test "github.com/stricttools/wasm-to-go/testdata/regression/oob_trap_imported"
 	provided_helper_test "github.com/stricttools/wasm-to-go/testdata/regression/provided_helper"
 	select_test "github.com/stricttools/wasm-to-go/testdata/regression/select_effect"
 	store_grow_test "github.com/stricttools/wasm-to-go/testdata/regression/store_grow"
@@ -48,6 +49,23 @@ func Test_regression_store_grow(t *testing.T) {
 
 func Test_regression_oob_trap(t *testing.T) {
 	testOOBTrap(t, oob_trap_test.New())
+}
+
+// The memory placed in a backing array far larger than itself: an access
+// past the memory's end traps though the array holds bytes there, before
+// and after the memory grows in place.
+func Test_regression_oob_trap_use_memory(t *testing.T) {
+	m := oob_trap_test.New()
+	if !m.UseMemory(make([]byte, 0, 16<<16)) {
+		t.Fatal("UseMemory refused an array of 16 pages")
+	}
+	testOOBTrap(t, m)
+}
+
+// An imported memory whose slice, as the host holds it, has spare
+// capacity past its length.
+func Test_regression_oob_trap_imported(t *testing.T) {
+	testOOBTrap(t, oob_trap_imported_test.New(spareEnv{&spareMemory{make([]byte, 1<<16, 4<<16)}}))
 }
 
 type oobTrapModule interface {
@@ -103,6 +121,25 @@ func testOOBTrap(t *testing.T, m oobTrapModule) {
 		t.Errorf("ld32(65536) = %d after grow, want 42", got)
 	}
 	mustTrap("ld32 past grown end", func() { m.Xld32(131073) })
+
+	// A second page: an owned memory's backing array then has room for a
+	// fourth, and so does the host's slice of an imported memory here.
+	if got := m.Xgrow(1); got != 2 {
+		t.Fatalf("grow(1) = %d, want 2", got)
+	}
+	const end = 3 << 16
+	m.Xst32(end-4, 7)
+	if got := m.Xld32(end - 4); got != 7 {
+		t.Errorf("ld32(%d) = %d after the second grow, want 7", end-4, got)
+	}
+	mustTrap("ld16 straddling the grown end", func() { m.Xld16(end - 1) })
+	mustTrap("ld32 straddling the grown end", func() { m.Xld32(end - 2) })
+	mustTrap("ld64 first past the grown end", func() { m.Xld64(end) })
+	mustTrap("st32 straddling the grown end", func() { m.Xst32(end-3, 0) })
+	mustTrap("st64 straddling the grown end", func() { m.Xst64(end-7, 0) })
+	if got := m.Xld32(end - 8); got != 0 {
+		t.Errorf("ld32(%d) = %d: a store that trapped wrote to the memory", end-8, got)
+	}
 }
 
 func Test_regression_provided_helper(t *testing.T) {

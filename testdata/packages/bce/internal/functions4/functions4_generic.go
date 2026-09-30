@@ -11,7 +11,7 @@ import (
 
 func Xwiden(m *instance.Module, v0 int32) int64 {
 	mem := m.Memory
-	_ = int32(binary.LittleEndian.Uint16(mem[uint32(v0):]))
-	t1 := int64(binary.LittleEndian.Uint64(mem[uint32(v0):]))
+	_ = int32(binary.LittleEndian.Uint16((*[2]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+2])[:]))
+	t1 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[:]))
 	return t1
 }

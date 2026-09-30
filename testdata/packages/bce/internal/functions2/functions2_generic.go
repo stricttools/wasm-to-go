@@ -12,8 +12,8 @@ import (
 func Xbranch(m *instance.Module, v0, v1 int32) int32 {
 	mem := m.Memory
 	if v1 != 0 {
-		_ = int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v0))+4:]))
+		_ = int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0))+4 : uint64(uint32(v0))+4+4])[:]))
 	}
-	t1 := int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v0))+4:]))
+	t1 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0))+4 : uint64(uint32(v0))+4+4])[:]))
 	return t1
 }

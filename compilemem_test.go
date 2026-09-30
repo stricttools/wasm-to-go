@@ -20,7 +20,7 @@ import (
 // Test_quickjs: the measured peak on linux/amd64 and js/wasm, with the
 // margin its run-to-run variation needs (see the README's compile cost
 // section). A change that makes the translation cost more fails the test.
-const compileMemoryBound = 240
+const compileMemoryBound = 640
 
 // The toolexec mode of the test binary: `go build -toolexec` runs it as
 // "test.binary -wasm2go-toolexec-log=FILE tool args...", and it runs the
@@ -64,32 +64,21 @@ func toolexec(log string, args []string) int {
 }
 
 // The reference module, QuickJS-ng (testdata/quickjs), compiles with every
-// compile process of its packages under a bound, one package at a time and
-// with GOMAXPROCS=4 (the backend concurrency of builds that compile several
-// packages at once), and runs test.js as native QuickJS does: translated
-// as the command does by default, for linux/amd64 and js/wasm, under
-// compileMemoryBound; and with -byte-accesses, for linux/amd64, under
-// compileMemoryBoundByteAccesses.
+// compile process of its packages under compileMemoryBound, one package at
+// a time and with GOMAXPROCS=4 (the backend concurrency of builds that
+// compile several packages at once), for linux/amd64 and js/wasm, and runs
+// test.js as native QuickJS does.
 func Test_quickjs(t *testing.T) {
-	t.Run("default", func(t *testing.T) {
-		testQuickJS(t, false, compileMemoryBound, "linux/amd64", "js/wasm")
-	})
-	t.Run("byte-accesses", func(t *testing.T) {
-		testQuickJS(t, true, compileMemoryBoundByteAccesses, "linux/amd64")
-	})
+	testQuickJS(t, compileMemoryBound, "linux/amd64", "js/wasm")
 }
 
-// compileMemoryBoundByteAccesses is compileMemoryBound for the translation
-// with -byte-accesses.
-const compileMemoryBoundByteAccesses = 540
-
-func testQuickJS(t *testing.T, bytes bool, bound float64, targets ...string) {
-	saved := [...]any{*importPath, *embed, *pkg, embedFile, *unsafe, *byteAccesses}
+func testQuickJS(t *testing.T, bound float64, targets ...string) {
+	saved := [...]any{*importPath, *embed, *pkg, embedFile, *unsafe}
 	t.Cleanup(func() {
-		*importPath, *embed, *pkg, embedFile, *unsafe, *byteAccesses = saved[0].(string), saved[1].(bool), saved[2].(string), saved[3].(string), saved[4].(bool), saved[5].(bool)
+		*importPath, *embed, *pkg, embedFile, *unsafe = saved[0].(string), saved[1].(bool), saved[2].(string), saved[3].(string), saved[4].(bool)
 	})
 	dir := t.TempDir()
-	*importPath, *embed, *pkg, *unsafe, *byteAccesses = "qjstest/qjs", true, "qjs", false, bytes
+	*importPath, *embed, *pkg, *unsafe = "qjstest/qjs", true, "qjs", false
 	embedFile = filepath.Join(dir, "qjs", "qjs.dat")
 	if err := os.MkdirAll(filepath.Join(dir, "qjs"), 0o755); err != nil {
 		t.Fatal(err)

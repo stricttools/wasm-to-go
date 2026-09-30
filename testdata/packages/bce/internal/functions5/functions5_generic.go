@@ -11,6 +11,6 @@ import (
 
 func Xinc(m *instance.Module, v0 int32) {
 	mem := m.Memory
-	t0 := int32(binary.LittleEndian.Uint32(mem[uint32(v0):]))
-	binary.LittleEndian.PutUint32(mem[uint32(v0):], uint32(t0+int32(1)))
+	t0 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[:]))
+	binary.LittleEndian.PutUint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[:], uint32(t0+int32(1)))
 }

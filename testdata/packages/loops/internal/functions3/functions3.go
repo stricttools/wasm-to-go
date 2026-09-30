@@ -17,7 +17,7 @@ l1:
 			return v4
 		}
 		v3 = v0 + v2*int32(4)
-		t0 := int32(binary.LittleEndian.Uint32(mem[uint32(v3):]))
+		t0 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[:len(mem):len(mem)][uint64(uint32(v3)) : uint64(uint32(v3))+4])[:]))
 		v4 = v4 + t0
 		v2 = v2 + int32(1)
 		goto l1

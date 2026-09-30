@@ -25,7 +25,7 @@ l1:
 			goto l0
 		}
 		memory_fill(mem, uint32(v1<<16), int32(171), uint32(int32(65536)))
-		binary.LittleEndian.PutUint32(mem[uint32(v1<<16):], uint32(v1))
+		binary.LittleEndian.PutUint32((*[4]byte)(mem[uint64(uint32(v1<<16)) : uint64(uint32(v1<<16))+4])[:], uint32(v1))
 		goto l1
 	}
 l0:

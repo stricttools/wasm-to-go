@@ -59,31 +59,31 @@ func (m *wasmMemory) Grow(delta, max int64) int64 {
 }
 func (m *Module) Xld16(v0 int32) int32 {
 	mem := m.memory
-	t0 := int32(binary.LittleEndian.Uint16(mem[uint32(v0):]))
+	t0 := int32(binary.LittleEndian.Uint16((*[2]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+2])[:]))
 	return t0
 }
 func (m *Module) Xld32(v0 int32) int32 {
 	mem := m.memory
-	t0 := int32(binary.LittleEndian.Uint32(mem[uint32(v0):]))
+	t0 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[:]))
 	return t0
 }
 func (m *Module) Xld64(v0 int32) int64 {
 	mem := m.memory
-	t0 := int64(binary.LittleEndian.Uint64(mem[uint32(v0):]))
+	t0 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[:]))
 	return t0
 }
 func (m *Module) Xld32o(v0 int32) int32 {
 	mem := m.memory
-	t0 := int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v0))+0xffffffff:]))
+	t0 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0))+0xffffffff : uint64(uint32(v0))+0xffffffff+4])[:]))
 	return t0
 }
 func (m *Module) Xst32(v0, v1 int32) {
 	mem := m.memory
-	binary.LittleEndian.PutUint32(mem[uint32(v0):], uint32(v1))
+	binary.LittleEndian.PutUint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[:], uint32(v1))
 }
 func (m *Module) Xst64(v0 int32, v1 int64) {
 	mem := m.memory
-	binary.LittleEndian.PutUint64(mem[uint32(v0):], uint64(v1))
+	binary.LittleEndian.PutUint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[:], uint64(v1))
 }
 func (m *Module) Xgrow(v0 int32) int32 {
 	t0 := int32(memory_grow(&m.memory, &m.memBacking, int64(v0), m.maxMem))

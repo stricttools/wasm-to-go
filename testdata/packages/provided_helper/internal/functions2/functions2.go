@@ -8,5 +8,5 @@ import (
 )
 
 func U_peek(mod *instance.Module, addr int32) int64 {
-	return int64(binary.LittleEndian.Uint64(mod.Memory[uint32(addr):]))
+	return int64(binary.LittleEndian.Uint64((*[8]byte)(mod.Memory[uint64(uint32(addr)) : uint64(uint32(addr))+8])[:]))
 }

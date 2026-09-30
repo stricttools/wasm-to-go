@@ -200,7 +200,8 @@ compiled into the module, and imports no math functions.
 A module that defines its memory (neither imports it nor shares it)
 keeps it in the `Module` as a slice whose capacity is its length,
 so no slice of the memory reaches past its end:
-the bulk memory operations, and code of `-provided` files, trap there.
+memory accesses (see [memory accesses](#memory-accesses)), the bulk memory
+operations, and code of `-provided` files trap there.
 The slice is a prefix of a backing array, also in the `Module`,
 whose bytes past the memory's end are zero.
 `memory.grow` within the backing array is in place:
@@ -468,13 +469,39 @@ constant, `int32(5)`, which the compiler handles without an inlined call.
 
 ### Memory accesses
 
-Loads and stores are written as calls of `encoding/binary`'s little-endian
-functions on the memory's slice, `binary.LittleEndian.Uint32(mem[a:])`,
-not as calls of helper functions: the Go compiler gives every inlined call
-its own copies of the callee's parameters, named variables with debug
-information, and a module makes tens of thousands of memory accesses.
-With `-unsafe`, `output.go` writes them inline with `unsafe` instead
-(see [below](#-unsafe-and-two-output-files)).
+Each load and store of more than one byte goes through a pointer to an
+array of its size, converted from a slice of the memory:
+`(*[4]byte)(mem[a : a+4])`, with the address as a `uint64`.
+The slice holds the access's whole bounds check, two compares,
+and the constant indexes into the array need none;
+a slice from the address, `mem[a:]`, also keeps a check of the last byte's
+index and masks the new slice's pointer, and holds the memory's length and
+capacity live. Slicing checks against the capacity, so this relies on an
+owned memory's capacity being its length (see [linear memory](#linear-memory));
+an imported or a shared memory, whose slice its host may hold with spare
+capacity, is first cut to its length, `mem[:len(mem):len(mem)]`.
+
+In most functions an access is a call of `encoding/binary`'s little-endian
+functions on the array, `binary.LittleEndian.Uint32((*[4]byte)(mem[a : a+4])[:])`,
+which the compiler inlines, not a call of a helper function: the Go compiler
+gives every inlined call its own copies of the callee's parameters, named
+variables with debug information, and a module makes tens of thousands of
+memory accesses. Into a function it considers big (about 6,400 AST nodes
+and more; `bigFunctionSize` in [translate.go](translate.go) is below that)
+it inlines only callees of cost 20 or less, and `encoding/binary`'s 32- and
+64-bit functions cost more, so there the translator writes each access as
+the byte operations those functions are, which the compiler combines into
+single loads and stores. With `-unsafe`, `output.go` writes the accesses
+inline with `unsafe` instead (see [below](#-unsafe-and-two-output-files)).
+
+On QuickJS-ng without `-unsafe`, where the interpreter loop is a big
+function, the game frame of the benchmark took 36.3 million cycles
+(9.1 ms) with the bytes of `mem[a:]` and 24.1 million (6.0 ms) with the
+array pointer (medians of interleaved runs on linux/amd64, under load);
+calls there instead of bytes took the game and Octane workloads 1.4 to 2.2
+times as long as the bytes of `mem[a:]`. The bytes cost compile memory:
+see [compile cost](#compile-cost). Writing a third index, `mem[a : a+4 : a+4]`,
+is no faster and made the largest compile take a quarter more memory.
 
 ### Bounds checks
 
@@ -547,7 +574,7 @@ in AST nodes of translated code), and writes a larger module as
 [several packages](#several-packages), each compiled by its own process.
 It also keeps the code small where the compiler's memory goes:
 memory accesses are written as `encoding/binary` calls, not as calls
-of helper functions (see [memory accesses](#memory-accesses)),
+of helper functions, except in big functions (see [memory accesses](#memory-accesses)),
 and integer constants as Go constants where Go cannot fold them
 (see [constants](#constants)).
 
@@ -561,7 +588,8 @@ the interpreter loop of QuickJS.
 
 The package limit was chosen from the peak memory of the largest compile
 process when building QuickJS-ng (without and with `-unsafe`) and
-tree-sitter's runtime, with `go build -p 1` on 16 cores,
+tree-sitter's runtime, with every access a call of `encoding/binary`
+(big functions included), with `go build -p 1` on 16 cores,
 Go 1.26 on linux/amd64 (MiB; arm64 and js/wasm peak in the same ranges;
 in one package, QuickJS's compile took 1,906 MiB):
 
@@ -575,7 +603,7 @@ in one package, QuickJS's compile took 1,906 MiB):
 | 400,000 | 611 | 344 | 287 | 8.8 s |
 
 QuickJS's largest function, its interpreter loop (about 99,000 AST nodes),
-alone takes 170 to 245 MiB from 100,000 nodes down (the run-to-run
+alone took 170 to 245 MiB from 100,000 nodes down (the run-to-run
 variation of the Go compiler's collector, which in a rare build of the
 translation reached 321 MiB); the limit, 25,000,
 is where smaller packages stopped lowering tree-sitter's largest compile
@@ -583,30 +611,18 @@ while build time kept rising. The limit does not change runtime speed
 measurably: calls between packages are direct calls, except calls to
 an earlier package, which go through a function variable.
 
+The interpreter loop is a big function, so its accesses are written as bytes
+(see [memory accesses](#memory-accesses)), which makes its source several
+times larger than calls do: its compile, the largest, takes 540 to 604 MiB
+on linux/amd64 and 526 to 595 MiB on js/wasm (eight runs of the test below),
+where the bytes of `mem[a:]` took 444 to 552 MiB and calls 170 to 245 MiB.
+
 `Test_quickjs` translates QuickJS-ng (`testdata/quickjs`), compiles it for
 linux/amd64 and js/wasm one package at a time with `GOMAXPROCS=4`,
 and fails if any compile process of its packages takes more than
 `compileMemoryBound` (in `compilemem_test.go`), just above the largest
 it has measured; it then runs `testdata/quickjs/test.js` on it and
-compares the result with a native build's. It does the same for the
-translation with `-byte-accesses` on linux/amd64, under
-`compileMemoryBoundByteAccesses`.
-
-### `-byte-accesses`
-
-The Go compiler inlines only small functions, of cost 20 or less,
-into a function it considers big (about 6,400 AST nodes and more,
-`bigFunctionSize` in [translate.go](translate.go) is below that),
-and `encoding/binary`'s 32- and 64-bit functions cost more:
-in such a function every memory access is a call.
-`-byte-accesses` writes the accesses of those functions as the byte
-operations the functions are, which the compiler combines into single
-loads and stores. On QuickJS without `-unsafe`, where the interpreter loop
-is such a function, the game and Octane workloads of the benchmark run
-1.4 to 2.2 times as fast, and the largest compile takes about twice
-the memory (475 to 525 MiB instead of 230 to 245 MiB) and twice the
-time: each access is written out byte by byte in the source, several times larger than a call.
-It is an option because both costs are real, and the choice is the consumer's.
+compares the result with a native build's.
 
 ## Usage
 
@@ -614,8 +630,6 @@ It is an option because both costs are real, and the choice is the consumer's.
 Usage: wasm2go [option]... [input.wasm]
   -dwarfline
         use line numbers from DWARF metadata
-  -byte-accesses
-        in functions the Go compiler considers big, write memory accesses as byte operations, which need no inlining: faster code, more compile memory (see the README)
   -embed
         go:embed data sections from a .dat file
   -importpath string

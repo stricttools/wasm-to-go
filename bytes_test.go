@@ -10,6 +10,7 @@ import (
 
 	bytes_bce "github.com/stricttools/wasm-to-go/testdata/bytes/bce"
 	bytes_oob_trap "github.com/stricttools/wasm-to-go/testdata/bytes/oob_trap"
+	bytes_oob_trap_imported "github.com/stricttools/wasm-to-go/testdata/bytes/oob_trap_imported"
 )
 
 // The modules of testdata/bytes have every memory access written as byte
@@ -17,7 +18,28 @@ import (
 // tests on each target.
 
 func Test_regression_bytes_oob_trap(t *testing.T) {
-	f, err := parser.ParseFile(token.NewFileSet(), "testdata/bytes/oob_trap/oob_trap.go", nil, 0)
+	requireBytes(t, "testdata/bytes/oob_trap/oob_trap.go")
+	testOOBTrap(t, bytes_oob_trap.New())
+}
+
+func Test_regression_bytes_oob_trap_use_memory(t *testing.T) {
+	m := bytes_oob_trap.New()
+	if !m.UseMemory(make([]byte, 0, 16<<16)) {
+		t.Fatal("UseMemory refused an array of 16 pages")
+	}
+	testOOBTrap(t, m)
+}
+
+func Test_regression_bytes_oob_trap_imported(t *testing.T) {
+	requireBytes(t, "testdata/bytes/oob_trap_imported/oob_trap_imported.go")
+	testOOBTrap(t, bytes_oob_trap_imported.New(spareEnv{&spareMemory{make([]byte, 1<<16, 4<<16)}}))
+}
+
+// Fails unless every memory access of the module's functions in file is
+// written as bytes.
+func requireBytes(t *testing.T, file string) {
+	t.Helper()
+	f, err := parser.ParseFile(token.NewFileSet(), file, nil, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -33,7 +55,6 @@ func Test_regression_bytes_oob_trap(t *testing.T) {
 			})
 		}
 	}
-	testOOBTrap(t, bytes_oob_trap.New())
 }
 
 // The generic file, which the platforms outside passes.ExpandPlatforms

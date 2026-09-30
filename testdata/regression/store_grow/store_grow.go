@@ -53,8 +53,8 @@ func (m *Module) Xtest() int32 {
 	mem := m.memory
 	t0 := m.fn0()
 	mem = m.memory
-	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(t0))
-	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(i32(0)):]))
+	binary.LittleEndian.PutUint32((*[4]byte)(mem[uint64(uint32(i32(0))) : uint64(uint32(i32(0)))+4])[:], uint32(t0))
+	t1 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(i32(0))) : uint64(uint32(i32(0)))+4])[:]))
 	return t1
 }
 func (m *Module) Xsize() int32 {

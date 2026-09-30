@@ -11,8 +11,8 @@ import (
 
 func Xsum(m *instance.Module, v0 int32) int32 {
 	mem := m.Memory
-	t0 := int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v0))+8:]))
-	t1 := int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v0))+4:]))
-	t2 := int32(binary.LittleEndian.Uint32(mem[uint32(v0):]))
+	t0 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0))+8 : uint64(uint32(v0))+8+4])[:]))
+	t1 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0))+4 : uint64(uint32(v0))+4+4])[:]))
+	t2 := int32(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[:]))
 	return t0 + t1 + t2
 }

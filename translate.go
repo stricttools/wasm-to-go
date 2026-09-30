@@ -402,21 +402,22 @@ func (t *translator) providedCode() []ast.Decl {
 // Go compiler may treat a function as big: its inliner then inlines only
 // callees of cost 20 or less into it (inlineBigFunctionNodes, 5000 of its
 // own nodes, and inlineBigFunctionMaxCost in cmd/compile/internal/inline),
-// which leaves encoding/binary's 32- and 64-bit functions calls. With
-// -byte-accesses, the translator writes the memory accesses of such
-// functions as bytes (passes.Lower). Measured on QuickJS, the smallest
-// function the compiler treated as big had 6444 AST nodes, the largest it
-// did not 6037.
+// which leaves encoding/binary's 32- and 64-bit functions calls. The
+// translator writes the memory accesses of such functions as bytes
+// (passes.Lower). Measured on QuickJS, the smallest function the compiler
+// treated as big had 6444 AST nodes, the largest it did not 6037.
 var bigFunctionSize = 5000
 
 // Replaces, in place, the memory access helper calls of decls with the
-// helpers' bodies (passes.Lower), unless -noopt.
+// helpers' bodies (passes.Lower), unless -noopt. An owned memory's
+// capacity is its length (see the README's section on linear memory).
 func (t *translator) lower(decls []*ast.FuncDecl) {
 	if *noopt {
 		return
 	}
+	capIsLen := t.memory != nil && t.memory.owned()
 	for _, decl := range decls {
-		passes.Lower(decl, *byteAccesses && passes.Size(decl) > bigFunctionSize)
+		passes.Lower(decl, passes.Size(decl) > bigFunctionSize, capIsLen)
 	}
 }
 
