@@ -199,6 +199,28 @@ where `math.FMA` takes 2.3 ns, and 14.1 ns with `math.FMA` in software
 QuickJS built with wasi-sdk is not affected: it links wasi-libc, whose libm is musl's
 compiled into the module, and imports no math functions.
 
+## Traps
+
+A trap is a Go panic raised in the translated code:
+`panic("unreachable")`, `"integer overflow"`, `"invalid conversion to integer"`,
+and `"call stack exhausted"` where the translation checks for the trap itself,
+and the Go runtime's own panic where a Go check catches it
+(an index or slice out of range for a memory, table, or segment access,
+an integer divide by zero, a failed type assertion for an indirect call
+of an empty slot or of a function of another type).
+The instance stays usable after a trap, as a Wasm instance does
+(see [the Go stack](#the-go-stack)).
+
+A host in plain Go contains a trap with `recover`.
+A strictgo program, where `recover` is refused,
+calls the module through `strictgo.Contain(m, func() { ... })`,
+which recovers only the panics raised in the translation's own packages
+and returns the trap's kind, the translated function it was raised in, and its message;
+a panic of the host's own code, a host function the module called included,
+goes on and ends the program.
+strictgo checks the translation as a library of the program,
+and it passes as `wasm2go` writes it (without `-unsafe`).
+
 ## Linear memory
 
 A module that defines its memory (neither imports it nor shares it)
