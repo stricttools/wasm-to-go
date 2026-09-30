@@ -15,6 +15,11 @@ with no dependencies beyond the standard library:
 a single file, or two with [`-unsafe`](#-unsafe-and-two-output-files),
 or, for a large module, [several packages](#several-packages).
 
+`stack-weight`, a command of this repository, prepares a module
+for running both translated and directly on a JavaScript engine
+with the same outcome when it recurses deeply
+(see [the stack-weight pass](#the-stack-weight-pass)).
+
 ## Overview
 
 The generated Go file forms a self-contained package
@@ -250,6 +255,100 @@ so a chain of them counts like any recursion:
 the spec tests' tail calls deeper than the bound
 (`beyondStackBound` in [internal/spectest/runner.go](internal/spectest/runner.go))
 are checked to trap.
+
+## The stack-weight pass
+
+A C program built with clang keeps its stack in linear memory
+(the shadow stack, through the `__stack_pointer` global),
+and a limit it puts on its own stack (QuickJS's, for example)
+measures only that stack, while the calls themselves use
+the native stack of whatever runs the module:
+the Go stack of the translation, or a JavaScript engine's own stack
+when a browser runs the module directly.
+A function that keeps its variables in Wasm locals uses no shadow stack,
+so its recursion can overflow a browser's native stack
+(an error the module cannot catch, and a different outcome from the Go host's)
+long before the program's own limit.
+
+`stack-weight` rewrites a module so that each function on a cycle
+of its call graph (the same analysis as [the Go stack](#the-go-stack))
+charges an estimate of its native frame to the shadow stack:
+
+```
+stack-weight -stack-limit BYTES -native-stack BYTES -o out.wasm [-report file.tsv] in.wasm
+```
+
+- At entry a charging function lowers `__stack_pointer` by its charge,
+  and traps (`unreachable`) when the result is below the stack's initial
+  value less `-stack-limit`; on every way out it raises it by the same
+  charge (a block around its code makes every branch to its own label
+  pass there). Nothing is ever written in the charged bytes.
+- The charge is the frame estimate times `-stack-limit` over
+  `-native-stack`, rounded up to 16 bytes, so at the pass's own bound
+  the estimated frames add up to at most `-native-stack` bytes.
+- The module must export `__stack_pointer` (link with
+  `-Wl,--export=__stack_pointer`), whose initial value must be a constant.
+  Tail calls, exception handling, SIMD, typed function references, and
+  garbage collection instructions are refused: a tail call or an exception
+  would leave frames without giving their charge back.
+- The pass adds a custom section named `stack-weight` recording its options
+  and its estimate, and refuses a module that has one: a second run would
+  charge every function twice.
+- `-report` writes each function's slots, whether it is on a cycle,
+  its estimate, and its charge.
+
+The charges are part of the module, so a limit the program measures from
+`__stack_pointer` is crossed at the same call wherever the module runs:
+in the translation on every Go target, and on every JavaScript engine.
+What makes that limit also keep an engine within its native stack is
+an assumption about the engine, which the estimate was measured against:
+
+- **Frames within the estimate.** The estimate
+  ([internal/stackweight/estimate.go](internal/stackweight/estimate.go))
+  is the larger of 272 plus 2 per slot and 48 plus 8 per slot
+  (parameters and declared locals), plus 8 per parameter an x86-64
+  engine passes on the stack. For every function on a cycle of
+  QuickJS-ng's call graph, the frame V8's two compilers give it
+  (Liftoff and TurboFan, in Node 22's V8 12.4, read from
+  `--print-wasm-code`) is at most 0.995 of the estimate.
+  A large constant per frame makes recursion through small frames that
+  keep no shadow stack (deeply nested JSON, arrays walked by `flat`)
+  and recursion through QuickJS's interpreter, whose frames also take
+  shadow stack, reach similar native stacks at the limit, so the
+  second goes deepest for a given worst case; 8 per slot keeps the
+  estimate growing with a frame's slots beyond the frames it was
+  fitted to.
+- **Room for the rest.** Frames outside every cycle charge nothing:
+  a chain of them is no deeper than the call graph. They, the frames
+  of the host that calls the module, and the program's own work after
+  its limit (throwing its error) must fit in what the engine's stack
+  has beyond `-native-stack`.
+- **Engines not measured.** SpiderMonkey and JavaScriptCore were not
+  available where the pass was measured; their frames per wasm frame
+  are not known to be within the estimate.
+
+Measured on QuickJS-ng v0.17.0 (1 MiB limit on its own stack, a 2 MiB
+shadow stack placed first), weighted with `-stack-limit 1179648`
+(128 KiB past QuickJS's limit) and `-native-stack 786432`, over
+recursion through 25 different paths in the engine, 60 random mixes of
+them, and nesting too deep for the parser, `JSON.parse`, regular
+expressions, `String`, `join`, `flat`, and a recursive clone:
+
+| engine | default stack | most any case needed | every case ended in QuickJS's error, at the same depth |
+|---|---|---|---|
+| Node 22.23 (V8 12.4) | 984 KiB | 464 KiB (Liftoff), 348 KiB (TurboFan only) | yes |
+| Deno 2.6.6 (V8 14.2) | 1,024 KiB | 508 KiB (Liftoff), 500 KiB (TurboFan only) | yes |
+| Chromium 149, page | 984 KiB | 464 KiB | yes |
+| Chromium 149, worker | set by the browser | not measurable with `--stack-size` | yes |
+| the translation, Go | 1 GB (250 MB on 32-bit) | under the Go stack bound | yes |
+
+Plain recursion (`function f() { return f() + 1; }` called through a
+dispatch table, three JavaScript calls per level) reaches 310 levels;
+unweighted it overflows V8's stack. An earlier estimate, 128 plus 16
+per local charged by every function that calls, reached 252 levels
+with its worst case needing 492 KiB. The charges cost about 2 to 4 percent
+of a 300-frame game workload's time in Node (medians of interleaved
+runs on a loaded machine).
 
 ## Optimization passes
 

@@ -13,15 +13,39 @@ import (
 	"slices"
 	"strings"
 	"testing"
+
+	"github.com/stricttools/wasm-to-go/internal/stackweight"
 )
 
 //go:generate go test -tags generator -run translate -args -unsafe
 //go:generate go test -tags generator -run translate
 
+// stackWeightOptions are the stack-weight pass's options for its test
+// module: charges twice the frame estimates, and traps 16 KiB below the
+// stack's top.
+var stackWeightOptions = stackweight.Options{StackLimit: 16 << 10, NativeStack: 8 << 10}
+
+// Writes the stack-weight pass's output for its test module, which
+// Test_translate then translates.
+func Test_stack_weight_module(t *testing.T) {
+	const dir = "testdata/regression/stack_weight/"
+	in, err := os.ReadFile(dir + "stack_weight.unweighted.wasm")
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := stackweight.Weigh(in, stackWeightOptions)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(dir+"stack_weight.wasm", res.Module, 0o644); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func Test_translate(t *testing.T) {
 	tests := []string{
 		"determinism", "fib", "loops", "memory", "primes", "recursion", "stack", "table", "trig",
-		"regression/constfold", "regression/dispatch", "regression/f32convert", "regression/nancanon", "regression/oob_trap", "regression/select_effect", "regression/stack_bound", "regression/store_grow", "regression/tee_self_loop",
+		"regression/constfold", "regression/dispatch", "regression/f32convert", "regression/nancanon", "regression/oob_trap", "regression/select_effect", "regression/stack_bound", "regression/stack_weight", "regression/store_grow", "regression/tee_self_loop",
 	}
 	for _, name := range tests {
 		t.Run(name, func(t *testing.T) {
