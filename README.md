@@ -311,17 +311,70 @@ The Go compiler keeps every compiled function's SSA form and machine
 instructions reachable until it writes the package: the DWARF location list
 of each function holds a callback that refers to them
 (`GetPC`, set in `cmd/compile/internal/ssagen`'s `genssa`).
-So a compile process's memory grows with its package's code, whatever
-the size of each function, and one package of a large module needs gigabytes:
-QuickJS-ng translated into one package needed more than 4 GB.
-The translator therefore bounds each package's code, and writes a larger
-module as several packages, each compiled by its own process.
-
+So a compile process's memory grows with its package's code,
+whatever the size of each function.
+The translator therefore bounds each package's code (`maxPackageSize`,
+in AST nodes of translated code), and writes a larger module as
+[several packages](#several-packages), each compiled by its own process.
 It also keeps the code small where the compiler's memory goes:
 memory accesses are written as `encoding/binary` calls, not as calls
 of helper functions (see [memory accesses](#memory-accesses)),
 and integer constants as Go constants where Go cannot fold them
 (see [constants](#constants)).
+
+A function is never split: one larger than the package limit has a package
+of its own, and its compile's memory grows with it (measured at about
+1.7 KB per AST node), so the largest function sets the least a module's
+largest compile can take.
+Splitting it would copy its variables at every part it is split into,
+which costs most where a function is largest and hottest:
+the interpreter loop of QuickJS.
+
+The package limit was chosen from the peak memory of the largest compile
+process when building QuickJS-ng (without and with `-unsafe`) and
+tree-sitter's runtime, with `go build -p 1` on 16 cores,
+Go 1.26 on linux/amd64 (MiB; arm64 and js/wasm peak within 15% of these;
+in one package, QuickJS's compile took 1.9 GB):
+
+| package limit (AST nodes) | QuickJS | QuickJS `-unsafe` | tree-sitter | QuickJS build time |
+|---|---|---|---|---|
+| 12,500 | 232 | 184 | 78 | 13.6 s |
+| 25,000 | 230 | 180 | 78 | 11.5 s |
+| 50,000 | 174 | 184 | 91 | 10.1 s |
+| 100,000 | 235 | 183 | 125 | 9.5 s |
+| 200,000 | 389 | 255 | | 8.8 s |
+| 400,000 | 611 | 344 | | 8.8 s |
+
+QuickJS's largest function, its interpreter loop (about 99,000 AST nodes),
+alone takes 170 to 240 MiB from 100,000 nodes down, the run-to-run
+variation of the Go compiler's collector included; the limit, 25,000,
+is where smaller packages stopped lowering tree-sitter's largest compile
+while build time kept rising. The limit does not change runtime speed
+measurably: calls between packages are direct calls, except calls to
+an earlier package, which go through a function variable.
+
+`Test_quickjs` translates QuickJS-ng (`testdata/quickjs`), compiles it for
+linux/amd64 and js/wasm one package at a time with `GOMAXPROCS=4`,
+and fails if any compile process of its packages takes more than
+`compileMemoryBound` (in `compilemem_test.go`), just above the largest
+it has measured; it then runs `testdata/quickjs/test.js` on it and
+compares the result with a native build's.
+
+### `-byte-accesses`
+
+The Go compiler inlines only small functions, of cost 20 or less,
+into a function it considers big (about 6,400 AST nodes and more,
+`bigFunctionSize` in [translate.go](translate.go) is below that),
+and `encoding/binary`'s 32- and 64-bit functions cost more:
+in such a function every memory access is a call.
+`-byte-accesses` writes the accesses of those functions as the byte
+operations the functions are, which the compiler combines into single
+loads and stores. On QuickJS without `-unsafe`, where the interpreter loop
+is such a function, the game and Octane workloads of the benchmark run
+1.4 to 2.2 times as fast, and the largest compile takes about twice
+the memory (470 MiB instead of 230 MiB) and twice the time: each access
+is written out byte by byte in the source, several times larger than a call.
+It is an option because both costs are real, and the choice is the consumer's.
 
 ## Usage
 
@@ -329,6 +382,8 @@ and integer constants as Go constants where Go cannot fold them
 Usage: wasm2go [option]... [input.wasm]
   -dwarfline
         use line numbers from DWARF metadata
+  -byte-accesses
+        in functions the Go compiler considers big, write memory accesses as byte operations, which need no inlining: faster code, more compile memory (see the README)
   -embed
         go:embed data sections from a .dat file
   -importpath string

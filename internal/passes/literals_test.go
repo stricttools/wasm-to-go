@@ -23,7 +23,7 @@ func TestLiterals(t *testing.T) {
 			}`,
 			want: `func (m *Module) f(v0 int32, v1 int64) int64 {
 				var v2 int32
-				store32(mem, uint32(v0), uint32(int32(9)))
+				store32(mem, uint32(v0), uint32(i32(9)))
 				v2 = int32(7)
 				t0 := v0 - int32(304)
 				t1 := v1 & int64(-0x100000000)
@@ -33,7 +33,7 @@ func TestLiterals(t *testing.T) {
 				}
 				return int64(t0) + t1
 			}`,
-			sites: 7,
+			sites: 6,
 		},
 		{
 			name: "integer conversions that keep the value",

@@ -10,11 +10,11 @@ import (
 func Xopen(m *instance.Module) int32 {
 	mem := m.Memory
 	var v0 int32
-	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(int32(1)))
+	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(i32(1)))
 	t0 := m.T1[uint(i32(0))].(func() int32)()
 	mem = m.Memory
 	v0 = t0
-	binary.LittleEndian.PutUint32(mem[uint32(v0*int32(65536)):], uint32(int32(99)))
+	binary.LittleEndian.PutUint32(mem[uint32(v0*int32(65536)):], uint32(i32(99)))
 	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v0*int32(65536)):]))
 	return t1
 }

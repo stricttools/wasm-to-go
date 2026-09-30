@@ -6,6 +6,7 @@ import (
 	"math"
 	"math/bits"
 )
+
 // Module is the state of an instance of the module: the output package's Module holds one.
 type Module struct {
 	T0       []any

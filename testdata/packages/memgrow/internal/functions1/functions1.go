@@ -10,7 +10,7 @@ import (
 
 func Xpeek(m *instance.Module, v0 int32) int32 {
 	mem := m.Memory
-	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(int32(1)))
+	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(i32(1)))
 	t0 := functions11.U_ppeek(m, v0)
 	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(i32(0)):]))
 	return t0 + t1

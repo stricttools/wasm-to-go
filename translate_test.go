@@ -87,6 +87,32 @@ func Test_translate_packages(t *testing.T) {
 	}
 }
 
+// Translates modules with -byte-accesses, as if every function were big,
+// into testdata/bytes: every memory access is written as byte operations,
+// and the tests of bytes_test.go run the one-package modules' tests on
+// them.
+func Test_translate_bytes(t *testing.T) {
+	size, bytes, flag := bigFunctionSize, *byteAccesses, *unsafe
+	bigFunctionSize, *byteAccesses = 0, true
+	t.Cleanup(func() { bigFunctionSize, *byteAccesses, *unsafe = size, bytes, flag })
+
+	tests := []struct {
+		name, wasm string
+		unsafe     bool
+	}{
+		{name: "oob_trap", wasm: "testdata/regression/oob_trap/oob_trap.wasm"},
+		{name: "bce", wasm: "testdata/regression/bce/bce.wasm", unsafe: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			*unsafe = tt.unsafe
+			if err := translateFile(tt.wasm, "testdata/bytes/"+tt.name+"/"+tt.name); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+}
+
 // Translates modules together with a provided-imports file, which may
 // reference helpers the module itself does not use (provided_helper),
 // or grow memory (memgrow).
@@ -160,6 +186,9 @@ func translateFile(file, base string) error {
 	var generic io.Writer
 	if *unsafe {
 		generic = &gen
+	}
+	if err := os.MkdirAll(filepath.Dir(base), 0o755); err != nil {
+		return err
 	}
 	files := newPackageFiles(filepath.Dir(base))
 	err = translate(in, &out, generic, files.create)

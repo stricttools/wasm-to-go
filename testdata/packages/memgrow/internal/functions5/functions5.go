@@ -13,7 +13,7 @@ import (
 func Xclosed(m *instance.Module, v0 int32) int32 {
 	mem := m.Memory
 	var v1 int32
-	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(int32(1)))
+	binary.LittleEndian.PutUint32(mem[uint32(i32(0)):], uint32(i32(1)))
 	var t0 int32
 	switch t2 := uint(v0); t2 {
 	case 0:
@@ -29,7 +29,7 @@ func Xclosed(m *instance.Module, v0 int32) int32 {
 		mem = m.Memory
 	}
 	v1 = t0
-	binary.LittleEndian.PutUint32(mem[uint32(v1*int32(65536)):], uint32(int32(99)))
+	binary.LittleEndian.PutUint32(mem[uint32(v1*int32(65536)):], uint32(i32(99)))
 	t1 := int32(binary.LittleEndian.Uint32(mem[uint32(v1*int32(65536)):]))
 	return t1
 }

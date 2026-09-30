@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"go/parser"
+	"maps"
 
 	"golang.org/x/tools/go/ast/astutil"
 
@@ -26,7 +27,7 @@ import (
 // the translator writes into one Go package. A module with more code is
 // written as several packages: see the README's compile cost section for
 // why, and for how the value was chosen.
-var maxPackageSize = 250_000
+var maxPackageSize = 25_000
 
 // The directories and names of the packages of a module written as
 // several packages, relative to the output package's directory.
@@ -67,6 +68,7 @@ type packaging struct {
 	fields     map[string]string // Module field → exported name
 	dataNames  map[string]string // data constant → exported name
 	moduleDecl *ast.GenDecl
+	helpers    *helperSet
 	n          int // code packages
 }
 
@@ -275,7 +277,7 @@ func (t *translator) writePackages(moduleDecl *ast.GenDecl) (*packaging, []pkgFi
 			instanceDecls = append(instanceDecls, dataDecl)
 		}
 	}
-	files = append(files, p.file(instancePkg, path.Join(internalDir, instancePkg, instancePkg+".go"), instanceDecls, helpers, false))
+	files = append(files, p.file(instancePkg, path.Join(internalDir, instancePkg, instancePkg+".go"), instanceDecls, helpers, true))
 
 	// The output package.
 	var out []ast.Decl
@@ -442,40 +444,20 @@ func (p *packaging) funcByDecl(d *ast.FuncDecl) *codeFunc {
 // The file of package name at rel (the output file if ""), with decls and
 // the helpers they use.
 func (p *packaging) file(name, rel string, decls []ast.Decl, helpers *helperSet, doc bool) pkgFile {
-	decls = append(decls, helpers.closure(decls)...)
+	p.helpers = helpers
 	return pkgFile{rel: rel, name: name, decls: decls, doc: doc}
 }
 
-// The Go file of pf, with the imports its declarations use now.
-func (p *packaging) build(pf pkgFile) *ast.File {
-	f := &ast.File{Name: ast.NewIdent(pf.name), Decls: pf.decls}
-	var specs []ast.Spec
-	for _, path := range p.imports(pf.decls) {
-		spec := &ast.ImportSpec{Path: &ast.BasicLit{Kind: token.STRING, Value: strconv.Quote(path)}}
-		if path == "embed" {
-			spec.Name = ast.NewIdent("_")
-		}
-		specs = append(specs, spec)
-	}
-	if len(specs) > 0 {
-		f.Decls = append([]ast.Decl{&ast.GenDecl{Tok: token.IMPORT, Specs: specs}}, f.Decls...)
-	}
-	return f
+// decls with the helpers they use.
+func (p *packaging) withHelpers(decls []ast.Decl) []ast.Decl {
+	return append(slices.Clone(decls), p.helpers.closure(decls)...)
 }
 
-// The import paths decls use: standard library packages, and the
-// packages of the translation.
+// The packages of the translation decls use.
 func (p *packaging) imports(decls []ast.Decl) []string {
 	paths := set[string]{}
 	for _, d := range decls {
 		ast.Inspect(d, func(n ast.Node) bool {
-			if gd, ok := n.(*ast.GenDecl); ok && gd.Doc != nil {
-				for _, c := range gd.Doc.List {
-					if strings.HasPrefix(c.Text, "//go:embed ") {
-						paths.add("embed")
-					}
-				}
-			}
 			sel, ok := n.(*ast.SelectorExpr)
 			if !ok {
 				return true
@@ -484,30 +466,15 @@ func (p *packaging) imports(decls []ast.Decl) []string {
 			if !ok {
 				return true
 			}
-			switch {
-			case id.Name == instancePkg:
+			if id.Name == instancePkg {
 				paths.add(path.Join(p.importPath, internalDir, instancePkg))
-			case strings.HasPrefix(id.Name, functionsPkg):
-				if i, err := strconv.Atoi(id.Name[len(functionsPkg):]); err == nil && i >= 1 && i <= p.n {
-					paths.add(p.pkgPath(i))
-				}
-			default:
-				if path, ok := stdlib[id.Name]; ok {
-					paths.add(path)
-				} else if path, ok := p.t.providedPaths[id.Name]; ok {
-					paths.add(path)
-				}
+			} else if i, err := strconv.Atoi(strings.TrimPrefix(id.Name, functionsPkg)); err == nil && strings.HasPrefix(id.Name, functionsPkg) && i >= 1 && i <= p.n {
+				paths.add(p.pkgPath(i))
 			}
 			return true
 		})
 	}
-	return slices.Sorted(func(yield func(string) bool) {
-		for path := range paths {
-			if !yield(path) {
-				return
-			}
-		}
-	})
+	return slices.Sorted(maps.Keys(paths))
 }
 
 func recvType(d *ast.FuncDecl) string {
@@ -959,23 +926,29 @@ func parserParse(fset *token.FileSet, src string) (*ast.File, error) {
 
 // Prints the packages' files: each to sub(rel), the output package's to w;
 // with -unsafe (generic set), each twice, like the single file.
-func (p *packaging) print(files []pkgFile, w, generic io.Writer, sub func(rel string) (io.Writer, error), fset *token.FileSet, restore func()) error {
+func (p *packaging) print(files []pkgFile, w, generic io.Writer, sub func(rel string) (io.Writer, error), fset *token.FileSet) error {
 	if sub == nil {
 		return errors.New("a module written as several packages needs -o")
 	}
-	open := func(rel string) (io.Writer, error) {
+	open := func(rel string, generic io.Writer) (io.Writer, error) {
 		if rel == "" {
-			return w, nil
+			return generic, nil
 		}
 		return sub(rel)
 	}
+	var code []*ast.FuncDecl
+	for _, f := range p.funcs {
+		code = append(code, f.decl)
+	}
+	p.t.code = code
 	if generic == nil {
+		p.t.lower(code)
 		for _, pf := range files {
-			out, err := open(pf.rel)
+			out, err := open(pf.rel, w)
 			if err != nil {
 				return err
 			}
-			if err := p.t.printFile(out, fset, p.build(pf), *tags, pf.doc); err != nil {
+			if err := p.t.printDecls(out, fset, pf.name, p.withHelpers(pf.decls), *tags, pf.doc, p.imports); err != nil {
 				return err
 			}
 		}
@@ -986,26 +959,25 @@ func (p *packaging) print(files []pkgFile, w, generic io.Writer, sub func(rel st
 		return err
 	}
 	for _, pf := range files {
-		out := generic
-		if pf.rel != "" {
-			if out, err = sub(genericFile(pf.rel)); err != nil {
-				return err
-			}
+		rel := pf.rel
+		if rel != "" {
+			rel = genericFile(rel)
 		}
-		if err := p.t.printFile(out, fset, p.build(pf), others, pf.doc); err != nil {
-			return err
-		}
-	}
-	restore()
-	for _, f := range p.funcs {
-		passes.Expand(f.decl)
-	}
-	for _, pf := range files {
-		out, err := open(pf.rel)
+		out, err := open(rel, generic)
 		if err != nil {
 			return err
 		}
-		if err := p.t.printFile(out, fset, p.build(pf), expanded, pf.doc); err != nil {
+		if err := p.t.printDecls(out, fset, pf.name, p.withHelpers(p.t.lowered(pf.decls)), others, pf.doc, p.imports); err != nil {
+			return err
+		}
+	}
+	p.t.expand(code)
+	for _, pf := range files {
+		out, err := open(pf.rel, w)
+		if err != nil {
+			return err
+		}
+		if err := p.t.printDecls(out, fset, pf.name, p.withHelpers(pf.decls), expanded, pf.doc, p.imports); err != nil {
 			return err
 		}
 	}

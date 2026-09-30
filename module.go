@@ -52,7 +52,6 @@ func (t *translator) createModuleStruct(k *moduleFacts) *ast.GenDecl {
 			fields = append(fields, &ast.Field{
 				Names: []*ast.Ident{newID("waiters")},
 				Type:  &ast.StarExpr{X: &ast.SelectorExpr{X: newID("sync"), Sel: newID("Map")}}})
-			t.packages.add("sync")
 		}
 	}
 	// Globals: owned/immutable are type; imported *type.

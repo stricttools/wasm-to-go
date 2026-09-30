@@ -47,7 +47,20 @@ func Test_regression_store_grow(t *testing.T) {
 }
 
 func Test_regression_oob_trap(t *testing.T) {
-	m := oob_trap_test.New()
+	testOOBTrap(t, oob_trap_test.New())
+}
+
+type oobTrapModule interface {
+	Xld16(addr int32) int32
+	Xld32(addr int32) int32
+	Xld64(addr int32) int64
+	Xld32o(addr int32) int32
+	Xst32(addr, v int32)
+	Xst64(addr int32, v int64)
+	Xgrow(pages int32) int32
+}
+
+func testOOBTrap(t *testing.T, m oobTrapModule) {
 
 	mustTrap := func(name string, f func()) {
 		t.Helper()

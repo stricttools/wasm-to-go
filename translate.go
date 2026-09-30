@@ -79,7 +79,6 @@ type translator struct {
 	in  *offset.Reader
 	out ast.File
 	// Dependencies.
-	packages set[string]
 	provided set[string]
 	helpers  set[string]
 	// Sections.
@@ -127,7 +126,6 @@ func translate(r io.Reader, w, generic io.Writer, sub func(rel string) (io.Write
 	}
 
 	fset := token.NewFileSet()
-	t.packages = set[string]{}
 	t.provided = set[string]{}
 	t.helpers = set[string]{}
 	t.indirect = map[*ast.CallExpr]indirectCall{}
@@ -276,27 +274,7 @@ func translate(r io.Reader, w, generic io.Writer, sub func(rel string) (io.Write
 		}
 	}
 
-	// The file for every platform (or the only file) accesses memory
-	// through the helpers' bodies; the expanded file through Expand's.
 	t.collectCode()
-	restore := t.lowerAccesses()
-
-	// Set imports.
-	if len(t.packages) > 0 {
-		specs := make([]ast.Spec, 0, len(t.data))
-		for _, pkg := range slices.Sorted(maps.Keys(t.packages)) {
-			spec := ast.ImportSpec{
-				Path: &ast.BasicLit{Kind: token.STRING, Value: `"` + pkg + `"`},
-			}
-			if pkg == "embed" {
-				spec.Name = newID("_")
-			}
-			specs = append(specs, &spec)
-		}
-		t.out.Decls = append([]ast.Decl{
-			&ast.GenDecl{Tok: token.IMPORT, Specs: specs}},
-			t.out.Decls...)
-	}
 
 	// Add data segments.
 	if len(t.data) > 0 {
@@ -339,11 +317,13 @@ func translate(r io.Reader, w, generic io.Writer, sub func(rel string) (io.Write
 		if err != nil {
 			return err
 		}
-		return p.print(files, w, generic, sub, fset, restore)
+		return p.print(files, w, generic, sub, fset)
 	}
 
+	name, doc := t.out.Name.Name, moduleDecl.Doc != nil
 	if generic == nil {
-		return t.print(w, fset, *tags, moduleDecl)
+		t.lower(t.code)
+		return t.printDecls(w, fset, name, t.out.Decls, *tags, doc, nil)
 	}
 
 	// Two files: the generic file, for every platform, and the expanded
@@ -355,20 +335,11 @@ func translate(r io.Reader, w, generic io.Writer, sub func(rel string) (io.Write
 	if err != nil {
 		return err
 	}
-	if err := t.print(generic, fset, others, moduleDecl); err != nil {
+	if err := t.printDecls(generic, fset, name, t.lowered(t.out.Decls), others, doc, nil); err != nil {
 		return err
 	}
-	restore()
-	if !*noopt {
-		sites := 0
-		for _, decl := range t.code {
-			sites += passes.Expand(decl)
-		}
-		if sites > 0 && !t.packages.has("unsafe") {
-			return errors.New("expanded code needs an import of unsafe")
-		}
-	}
-	return t.print(w, fset, expanded, moduleDecl)
+	t.expand(t.code)
+	return t.printDecls(w, fset, name, t.out.Decls, expanded, doc, nil)
 }
 
 // The build constraints of the expanded file and of the generic file.
@@ -398,8 +369,7 @@ func (t *translator) collectCode() {
 	}
 }
 
-// The declarations of the -provided files, which the output holds; their
-// imports are added to the output's.
+// The declarations of the -provided files, which the output holds.
 func (t *translator) providedCode() []ast.Decl {
 	var decls []ast.Decl
 	for _, f := range t.providedFiles {
@@ -410,37 +380,123 @@ func (t *translator) providedCode() []ast.Decl {
 			decls = append(decls, d)
 		}
 	}
-	for _, path := range t.providedPaths {
-		t.packages.add(path)
-	}
 	return decls
 }
 
-// Replaces the memory access helper calls of every translated function
-// with the helpers' bodies (passes.Lower), unless -noopt, and returns a
-// function that restores the calls.
-func (t *translator) lowerAccesses() (restore func()) {
-	var undos []func()
+// bigFunctionSize is the size, in AST nodes (passes.Size), above which the
+// Go compiler may treat a function as big: its inliner then inlines only
+// callees of cost 20 or less into it (inlineBigFunctionNodes, 5000 of its
+// own nodes, and inlineBigFunctionMaxCost in cmd/compile/internal/inline),
+// which leaves encoding/binary's 32- and 64-bit functions calls. With
+// -byte-accesses, the translator writes the memory accesses of such
+// functions as bytes (passes.Lower). Measured on QuickJS, the smallest
+// function the compiler treated as big had 6444 AST nodes, the largest it
+// did not 6037.
+var bigFunctionSize = 5000
+
+// Replaces, in place, the memory access helper calls of decls with the
+// helpers' bodies (passes.Lower), unless -noopt.
+func (t *translator) lower(decls []*ast.FuncDecl) {
 	if *noopt {
-		return func() {}
+		return
 	}
-	for _, decl := range t.code {
-		undo, sites := passes.Lower(decl)
-		undos = append(undos, undo)
-		if sites > 0 {
-			t.packages.add("encoding/binary")
-		}
-	}
-	return func() {
-		for _, undo := range undos {
-			undo()
-		}
+	for _, decl := range decls {
+		passes.Lower(decl, *byteAccesses && passes.Size(decl) > bigFunctionSize)
 	}
 }
 
-// Prints the Go file, under the build constraint tags if any.
-func (t *translator) print(w io.Writer, fset *token.FileSet, tags string, moduleDecl *ast.GenDecl) error {
-	return t.printFile(w, fset, &t.out, tags, moduleDecl.Doc != nil)
+// Expands, in place, the memory access helper calls of decls (passes.Expand),
+// unless -noopt.
+func (t *translator) expand(decls []*ast.FuncDecl) {
+	if *noopt {
+		return
+	}
+	for _, decl := range decls {
+		passes.Expand(decl)
+	}
+}
+
+// Returns decls with each function of the module's code replaced by a copy
+// whose memory accesses are lowered: the generic file's, while the expanded
+// file expands the originals.
+func (t *translator) lowered(decls []ast.Decl) []ast.Decl {
+	code := map[ast.Decl]bool{}
+	for _, d := range t.code {
+		code[d] = true
+	}
+	out := make([]ast.Decl, len(decls))
+	var copies []*ast.FuncDecl
+	for i, d := range decls {
+		out[i] = d
+		if code[d] {
+			c := passes.Clone(d.(*ast.FuncDecl))
+			out[i] = c
+			copies = append(copies, c)
+		}
+	}
+	t.lower(copies)
+	return out
+}
+
+// Prints the Go file of package name holding decls, under the build
+// constraint tags if any, importing what they use (and the paths more
+// returns); doc says decls have doc comments without positions, which
+// gofmt places.
+func (t *translator) printDecls(w io.Writer, fset *token.FileSet, name string, decls []ast.Decl, tags string, doc bool, more func([]ast.Decl) []string) error {
+	paths := t.fileImports(decls)
+	if more != nil {
+		paths = append(paths, more(decls)...)
+		slices.Sort(paths)
+	}
+	f := &ast.File{Name: ast.NewIdent(name)}
+	if len(paths) > 0 {
+		var specs []ast.Spec
+		for _, path := range paths {
+			spec := &ast.ImportSpec{Path: &ast.BasicLit{Kind: token.STRING, Value: strconv.Quote(path)}}
+			if path == "embed" {
+				spec.Name = ast.NewIdent("_")
+			}
+			specs = append(specs, spec)
+		}
+		f.Decls = append(f.Decls, &ast.GenDecl{Tok: token.IMPORT, Specs: specs})
+	}
+	for _, d := range decls {
+		if gd, ok := d.(*ast.GenDecl); ok && gd.Tok == token.IMPORT {
+			continue
+		}
+		f.Decls = append(f.Decls, d)
+	}
+	return t.printFile(w, fset, f, tags, doc)
+}
+
+// The standard library and provided-file packages decls use: the package
+// names their selectors start with, and embed for a //go:embed directive.
+func (t *translator) fileImports(decls []ast.Decl) []string {
+	paths := set[string]{}
+	for _, d := range decls {
+		ast.Inspect(d, func(n ast.Node) bool {
+			switch n := n.(type) {
+			case *ast.GenDecl:
+				if n.Doc != nil {
+					for _, c := range n.Doc.List {
+						if strings.HasPrefix(c.Text, "//go:embed ") {
+							paths.add("embed")
+						}
+					}
+				}
+			case *ast.SelectorExpr:
+				if id, ok := n.X.(*ast.Ident); ok {
+					if path, ok := stdlib[id.Name]; ok {
+						paths.add(path)
+					} else if path, ok := t.providedPaths[id.Name]; ok {
+						paths.add(path)
+					}
+				}
+			}
+			return true
+		})
+	}
+	return slices.Sorted(maps.Keys(paths))
 }
 
 // Prints the Go file f, under the build constraint tags if any; doc says
@@ -1107,18 +1163,12 @@ func (t *translator) readConstExpr() (ast.Expr, error) {
 			if err != nil {
 				return nil, err
 			}
-			// Written with math.Float32frombits; function bodies find
-			// their imports when they are complete, initializers here.
-			t.packages.add("math")
 			stack.append(expr)
 		case 0x44: // f64.const
 			expr, err := t.constF64()
 			if err != nil {
 				return nil, err
 			}
-			// Written with math.Float64frombits; function bodies find
-			// their imports when they are complete, initializers here.
-			t.packages.add("math")
 			stack.append(expr)
 		case 0x23: // global.get
 			expr, _, err := t.globalGet()
@@ -1202,7 +1252,6 @@ func (t *translator) readDataSection() error {
 		}
 		defer f.Close()
 		threshold = 4096
-		t.packages.add("embed")
 	}
 
 	for i := range t.data {
@@ -1470,7 +1519,6 @@ func (t *translator) addHelpers(fset *token.FileSet, filename, src string) error
 			continue
 		}
 		t.out.Decls = append(t.out.Decls, decl)
-		ast.Inspect(decl, t.resolveImports)
 	}
 	return nil
 }
@@ -1485,14 +1533,12 @@ func (t *translator) resolveHelpers(fset *token.FileSet, filename, src string) e
 		case *ast.FuncDecl:
 			if t.helpers.has(d.Name.Name) {
 				t.out.Decls = append(t.out.Decls, d)
-				ast.Inspect(d, t.resolveImports)
 				delete(t.helpers, d.Name.Name)
 			}
 		case *ast.GenDecl:
 			for _, spec := range d.Specs {
 				if s, ok := spec.(*ast.TypeSpec); ok && t.helpers.has(s.Name.Name) {
 					t.out.Decls = append(t.out.Decls, d)
-					ast.Inspect(d, t.resolveImports)
 					delete(t.helpers, s.Name.Name)
 					break
 				}
@@ -1500,17 +1546,6 @@ func (t *translator) resolveHelpers(fset *token.FileSet, filename, src string) e
 		}
 	}
 	return nil
-}
-
-func (t *translator) resolveImports(n ast.Node) bool {
-	if sel, ok := n.(*ast.SelectorExpr); ok {
-		if id, ok := sel.X.(*ast.Ident); ok {
-			if path, ok := stdlib[id.Name]; ok {
-				t.packages.add(path)
-			}
-		}
-	}
-	return true
 }
 
 func (t *translator) dataExpr(i int) *ast.ParenExpr {

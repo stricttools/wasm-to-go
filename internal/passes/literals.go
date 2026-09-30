@@ -36,8 +36,8 @@ var intRanges = map[string][2]float64{
 // variable, a field, or the result of a function call), not the divisor
 // of a division or remainder when it is zero, and not a negative shift
 // count; or an argument of a function call that is not a conversion or a
-// builtin, other than the address of a memory access, which Lower and
-// Expand turn into an index; or the value of an assignment, a return, or a variable
+// builtin, other than the address or value of a memory access, which Lower
+// and Expand turn into an index or shifted bytes; or the value of an assignment, a return, or a variable
 // declaration. In each of these a Go constant is converted to the type
 // the operation or the destination needs, int32 or int64 as with the
 // helper, and the operation is evaluated at run time, as the helper's
@@ -163,8 +163,9 @@ func literalSafe(stack []ast.Node, v float64, locals set[string]) bool {
 		switch fun := p.Fun.(type) {
 		case *ast.Ident:
 			// Lower and Expand make the address of a memory access an
-			// index, where a constant must fit in an int.
-			if lowerFuncs[fun.Name] != "" && len(p.Args) > 1 && p.Args[1] == self {
+			// index, where a constant must fit in an int, and Lower may
+			// shift a stored value and convert it to byte.
+			if lowerFuncs[fun.Name] != "" && p.Fun != self {
 				return false
 			}
 			_, conversion := intRanges[fun.Name]
