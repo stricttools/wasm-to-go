@@ -352,7 +352,8 @@ in one package, QuickJS's compile took 1,906 MiB):
 
 QuickJS's largest function, its interpreter loop (about 99,000 AST nodes),
 alone takes 170 to 245 MiB from 100,000 nodes down (the run-to-run
-variation of the Go compiler's collector); the limit, 25,000,
+variation of the Go compiler's collector, which in a rare build of the
+translation reached 321 MiB); the limit, 25,000,
 is where smaller packages stopped lowering tree-sitter's largest compile
 while build time kept rising. The limit does not change runtime speed
 measurably: calls between packages are direct calls, except calls to
@@ -379,8 +380,8 @@ operations the functions are, which the compiler combines into single
 loads and stores. On QuickJS without `-unsafe`, where the interpreter loop
 is such a function, the game and Octane workloads of the benchmark run
 1.4 to 2.2 times as fast, and the largest compile takes about twice
-the memory (470 MiB instead of 230 MiB) and twice the time: each access
-is written out byte by byte in the source, several times larger than a call.
+the memory (475 to 525 MiB instead of 230 to 245 MiB) and twice the
+time: each access is written out byte by byte in the source, several times larger than a call.
 It is an option because both costs are real, and the choice is the consumer's.
 
 ## Usage
