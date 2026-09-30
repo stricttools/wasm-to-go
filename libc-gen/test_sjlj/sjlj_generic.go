@@ -13,18 +13,20 @@ import (
 )
 
 type Module struct {
-	t0       []any
-	elements [][]any
-	memory   []byte
-	maxMem   int64
-	g0       int32
+	t0         []any
+	elements   [][]any
+	memory     []byte
+	memBacking []byte
+	maxMem     int64
+	g0         int32
 }
 
 func New() *Module {
 	m := new(Module)
 	m.t0 = make([]any, 2)
 	m.maxMem = 65536
-	m.memory = make([]byte, 0x20000)
+	m.memBacking = make([]byte, 0x20000)
+	m.memory = m.memBacking
 	m.elements = [][]any{{m.fn3}}
 	table_init(m.t0, m.elements[0], i32(1), 0, len(m.elements[0]))
 	m.elements[0] = nil
@@ -32,17 +34,40 @@ func New() *Module {
 	return m
 }
 
+// MemoryMax is the most bytes the module's memory can grow to
+// through its own memory.grow: its declared maximum.
+func (m *Module) MemoryMax() int64 { return 4294967296 }
+
+// UseMemory moves the module's memory to the start of buf's backing array,
+// where it keeps its size and contents and grows in place, without
+// copying or allocating, as far as buf's capacity allows (past it, it moves
+// to a new array in the Go heap). buf's bytes past the memory's size must
+// be zero, and nothing else may write to them. UseMemory returns false,
+// and leaves the memory where it is, when buf's capacity is less than the
+// memory's size (a nil buf included). Slices of the memory taken before
+// the call are stale after it, as after the memory grows.
+func (m *Module) UseMemory(buf []byte) bool {
+	n := len(m.memory)
+	if cap(buf) < n {
+		return false
+	}
+	buf = buf[:cap(buf)]
+	copy(buf, m.memory)
+	m.memBacking = buf
+	m.memory = buf[:n:n]
+	return true
+}
+
 type Memory = interface {
 	Slice() *[]byte
 	Grow(delta, max int64) int64
 }
-type wasmMemory []byte
+type wasmMemory Module
 
-func (m *wasmMemory) Slice() *[]byte {
-	return (*[]byte)(m)
-}
+func (m *wasmMemory) Slice() *[]byte { return &m.memory }
+
 func (m *wasmMemory) Grow(delta, max int64) int64 {
-	return memory_grow((*[]byte)(m), delta, max)
+	return memory_grow(&m.memory, &m.memBacking, delta, max)
 }
 func (m *Module) Xtest() int32 {
 	mem := m.memory
@@ -50,16 +75,16 @@ func (m *Module) Xtest() int32 {
 	t0 := m.g0
 	v1 = t0 - int32(16)
 	m.g0 = v1
-	binary.LittleEndian.PutUint32(mem[uint32(i32(65540)):], uint32(int32(1)))
+	binary.LittleEndian.PutUint32(mem[uint32(i32(65540)):], uint32(i32(1)))
 	binary.LittleEndian.PutUint32(mem[uint32(i32(65536)):], uint32(v1+int32(12)))
 l2:
 	if v0 == 0 {
-		binary.LittleEndian.PutUint32(mem[uint32(i32(65544)):], uint32(int32(0)))
+		binary.LittleEndian.PutUint32(mem[uint32(i32(65544)):], uint32(i32(0)))
 		m._invoke_vii(int32(1), int32(65536), int32(42))
 		mem = m.memory
 		t1 := int32(binary.LittleEndian.Uint32(mem[uint32(i32(65544)):]))
 		v0 = t1
-		binary.LittleEndian.PutUint32(mem[uint32(i32(65544)):], uint32(int32(0)))
+		binary.LittleEndian.PutUint32(mem[uint32(i32(65544)):], uint32(i32(0)))
 		{
 			if v0 == 0 {
 				goto l0
@@ -108,9 +133,8 @@ func (m *Module) X__stack_pointer() *int32 {
 	return &m.g0
 }
 func (m *Module) Xmemory() Memory {
-	return (*wasmMemory)(&m.memory)
+	return (*wasmMemory)(m)
 }
-
 func (m *Module) __throw_longjmp() { panic("emscripten_longjmp") }
 func (m *Module) __catch_longjmp(sp int32) {
 	if r := recover(); r == "emscripten_longjmp" {
@@ -188,7 +212,14 @@ func store32u[T uint32 | uint64](mem []byte, addr T, val uint32) {
 //go:nosplit
 func i32(x int32) int32 { return x }
 
-func memory_grow(mem *[]byte, delta, max int64) int64 {
+// Grows the memory *mem by delta pages, up to max, and returns its old size
+// in pages, or -1. *back is the memory's backing array: *mem is its prefix,
+// with its capacity cut to its length, so no slice of the memory reaches
+// past its end, and back's bytes past the memory's end are zero. Growth
+// within back is in place: no copy, no allocation. Past it, the memory moves
+// to a new backing array of twice the size, at least what the growth needs,
+// at most max pages.
+func memory_grow(mem, back *[]byte, delta, max int64) int64 {
 	buf := *mem
 	len := len(buf)
 	old := len >> 16
@@ -200,7 +231,17 @@ func memory_grow(mem *[]byte, delta, max int64) int64 {
 	if c != 0 || new > uint64(max) {
 		return -1
 	}
-	*mem = append(buf, make([]byte, int(new<<16)-len)...)
+	size := int(new << 16)
+	if size > cap(*back) {
+		n := int(min(uint64(cap(*back))>>15, uint64(max)) << 16)
+		if n < size {
+			n = size
+		}
+		b := make([]byte, n)
+		copy(b, buf)
+		*back = b
+	}
+	*mem = (*back)[:size:size]
 	return int64(old)
 }
 
