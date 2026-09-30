@@ -45,7 +45,7 @@ func Test_stack_weight_module(t *testing.T) {
 func Test_translate(t *testing.T) {
 	tests := []string{
 		"determinism", "fib", "loops", "memory", "primes", "recursion", "stack", "table", "trig",
-		"regression/constfold", "regression/dispatch", "regression/f32convert", "regression/nancanon", "regression/oob_trap", "regression/select_effect", "regression/stack_bound", "regression/stack_weight", "regression/store_grow", "regression/tee_self_loop",
+		"regression/bulk_bounds", "regression/bulk_bounds_imported", "regression/constfold", "regression/dispatch", "regression/f32convert", "regression/nancanon", "regression/oob_trap", "regression/select_effect", "regression/stack_bound", "regression/stack_weight", "regression/store_grow", "regression/tee_self_loop", "regression/use_memory",
 	}
 	for _, name := range tests {
 		t.Run(name, func(t *testing.T) {
@@ -95,6 +95,7 @@ func Test_translate_packages(t *testing.T) {
 		{name: "memgrow", wasm: "testdata/regression/memgrow/memgrow.wasm", provided: "testdata/regression/memgrow/provided.go"},
 		{name: "recursion", wasm: "testdata/recursion/recursion.wasm"},
 		{name: "stack_bound", wasm: "testdata/regression/stack_bound/stack_bound.wasm"},
+		{name: "use_memory", wasm: "testdata/regression/use_memory/use_memory.wasm"},
 		{name: "loops", wasm: "testdata/loops/loops.wasm"},
 		{name: "provided_helper", wasm: "testdata/regression/provided_helper/provided_helper.wasm", provided: "testdata/regression/provided_helper/provided.go"},
 		{name: "bce", wasm: "testdata/regression/bce/bce.wasm", unsafe: true},

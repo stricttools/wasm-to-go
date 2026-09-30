@@ -52,13 +52,13 @@ func TestMemLocal(t *testing.T) {
 			name:   "owned, grown by the helper",
 			memory: "m.memory",
 			src: `func (m *Module) f(v0 int32) int32 {
-				t0 := int32(memory_grow(&m.memory, int64(v0), m.maxMem))
+				t0 := int32(memory_grow(&m.memory, &m.memBacking, int64(v0), m.maxMem))
 				m.memory[uint32(t0)] = 1
 				return m.grow(t0)
 			}`,
 			want: `func (m *Module) f(v0 int32) int32 {
 				mem := m.memory
-				t0 := int32(memory_grow(&m.memory, int64(v0), m.maxMem))
+				t0 := int32(memory_grow(&m.memory, &m.memBacking, int64(v0), m.maxMem))
 				mem = m.memory
 				mem[uint32(t0)] = 1
 				return m.grow(t0)

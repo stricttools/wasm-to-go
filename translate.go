@@ -104,6 +104,8 @@ type translator struct {
 	providedFiles []*ast.File
 	providedPaths map[string]string
 	helperNames   set[string]
+	// The file set of the parsed helpers and snippets the output holds.
+	fset *token.FileSet
 	// Whether the module has recursive functions, which bound the Go
 	// stack (stackbound.go).
 	stackBound bool
@@ -132,6 +134,7 @@ func translate(r io.Reader, w, generic io.Writer, sub func(rel string) (io.Write
 	}
 
 	fset := token.NewFileSet()
+	t.fset = fset
 	t.provided = set[string]{}
 	t.helpers = set[string]{}
 	t.indirect = map[*ast.CallExpr]indirectCall{}
@@ -237,6 +240,10 @@ func translate(r io.Reader, w, generic io.Writer, sub func(rel string) (io.Write
 	}
 	if t.memory != nil && (exported || t.memory.imported) {
 		t.out.Decls = append(t.createMemoryTypes(), t.out.Decls...)
+	}
+	if t.memory != nil && t.memory.owned() {
+		t.helpers.add("memory_grow")
+		t.out.Decls = append(t.ownedMemoryDecls(false), t.out.Decls...)
 	}
 	if !*nohost && len(t.imports) > 0 {
 		t.out.Decls = append(t.createHostInterfaces(), t.out.Decls...)
@@ -514,6 +521,17 @@ func (t *translator) fileImports(decls []ast.Decl) []string {
 	return slices.Sorted(maps.Keys(paths))
 }
 
+// Reports whether a function of f has a doc comment without positions
+// (ownedMemoryDecls writes them).
+func hasPositionlessDocs(f *ast.File) bool {
+	for _, d := range f.Decls {
+		if fd, ok := d.(*ast.FuncDecl); ok && fd.Doc != nil && !fd.Doc.Pos().IsValid() {
+			return true
+		}
+	}
+	return false
+}
+
 // Prints the Go file f, under the build constraint tags if any; doc says
 // it has doc comments without positions, which gofmt places.
 func (t *translator) printFile(w io.Writer, fset *token.FileSet, f *ast.File, tags string, doc bool) error {
@@ -528,7 +546,7 @@ func (t *translator) printFile(w io.Writer, fset *token.FileSet, f *ast.File, ta
 	if err != nil {
 		return err
 	}
-	if doc {
+	if doc || hasPositionlessDocs(f) {
 		// Printing the Module doc comment without positions
 		// leaves it attached to the package clause; gofmt fixes that.
 		src, err := format.Source(out.Bytes())

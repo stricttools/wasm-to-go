@@ -2,9 +2,12 @@ package main
 
 import (
 	"cmp"
+	"fmt"
 	"go/ast"
+	"go/parser"
 	"go/token"
 	"maps"
+	"math"
 	"slices"
 	"strconv"
 
@@ -44,6 +47,12 @@ func (t *translator) createModuleStruct(k *moduleFacts) *ast.GenDecl {
 			fields = append(fields, &ast.Field{
 				Names: []*ast.Ident{t.memory.id},
 				Type:  &ast.ArrayType{Elt: newID("byte")}})
+			if t.memory.owned() {
+				// The memory's backing array (memory_grow).
+				fields = append(fields, &ast.Field{
+					Names: []*ast.Ident{newID(memBackingField)},
+					Type:  &ast.ArrayType{Elt: newID("byte")}})
+			}
 		}
 		fields = append(fields, &ast.Field{
 			Names: []*ast.Ident{newID("maxMem")},
@@ -181,10 +190,23 @@ func (t *translator) createNewFunc() ast.Decl {
 			if t.memory.shared {
 				args = append(args, &ast.BasicLit{Kind: token.INT, Value: formatUint(t.memory.max << 16)})
 			}
-			body.List = append(body.List, &ast.AssignStmt{
-				Tok: token.ASSIGN,
-				Lhs: []ast.Expr{t.memory.selector},
-				Rhs: []ast.Expr{&ast.CallExpr{Fun: newID("make"), Args: args}}})
+			if t.memory.owned() {
+				// m.memBacking = make([]byte, min<<16); m.memory = m.memBacking
+				backing := &ast.SelectorExpr{X: newID("m"), Sel: newID(memBackingField)}
+				body.List = append(body.List, &ast.AssignStmt{
+					Tok: token.ASSIGN,
+					Lhs: []ast.Expr{backing},
+					Rhs: []ast.Expr{&ast.CallExpr{Fun: newID("make"), Args: args}}},
+					&ast.AssignStmt{
+						Tok: token.ASSIGN,
+						Lhs: []ast.Expr{t.memory.selector},
+						Rhs: []ast.Expr{backing}})
+			} else {
+				body.List = append(body.List, &ast.AssignStmt{
+					Tok: token.ASSIGN,
+					Lhs: []ast.Expr{t.memory.selector},
+					Rhs: []ast.Expr{&ast.CallExpr{Fun: newID("make"), Args: args}}})
+			}
 			if t.memory.shared {
 				body.List = append(body.List, &ast.AssignStmt{
 					Tok: token.ASSIGN,
@@ -432,7 +454,12 @@ func (t *translator) createMemoryTypes() []ast.Decl {
 				Specs: []ast.Spec{&ast.TypeSpec{
 					Assign: 1, Name: newID("Memory"), Type: iface}}})
 	}
-	// Memory structure implementing the interface for owned memory.
+	// An owned memory: the Memory's methods and the Module's methods of
+	// its backing array.
+	if t.memory.owned() {
+		return append(decls, t.ownedMemoryDecls(true)...)
+	}
+	// Memory structure implementing the interface for a shared memory.
 	if !t.memory.imported {
 		name := "memory_grow"
 		if t.memory.shared {
@@ -479,6 +506,76 @@ func (t *translator) createMemoryTypes() []ast.Decl {
 		}
 	}
 	return decls
+}
+
+// The declarations of an owned memory (memoryDef.owned): with types,
+// wasmMemory, the Module seen as its Memory (for an exported memory);
+// without, the Module's methods that let a host place the memory in a
+// backing array of its own (see the README's section on linear memory).
+func (t *translator) ownedMemoryDecls(types bool) []ast.Decl {
+	maxBytes := uint64(math.MaxInt64)
+	if t.memory.max < 1<<47 {
+		maxBytes = t.memory.max << 16
+	}
+	src := fmt.Sprintf(`package p
+
+func (m *Module) MemoryMax() int64 { return %[3]d }
+
+func (m *Module) UseMemory(buf []byte) bool {
+	n := len(m.%[1]s)
+	if cap(buf) < n {
+		return false
+	}
+	buf = buf[:cap(buf)]
+	copy(buf, m.%[1]s)
+	m.%[2]s = buf
+	m.%[1]s = buf[:n:n]
+	return true
+}
+`, t.memory.id.Name, memBackingField, maxBytes)
+	if types {
+		src = fmt.Sprintf(`package p
+
+type wasmMemory Module
+
+func (m *wasmMemory) Slice() *[]byte { return &m.%[1]s }
+
+func (m *wasmMemory) Grow(delta, max int64) int64 {
+	return memory_grow(&m.%[1]s, &m.%[2]s, delta, max)
+}
+`, t.memory.id.Name, memBackingField)
+	}
+	f, err := parser.ParseFile(t.fset, "", src, 0)
+	if err != nil {
+		panic(err)
+	}
+	docs := map[string][]string{
+		"MemoryMax": {
+			"MemoryMax is the most bytes the module's memory can grow to",
+			"through its own memory.grow: its declared maximum.",
+		},
+		"UseMemory": {
+			"UseMemory moves the module's memory to the start of buf's backing array,",
+			"where it keeps its size and contents and grows in place, without",
+			"copying or allocating, as far as buf's capacity allows (past it, it moves",
+			"to a new array in the Go heap). buf's bytes past the memory's size must",
+			"be zero, and nothing else may write to them. UseMemory returns false,",
+			"and leaves the memory where it is, when buf's capacity is less than the",
+			"memory's size (a nil buf included). Slices of the memory taken before",
+			"the call are stale after it, as after the memory grows.",
+		},
+	}
+	for _, d := range f.Decls {
+		if fd, ok := d.(*ast.FuncDecl); ok {
+			if lines := docs[fd.Name.Name]; lines != nil {
+				fd.Doc = &ast.CommentGroup{}
+				for _, l := range lines {
+					fd.Doc.List = append(fd.Doc.List, &ast.Comment{Text: "// " + l})
+				}
+			}
+		}
+	}
+	return f.Decls
 }
 
 func (t *translator) createExportMethods() []ast.Decl {
@@ -541,9 +638,14 @@ func (t *translator) createExportMethods() []ast.Decl {
 			if t.memory.imported {
 				decl.Body.List = []ast.Stmt{&ast.ReturnStmt{Results: []ast.Expr{&ast.SelectorExpr{X: newID("m"), Sel: newID("memImp")}}}}
 			} else {
+				// An owned memory's wasmMemory is the Module; a shared one's the slice.
+				var arg ast.Expr = newID("m")
+				if !t.memory.owned() {
+					arg = &ast.UnaryExpr{Op: token.AND, X: &ast.SelectorExpr{X: newID("m"), Sel: t.memory.id}}
+				}
 				decl.Body.List = []ast.Stmt{&ast.ReturnStmt{Results: []ast.Expr{&ast.CallExpr{
 					Fun:  &ast.ParenExpr{X: &ast.StarExpr{X: newID("wasmMemory")}},
-					Args: []ast.Expr{&ast.UnaryExpr{Op: token.AND, X: &ast.SelectorExpr{X: newID("m"), Sel: t.memory.id}}}}}}}
+					Args: []ast.Expr{arg}}}}}
 			}
 		}
 

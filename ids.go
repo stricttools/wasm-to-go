@@ -24,6 +24,7 @@ import (
 //	- exports (X-prefixed)
 //	- elements
 //	- memory
+//	- memBacking (an owned memory's backing array) and maxMem
 //
 // Function code may have:
 //	- local variables, arguments (v+number)

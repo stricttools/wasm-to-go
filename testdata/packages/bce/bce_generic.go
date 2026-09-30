@@ -23,11 +23,36 @@ func New() *Module {
 	m := new(Module)
 	s := &m.instance
 	s.MaxMem = 65536
-	s.Memory = make([]byte, 65536)
+	s.MemBacking = make([]byte, 65536)
+	s.Memory = s.MemBacking
 	return m
 }
+
+// MemoryMax is the most bytes the module's memory can grow to
+// through its own memory.grow: its declared maximum.
+func (m *Module) MemoryMax() int64 { return 4294967296 }
+
+// UseMemory moves the module's memory to the start of buf's backing array,
+// where it keeps its size and contents and grows in place, without
+// copying or allocating, as far as buf's capacity allows (past it, it moves
+// to a new array in the Go heap). buf's bytes past the memory's size must
+// be zero, and nothing else may write to them. UseMemory returns false,
+// and leaves the memory where it is, when buf's capacity is less than the
+// memory's size (a nil buf included). Slices of the memory taken before
+// the call are stale after it, as after the memory grows.
+func (m *Module) UseMemory(buf []byte) bool {
+	n := len(m.instance.Memory)
+	if cap(buf) < n {
+		return false
+	}
+	buf = buf[:cap(buf)]
+	copy(buf, m.instance.Memory)
+	m.instance.MemBacking = buf
+	m.instance.Memory = buf[:n:n]
+	return true
+}
 func (m *Module) Xmemory() Memory {
-	return (*wasm2go_instance.WasmMemory)(&m.instance.Memory)
+	return (*wasm2go_instance.WasmMemory)(&m.instance)
 }
 func (m *Module) Xbranch(v0, v1 int32) int32 {
 	return wasm2go_functions2.Xbranch(&m.instance, v0, v1)

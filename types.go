@@ -156,6 +156,15 @@ type memoryDef struct {
 	max      uint64
 }
 
+// owned reports whether the module owns its memory's slice outright: a
+// memory neither imported nor shared, whose growth memory_grow implements
+// over a backing array (the memBacking field).
+func (m *memoryDef) owned() bool { return !m.imported && !m.shared }
+
+// memBackingField is the Module field holding an owned memory's backing
+// array, of which the memory's slice is a prefix.
+const memBackingField = "memBacking"
+
 func (m *memoryDef) stype() string {
 	if m.is64 {
 		return "int64"

@@ -357,11 +357,26 @@ func (p *packaging) instanceModule() *ast.GenDecl {
 		Specs: []ast.Spec{&ast.TypeSpec{Name: ast.NewIdent("Module"), Type: &ast.StructType{Fields: fields}}}}
 }
 
-// Renames wasmMemory, exported in the instance package.
+// Renames wasmMemory, exported in the instance package, and the fields its
+// methods reach through their receiver (an owned memory's wasmMemory is the
+// Module).
 func (p *packaging) renameWasmMemory(d ast.Decl) {
+	recv := ""
+	if fd, ok := d.(*ast.FuncDecl); ok {
+		recv = receiverName(fd)
+	}
 	astutil.Apply(d, nil, func(c *astutil.Cursor) bool {
-		if id, ok := c.Node().(*ast.Ident); ok && id.Name == "wasmMemory" {
-			c.Replace(ast.NewIdent("WasmMemory"))
+		switch n := c.Node().(type) {
+		case *ast.Ident:
+			if n.Name == "wasmMemory" {
+				c.Replace(ast.NewIdent("WasmMemory"))
+			}
+		case *ast.SelectorExpr:
+			if id, ok := n.X.(*ast.Ident); ok && recv != "" && id.Name == recv {
+				if pub, ok := p.fields[n.Sel.Name]; ok {
+					c.Replace(&ast.SelectorExpr{X: n.X, Sel: ast.NewIdent(pub)})
+				}
+			}
 		}
 		return true
 	})
@@ -397,8 +412,20 @@ func (p *packaging) exportMethods(decls []ast.Decl) []ast.Decl {
 		if fd, ok := d.(*ast.FuncDecl); ok && fd.Recv != nil {
 			p.rewrite(fd.Body, 0, "m", inst, base)
 			astutil.Apply(fd.Body, nil, func(c *astutil.Cursor) bool {
-				if id, ok := c.Node().(*ast.Ident); ok && id.Name == "wasmMemory" {
-					c.Replace(&ast.SelectorExpr{X: ast.NewIdent(instancePkg), Sel: ast.NewIdent("WasmMemory")})
+				switch n := c.Node().(type) {
+				case *ast.Ident:
+					if n.Name == "wasmMemory" {
+						c.Replace(&ast.SelectorExpr{X: ast.NewIdent(instancePkg), Sel: ast.NewIdent("WasmMemory")})
+					}
+				case *ast.CallExpr:
+					// (*wasmMemory)(m), an owned memory's: the instance is its Module.
+					fun := n.Fun
+					if par, ok := fun.(*ast.ParenExpr); ok {
+						fun = par.X
+					}
+					if star, ok := fun.(*ast.StarExpr); ok && isWasmMemory(star.X) && len(n.Args) == 1 && isIdent(n.Args[0], "m") {
+						n.Args[0] = inst()
+					}
 				}
 				return true
 			})
@@ -508,6 +535,15 @@ func (p *packaging) imports(decls []ast.Decl) []string {
 
 // The name of d's receiver: "m" for the translator's methods, whatever a
 // provided file names it, and "m" for none or an unnamed one.
+// Reports whether e names wasmMemory, as the translator wrote it or as
+// exportMethods renamed it.
+func isWasmMemory(e ast.Expr) bool {
+	if sel, ok := e.(*ast.SelectorExpr); ok {
+		return isIdent(sel.X, instancePkg) && sel.Sel.Name == "WasmMemory"
+	}
+	return isIdent(e, "wasmMemory")
+}
+
 func receiverName(d *ast.FuncDecl) string {
 	if d.Recv != nil && len(d.Recv.List) == 1 && len(d.Recv.List[0].Names) == 1 && d.Recv.List[0].Names[0].Name != "_" {
 		return d.Recv.List[0].Names[0].Name

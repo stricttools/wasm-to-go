@@ -9,11 +9,18 @@ import (
 )
 
 func Fn3(m *instance.Module) int32 {
-	t0 := int32(memory_grow(&m.Memory, int64(int32(1)), m.MaxMem))
+	t0 := int32(memory_grow(&m.Memory, &m.MemBacking, int64(int32(1)), m.MaxMem))
 	return t0
 }
 
-func memory_grow(mem *[]byte, delta, max int64) int64 {
+// Grows the memory *mem by delta pages, up to max, and returns its old size
+// in pages, or -1. *back is the memory's backing array: *mem is its prefix,
+// with its capacity cut to its length, so no slice of the memory reaches
+// past its end, and back's bytes past the memory's end are zero. Growth
+// within back is in place: no copy, no allocation. Past it, the memory moves
+// to a new backing array of twice the size, at least what the growth needs,
+// at most max pages.
+func memory_grow(mem, back *[]byte, delta, max int64) int64 {
 	buf := *mem
 	len := len(buf)
 	old := len >> 16
@@ -25,6 +32,16 @@ func memory_grow(mem *[]byte, delta, max int64) int64 {
 	if c != 0 || new > uint64(max) {
 		return -1
 	}
-	*mem = append(buf, make([]byte, int(new<<16)-len)...)
+	size := int(new << 16)
+	if size > cap(*back) {
+		n := int(min(uint64(cap(*back))>>15, uint64(max)) << 16)
+		if n < size {
+			n = size
+		}
+		b := make([]byte, n)
+		copy(b, buf)
+		*back = b
+	}
+	*mem = (*back)[:size:size]
 	return int64(old)
 }

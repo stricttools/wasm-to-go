@@ -5,18 +5,45 @@ package wasm2go
 import (
 	"encoding/binary"
 	"math"
+	"math/bits"
 )
 
 type Module struct {
-	memory []byte
-	maxMem int64
+	memory     []byte
+	memBacking []byte
+	maxMem     int64
 }
 
 func New() *Module {
 	m := new(Module)
 	m.maxMem = 65536
-	m.memory = make([]byte, 65536)
+	m.memBacking = make([]byte, 65536)
+	m.memory = m.memBacking
 	return m
+}
+
+// MemoryMax is the most bytes the module's memory can grow to
+// through its own memory.grow: its declared maximum.
+func (m *Module) MemoryMax() int64 { return 4294967296 }
+
+// UseMemory moves the module's memory to the start of buf's backing array,
+// where it keeps its size and contents and grows in place, without
+// copying or allocating, as far as buf's capacity allows (past it, it moves
+// to a new array in the Go heap). buf's bytes past the memory's size must
+// be zero, and nothing else may write to them. UseMemory returns false,
+// and leaves the memory where it is, when buf's capacity is less than the
+// memory's size (a nil buf included). Slices of the memory taken before
+// the call are stale after it, as after the memory grows.
+func (m *Module) UseMemory(buf []byte) bool {
+	n := len(m.memory)
+	if cap(buf) < n {
+		return false
+	}
+	buf = buf[:cap(buf)]
+	copy(buf, m.memory)
+	m.memBacking = buf
+	m.memory = buf[:n:n]
+	return true
 }
 func (m *Module) Xdiv64(v0, v1 int64) int64 {
 	return int64(math.Float64bits(f64_canon(float64(math.Float64frombits(uint64(v0)) / math.Float64frombits(uint64(v1))))))
@@ -153,4 +180,37 @@ func load64[T uint32 | uint64](mem []byte, addr T) uint64 {
 //go:nosplit
 func store64[T uint32 | uint64](mem []byte, addr T, val uint64) {
 	binary.LittleEndian.PutUint64(mem[addr:], val)
+}
+
+// Grows the memory *mem by delta pages, up to max, and returns its old size
+// in pages, or -1. *back is the memory's backing array: *mem is its prefix,
+// with its capacity cut to its length, so no slice of the memory reaches
+// past its end, and back's bytes past the memory's end are zero. Growth
+// within back is in place: no copy, no allocation. Past it, the memory moves
+// to a new backing array of twice the size, at least what the growth needs,
+// at most max pages.
+func memory_grow(mem, back *[]byte, delta, max int64) int64 {
+	buf := *mem
+	len := len(buf)
+	old := len >> 16
+	if delta == 0 {
+		return int64(old)
+	}
+	max = int64(min(uint64(max), math.MaxInt>>16))
+	new, c := bits.Add64(uint64(old), uint64(delta), 0)
+	if c != 0 || new > uint64(max) {
+		return -1
+	}
+	size := int(new << 16)
+	if size > cap(*back) {
+		n := int(min(uint64(cap(*back))>>15, uint64(max)) << 16)
+		if n < size {
+			n = size
+		}
+		b := make([]byte, n)
+		copy(b, buf)
+		*back = b
+	}
+	*mem = (*back)[:size:size]
+	return int64(old)
 }

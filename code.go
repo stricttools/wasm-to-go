@@ -773,13 +773,15 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 					needsUnsafe("shared memory")
 				}
 				fn.helpers.add(name)
-				fn.push(convert(&ast.CallExpr{
-					Fun: newID(name),
-					Args: []ast.Expr{
-						&ast.UnaryExpr{Op: token.AND, X: t.memory.selector},
-						convert(fn.pop(), "int64"),
-						&ast.SelectorExpr{X: newID("m"), Sel: newID("maxMem")}}},
-					t.memory.stype()))
+				args := []ast.Expr{&ast.UnaryExpr{Op: token.AND, X: t.memory.selector}}
+				if t.memory.owned() {
+					args = append(args, &ast.UnaryExpr{Op: token.AND,
+						X: &ast.SelectorExpr{X: newID("m"), Sel: newID(memBackingField)}})
+				}
+				args = append(args,
+					convert(fn.pop(), "int64"),
+					&ast.SelectorExpr{X: newID("m"), Sel: newID("maxMem")})
+				fn.push(convert(&ast.CallExpr{Fun: newID(name), Args: args}, t.memory.stype()))
 			}
 
 		case 0x41: // i32.const

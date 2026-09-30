@@ -73,7 +73,7 @@ func TestLowerOthers(t *testing.T) {
 		t0 := load32x(m.memory, uint32(v0))
 		t1 := i32(load8)
 		t2 := load32(m.memory)
-		return memory_grow(&m.memory, int64(t0), int64(t1))
+		return memory_grow(&m.memory, &m.memBacking, int64(t0), int64(t1))
 	}`
 	fn := parseFunc(t, src)
 	if sites := Lower(fn, true); sites != 0 {

@@ -195,6 +195,70 @@ where `math.FMA` takes 2.3 ns, and 14.1 ns with `math.FMA` in software
 QuickJS built with wasi-sdk is not affected: it links wasi-libc, whose libm is musl's
 compiled into the module, and imports no math functions.
 
+## Linear memory
+
+A module that defines its memory (neither imports it nor shares it)
+keeps it in the `Module` as a slice whose capacity is its length,
+so no slice of the memory reaches past its end:
+the bulk memory operations, and code of `-provided` files, trap there.
+The slice is a prefix of a backing array, also in the `Module`,
+whose bytes past the memory's end are zero.
+`memory.grow` within the backing array is in place:
+it lengthens the slice, with no copy and no allocation.
+Past it, the memory moves to a new array in the Go heap
+of twice the old array's size (at least what the growth needs,
+at most the module's maximum), and the old array becomes garbage.
+
+In the Go heap, a memory that grows costs the host more than the memory:
+moving it needs the old and the new array at once,
+the collector frees the old arrays only at its next cycle,
+Go zeroes a large allocation that reuses memory it freed (touching all of it),
+and translated code cannot release anything itself
+(the packages that could, `runtime` and `syscall`, are ones strictgo refuses).
+Doubling the backing array moves the memory less often than `append`
+did, which halves the peak of a memory that grows a page at a time
+(see the test below), but the game engine module of strictgame
+(QuickJS-ng, 71 MB of memory at the end of its memory script)
+peaked at 247 MB with either.
+
+So a host outside strictgo's checks can place the memory in address space
+the operating system commits page by page when each page is first touched,
+through two methods of `Module` and the package
+[`reserve`](reserve/reserve.go) of this repository:
+
+```go
+m := translated.New()
+m.UseMemory(reserve.Memory(m, m.MemoryMax()))
+```
+
+`MemoryMax` is the memory's declared maximum in bytes (4 GiB for a
+32-bit memory that declares none); `UseMemory` moves the memory to the start of
+the given array, where it then grows in place up to the array's capacity.
+`reserve.Memory` maps that much private anonymous memory on Linux, macOS, and the BSDs
+(on Linux with `MAP_NORESERVE`, so it is not counted against the commit limit)
+and unmaps it when its owner, the `Module`, becomes unreachable,
+so no slice of the memory may outlive the `Module`.
+It returns nil, and `UseMemory` then leaves the memory in the Go heap,
+where it cannot reserve: on js/wasm and wasip1 (the Go program's own
+linear memory is all the memory there is), on Windows (reserving and
+committing on touch needs `VirtualAlloc`, which `syscall` lacks), and when
+the operating system refuses (a 32-bit address space, Linux with
+`vm.overcommit_memory=2`). With the memory reserved, the memory script peaked
+at 77 MB. The results of `memory.grow`, the memory's contents, and its bounds
+are the same wherever the memory is.
+
+An imported memory is the host's, grown by its `Grow`; a shared memory is
+created with its maximum capacity and grown in place, atomically.
+The bulk memory operations slice both up to their length, not their capacity.
+
+`Test_memory_peak` grows a module's memory to 64 MiB one page at a time,
+filling each page, in a child process, and bounds the child's peak above an
+idle one's just above what was measured: 64.1 MiB with the memory reserved
+(bound: the memory and 1 MiB more), and 129.6 MiB in the Go heap, the last
+move's old and new arrays (bound: twice the memory and 4 MiB more).
+Growing by `append`, before the backing array doubled, the same module
+took 270 to 290 MiB.
+
 ## The Go stack
 
 Every Wasm call is a Go call, so a module's recursion grows the goroutine's stack,

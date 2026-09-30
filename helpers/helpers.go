@@ -513,7 +513,14 @@ func store64[T uint32 | uint64](mem []byte, addr T, val uint64) {
 
 // Bulk memory operations.
 
-func memory_grow(mem *[]byte, delta, max int64) int64 {
+// Grows the memory *mem by delta pages, up to max, and returns its old size
+// in pages, or -1. *back is the memory's backing array: *mem is its prefix,
+// with its capacity cut to its length, so no slice of the memory reaches
+// past its end, and back's bytes past the memory's end are zero. Growth
+// within back is in place: no copy, no allocation. Past it, the memory moves
+// to a new backing array of twice the size, at least what the growth needs,
+// at most max pages.
+func memory_grow(mem, back *[]byte, delta, max int64) int64 {
 	buf := *mem
 	len := len(buf)
 	old := len >> 16
@@ -525,11 +532,26 @@ func memory_grow(mem *[]byte, delta, max int64) int64 {
 	if c != 0 || new > uint64(max) {
 		return -1
 	}
-	*mem = append(buf, make([]byte, int(new<<16)-len)...)
+	size := int(new << 16)
+	if size > cap(*back) {
+		n := int(min(uint64(cap(*back))>>15, uint64(max)) << 16)
+		if n < size {
+			n = size
+		}
+		b := make([]byte, n)
+		copy(b, buf)
+		*back = b
+	}
+	*mem = (*back)[:size:size]
 	return int64(old)
 }
 
+// The bulk memory operations slice the memory up to its length, not its
+// capacity, so an operation past the end traps even where the slice's
+// capacity is larger (an imported memory's, a shared memory's).
+
 func memory_init[T1, T2 int | uint32 | uint64](mem []byte, data string, dest T1, src, n T2) {
+	mem = mem[:len(mem):len(mem)]
 	x := uint64(dest)
 	z := uint64(src)
 	y := x + uint64(n)
@@ -538,6 +560,7 @@ func memory_init[T1, T2 int | uint32 | uint64](mem []byte, data string, dest T1,
 }
 
 func memory_copy[T uint32 | uint64](mem []byte, dest, src, n T) {
+	mem = mem[:len(mem):len(mem)]
 	x := uint64(dest)
 	z := uint64(src)
 	y := x + uint64(n)
@@ -546,6 +569,7 @@ func memory_copy[T uint32 | uint64](mem []byte, dest, src, n T) {
 }
 
 func memory_fill[T uint32 | uint64](mem []byte, dest T, val int32, n T) {
+	mem = mem[:len(mem):len(mem)]
 	x := uint64(dest)
 	y := x + uint64(n)
 	buf := mem[x:y]
@@ -559,6 +583,7 @@ func memory_fill[T uint32 | uint64](mem []byte, dest T, val int32, n T) {
 }
 
 func memory_zero[T uint32 | uint64](mem []byte, dest, n T) {
+	mem = mem[:len(mem):len(mem)]
 	x := uint64(dest)
 	y := x + uint64(n)
 	clear(mem[x:y])
