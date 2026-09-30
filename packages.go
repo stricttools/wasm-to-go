@@ -52,6 +52,7 @@ type codeFunc struct {
 	pub      string         // its exported name in the packages
 	recv     bool           // takes the module (a method in the single package)
 	params   *ast.FieldList // its parameters, without the module
+	self     string         // the name of its receiver, the module
 	size     int
 	pkg      int // 1..n
 	calls    map[string]int
@@ -74,14 +75,16 @@ type packaging struct {
 
 // Reports whether the module's code is larger than one package may hold.
 func (t *translator) needsPackages() bool {
-	if *noopt {
-		return false
-	}
+	return t.codeSize() > maxPackageSize
+}
+
+// The size of the translated functions, in AST nodes.
+func (t *translator) codeSize() int {
 	total := 0
 	for _, fd := range t.code {
 		total += passes.Size(fd)
 	}
-	return total > maxPackageSize
+	return total
 }
 
 // Writes the module as several packages: the output package, with the
@@ -92,8 +95,9 @@ func (t *translator) needsPackages() bool {
 // translator's declarations in place, and returns the files to print.
 func (t *translator) writePackages(moduleDecl *ast.GenDecl) (*packaging, []pkgFile, error) {
 	if *importPath == "" {
-		return nil, nil, fmt.Errorf("the module's code is larger than one package holds (%d AST nodes): "+
-			"it is written as several packages, whose imports need -importpath, the import path of the directory of -o", maxPackageSize)
+		return nil, nil, fmt.Errorf("the module has %d AST nodes of translated code, more than one package holds (%d): "+
+			"it is written as several packages, whose imports need -importpath, the import path of the directory of -o",
+			t.codeSize(), maxPackageSize)
 	}
 	if *dwarfline {
 		return nil, nil, errors.New("-dwarfline is not supported for a module written as several packages")
@@ -117,7 +121,7 @@ func (t *translator) writePackages(moduleDecl *ast.GenDecl) (*packaging, []pkgFi
 		// the translator's trees share nodes between functions.
 		d := passes.Clone(fn.decl)
 		original[fn.decl] = true
-		f := &codeFunc{decl: d, name: d.Name.Name, recv: d.Recv != nil, size: passes.Size(d), params: d.Type.Params}
+		f := &codeFunc{decl: d, name: d.Name.Name, recv: d.Recv != nil, size: passes.Size(d), params: d.Type.Params, self: receiverName(d)}
 		f.pub = exportName(f.name)
 		if !pubs.add(f.pub) {
 			return nil, nil, fmt.Errorf("two functions are named %s in the packages", f.pub)
@@ -141,7 +145,7 @@ func (t *translator) writePackages(moduleDecl *ast.GenDecl) (*packaging, []pkgFi
 			}
 			original[fd] = true
 			fd = passes.Clone(fd)
-			f := &codeFunc{decl: fd, name: fd.Name.Name, recv: true, size: passes.Size(fd), params: fd.Type.Params, provided: true}
+			f := &codeFunc{decl: fd, name: fd.Name.Name, recv: true, size: passes.Size(fd), params: fd.Type.Params, provided: true, self: receiverName(fd)}
 			f.pub = exportName(f.name)
 			if !pubs.add(f.pub) {
 				return nil, nil, fmt.Errorf("two functions are named %s in the packages", f.pub)
@@ -206,19 +210,20 @@ func (t *translator) writePackages(moduleDecl *ast.GenDecl) (*packaging, []pkgFi
 		}
 	}
 
-	// The functions.
+	// The functions: a method takes the module as its first parameter,
+	// named as its receiver was.
 	for _, f := range p.funcs {
 		d := f.decl
 		if f.recv {
 			d.Type.Params = &ast.FieldList{List: append([]*ast.Field{{
-				Names: []*ast.Ident{ast.NewIdent("m")},
+				Names: []*ast.Ident{ast.NewIdent(f.self)},
 				Type:  &ast.StarExpr{X: &ast.SelectorExpr{X: ast.NewIdent(instancePkg), Sel: ast.NewIdent("Module")}},
 			}}, d.Type.Params.List...)}
 			d.Recv = nil
 		}
 		d.Name = ast.NewIdent(f.pub)
-		m := func() ast.Expr { return ast.NewIdent("m") }
-		p.rewrite(d.Body, f.pkg, m, m)
+		self := func() ast.Expr { return ast.NewIdent(f.self) }
+		p.rewrite(d.Body, f.pkg, f.self, self, self)
 	}
 	var files []pkgFile
 	for i := 1; i <= p.n; i++ {
@@ -370,7 +375,7 @@ func (p *packaging) rewriteNew(d *ast.FuncDecl) {
 		used = true
 		return ast.NewIdent("s")
 	}
-	p.rewrite(d.Body, 0, s, s)
+	p.rewrite(d.Body, 0, "m", s, s)
 	if !used {
 		return
 	}
@@ -390,7 +395,7 @@ func (p *packaging) exportMethods(decls []ast.Decl) []ast.Decl {
 	var out []ast.Decl
 	for _, d := range decls {
 		if fd, ok := d.(*ast.FuncDecl); ok && fd.Recv != nil {
-			p.rewrite(fd.Body, 0, inst, base)
+			p.rewrite(fd.Body, 0, "m", inst, base)
 			astutil.Apply(fd.Body, nil, func(c *astutil.Cursor) bool {
 				if id, ok := c.Node().(*ast.Ident); ok && id.Name == "wasmMemory" {
 					c.Replace(&ast.SelectorExpr{X: ast.NewIdent(instancePkg), Sel: ast.NewIdent("WasmMemory")})
@@ -412,9 +417,6 @@ func (p *packaging) exportMethods(decls []ast.Decl) []ast.Decl {
 		}
 		fn := &p.t.functions[exp.index]
 		f := p.byName[fn.decl.Name.Name]
-		if f == nil {
-			f = p.funcByDecl(fn.decl)
-		}
 		if f == nil || f.name != mangleExported(name) {
 			continue // the translator wrote a method for it
 		}
@@ -434,15 +436,6 @@ func (p *packaging) exportMethods(decls []ast.Decl) []ast.Decl {
 			Body: &ast.BlockStmt{List: []ast.Stmt{body}}})
 	}
 	return out
-}
-
-func (p *packaging) funcByDecl(d *ast.FuncDecl) *codeFunc {
-	for _, f := range p.funcs {
-		if f.decl == d {
-			return f
-		}
-	}
-	return nil
 }
 
 // The file of package name at rel (the output file if ""), with decls and
@@ -513,6 +506,15 @@ func (p *packaging) imports(decls []ast.Decl) []string {
 	return slices.Sorted(maps.Keys(paths))
 }
 
+// The name of d's receiver: "m" for the translator's methods, whatever a
+// provided file names it, and "m" for none or an unnamed one.
+func receiverName(d *ast.FuncDecl) string {
+	if d.Recv != nil && len(d.Recv.List) == 1 && len(d.Recv.List[0].Names) == 1 && d.Recv.List[0].Names[0].Name != "_" {
+		return d.Recv.List[0].Names[0].Name
+	}
+	return "m"
+}
+
 func recvType(d *ast.FuncDecl) string {
 	typ := d.Recv.List[0].Type
 	if st, ok := typ.(*ast.StarExpr); ok {
@@ -556,7 +558,7 @@ func (p *packaging) plan() {
 	for _, f := range p.funcs {
 		f.calls = map[string]int{}
 		ast.Inspect(f.decl.Body, func(n ast.Node) bool {
-			if name, ok := p.funcRef(n); ok {
+			if name, ok := p.funcRef(n, f.self); ok {
 				f.calls[name]++
 			}
 			return true
@@ -596,10 +598,10 @@ func (p *packaging) plan() {
 }
 
 // The name of the module function n refers to, if it is m.name or name.
-func (p *packaging) funcRef(n ast.Node) (string, bool) {
+func (p *packaging) funcRef(n ast.Node, self string) (string, bool) {
 	switch n := n.(type) {
 	case *ast.SelectorExpr:
-		if id, ok := n.X.(*ast.Ident); ok && id.Name == "m" {
+		if id, ok := n.X.(*ast.Ident); ok && id.Name == self {
 			if f := p.byName[n.Sel.Name]; f != nil && f.recv {
 				return f.name, true
 			}
@@ -723,7 +725,7 @@ func (p *packaging) pkgPath(i int) string {
 // package pkg (0 for the output package), where inst is the expression of
 // the instance (a *instance.Module) and base the expression whose fields
 // are the instance's.
-func (p *packaging) rewrite(n ast.Node, pkg int, inst, base func() ast.Expr) ast.Node {
+func (p *packaging) rewrite(n ast.Node, pkg int, self string, inst, base func() ast.Expr) ast.Node {
 	return astutil.Apply(n, func(c *astutil.Cursor) bool {
 		e, ok := c.Node().(*ast.CallExpr)
 		if !ok {
@@ -737,7 +739,7 @@ func (p *packaging) rewrite(n ast.Node, pkg int, inst, base func() ast.Expr) ast
 			}
 			fun = par.X
 		}
-		name, ok := p.calleeName(fun)
+		name, ok := p.calleeName(fun, self)
 		if !ok {
 			return true
 		}
@@ -752,7 +754,7 @@ func (p *packaging) rewrite(n ast.Node, pkg int, inst, base func() ast.Expr) ast
 		switch e := c.Node().(type) {
 		case *ast.SelectorExpr:
 			id, ok := e.X.(*ast.Ident)
-			if !ok || id.Name != "m" {
+			if !ok || id.Name != self {
 				return true
 			}
 			if f := p.byName[e.Sel.Name]; f != nil && f.recv {
@@ -778,10 +780,10 @@ func (p *packaging) rewrite(n ast.Node, pkg int, inst, base func() ast.Expr) ast
 }
 
 // The module function fun names, as the callee of a call.
-func (p *packaging) calleeName(fun ast.Expr) (string, bool) {
+func (p *packaging) calleeName(fun ast.Expr, self string) (string, bool) {
 	switch f := fun.(type) {
 	case *ast.SelectorExpr:
-		if id, ok := f.X.(*ast.Ident); ok && id.Name == "m" {
+		if id, ok := f.X.(*ast.Ident); ok && id.Name == self {
 			if g := p.byName[f.Sel.Name]; g != nil && g.recv {
 				return g.name, true
 			}

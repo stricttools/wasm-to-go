@@ -237,9 +237,10 @@ Shared memories are left alone, since other goroutines may grow them.
 
 An integer constant is a call of the `i32` or `i64` helper, `i32(5)`,
 which keeps it out of Go's constant evaluator, only where it could become
-an operand of a Go constant expression; where it is combined with a
-variable, passed to a function, assigned, or returned, it is a Go constant,
-`int32(5)`, which the compiler handles without an inlined call.
+an operand of a Go constant expression, or is a memory access's address or
+stored value (which become an index, or shifted bytes); where it is combined
+with a variable, passed to a function, assigned, or returned, it is a Go
+constant, `int32(5)`, which the compiler handles without an inlined call.
 
 ### Memory accesses
 
@@ -291,13 +292,17 @@ of the directory of `-o`:
   to the other packages, and the imported interfaces and memory types
   (the output package declares aliases of them);
 - `internal/functions1` to `internal/functionsN`: the module's functions,
-  as functions taking the instance, the provided functions in the last.
+  as functions taking the instance (a method's receiver becomes their first
+  parameter, under the receiver's name), the provided functions in the last.
   Functions are ordered callers first (the strongly connected components
   of the call graph in topological order) and filled into packages in that
   order, so a call to a function in a later package is a direct call,
   and a call to one in an earlier package goes through a function variable
   of `internal/instance`, which the output package sets when it is initialized.
 
+The output package imports the others as `wasm2go_instance` and
+`wasm2go_functions1` to `wasm2go_functionsN`, names its other files
+(yours, or a generator's) must not declare.
 Writing again into the same directory removes the files of packages
 an earlier translation wrote there and this one does not;
 a file there that `wasm2go` did not write is an error.
@@ -333,8 +338,8 @@ the interpreter loop of QuickJS.
 The package limit was chosen from the peak memory of the largest compile
 process when building QuickJS-ng (without and with `-unsafe`) and
 tree-sitter's runtime, with `go build -p 1` on 16 cores,
-Go 1.26 on linux/amd64 (MiB; arm64 and js/wasm peak within 15% of these;
-in one package, QuickJS's compile took 1.9 GB):
+Go 1.26 on linux/amd64 (MiB; arm64 and js/wasm peak in the same ranges;
+in one package, QuickJS's compile took 1,906 MiB):
 
 | package limit (AST nodes) | QuickJS | QuickJS `-unsafe` | tree-sitter | QuickJS build time |
 |---|---|---|---|---|
@@ -342,12 +347,12 @@ in one package, QuickJS's compile took 1.9 GB):
 | 25,000 | 230 | 180 | 78 | 11.5 s |
 | 50,000 | 174 | 184 | 91 | 10.1 s |
 | 100,000 | 235 | 183 | 125 | 9.5 s |
-| 200,000 | 389 | 255 | | 8.8 s |
-| 400,000 | 611 | 344 | | 8.8 s |
+| 200,000 | 389 | 255 | 175 | 8.8 s |
+| 400,000 | 611 | 344 | 287 | 8.8 s |
 
 QuickJS's largest function, its interpreter loop (about 99,000 AST nodes),
-alone takes 170 to 240 MiB from 100,000 nodes down, the run-to-run
-variation of the Go compiler's collector included; the limit, 25,000,
+alone takes 170 to 245 MiB from 100,000 nodes down (the run-to-run
+variation of the Go compiler's collector); the limit, 25,000,
 is where smaller packages stopped lowering tree-sitter's largest compile
 while build time kept rising. The limit does not change runtime speed
 measurably: calls between packages are direct calls, except calls to
@@ -358,7 +363,9 @@ linux/amd64 and js/wasm one package at a time with `GOMAXPROCS=4`,
 and fails if any compile process of its packages takes more than
 `compileMemoryBound` (in `compilemem_test.go`), just above the largest
 it has measured; it then runs `testdata/quickjs/test.js` on it and
-compares the result with a native build's.
+compares the result with a native build's. It does the same for the
+translation with `-byte-accesses` on linux/amd64, under
+`compileMemoryBoundByteAccesses`.
 
 ### `-byte-accesses`
 

@@ -106,8 +106,10 @@ func testOOBTrap(t *testing.T, m oobTrapModule) {
 }
 
 func Test_regression_provided_helper(t *testing.T) {
-	m := provided_helper_test.New()
+	testProvidedHelper(t, provided_helper_test.New())
+}
 
+func testProvidedHelper(t *testing.T, m interface{ Xtest() int64 }) {
 	if got := m.Xtest(); got != 0x0807060504030201 {
 		t.Errorf("test() = %#x, want 0x0807060504030201 (provided import must be able to call load64)", got)
 	}

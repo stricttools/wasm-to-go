@@ -15,6 +15,7 @@ import (
 	packages_dispatch "github.com/stricttools/wasm-to-go/testdata/packages/dispatch"
 	packages_loops "github.com/stricttools/wasm-to-go/testdata/packages/loops"
 	packages_memgrow "github.com/stricttools/wasm-to-go/testdata/packages/memgrow"
+	packages_provided_helper "github.com/stricttools/wasm-to-go/testdata/packages/provided_helper"
 	packages_recursion "github.com/stricttools/wasm-to-go/testdata/packages/recursion"
 )
 
@@ -64,6 +65,11 @@ func Test_regression_packages_memgrow(t *testing.T) {
 	m := packages_memgrow.New(env)
 	env.m = m
 	testMemgrow(t, m)
+}
+
+// The provided function's receiver is named mod.
+func Test_regression_packages_provided_helper(t *testing.T) {
+	testProvidedHelper(t, packages_provided_helper.New())
 }
 
 func Test_regression_packages_bce(t *testing.T) {
@@ -165,4 +171,21 @@ func translateRecursion(t *testing.T, dir string) error {
 		err = cerr
 	}
 	return err
+}
+
+// -noopt, which turns the optimization passes off, still writes a large
+// module as several packages: the limit bounds compile memory, whatever
+// the passes.
+func Test_packages_noopt(t *testing.T) {
+	limit, path, off := maxPackageSize, *importPath, *noopt
+	t.Cleanup(func() { maxPackageSize, *importPath, *noopt = limit, path, off })
+	maxPackageSize, *importPath, *noopt = 1, "example.com/recursion", true
+
+	dir := t.TempDir()
+	if err := translateRecursion(t, dir); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(filepath.Join(dir, "internal", "functions3", "functions3.go")); err != nil {
+		t.Errorf("with -noopt, the functions are not in packages of their own: %v", err)
+	}
 }

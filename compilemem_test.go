@@ -63,19 +63,33 @@ func toolexec(log string, args []string) int {
 	return cmd.ProcessState.ExitCode()
 }
 
-// The reference module, QuickJS-ng (testdata/quickjs), translated as the
-// command does by default, compiles for linux/amd64 and js/wasm with every
-// compile process of its packages under compileMemoryBound, one package at
-// a time and with GOMAXPROCS=4 (the backend concurrency of builds that
-// compile several packages at once); and runs test.js as native QuickJS
-// does.
+// The reference module, QuickJS-ng (testdata/quickjs), compiles with every
+// compile process of its packages under a bound, one package at a time and
+// with GOMAXPROCS=4 (the backend concurrency of builds that compile several
+// packages at once), and runs test.js as native QuickJS does: translated
+// as the command does by default, for linux/amd64 and js/wasm, under
+// compileMemoryBound; and with -byte-accesses, for linux/amd64, under
+// compileMemoryBoundByteAccesses.
 func Test_quickjs(t *testing.T) {
-	saved := [...]any{*importPath, *embed, *pkg, embedFile, *unsafe}
+	t.Run("default", func(t *testing.T) {
+		testQuickJS(t, false, compileMemoryBound, "linux/amd64", "js/wasm")
+	})
+	t.Run("byte-accesses", func(t *testing.T) {
+		testQuickJS(t, true, compileMemoryBoundByteAccesses, "linux/amd64")
+	})
+}
+
+// compileMemoryBoundByteAccesses is compileMemoryBound for the translation
+// with -byte-accesses.
+const compileMemoryBoundByteAccesses = 540
+
+func testQuickJS(t *testing.T, bytes bool, bound float64, targets ...string) {
+	saved := [...]any{*importPath, *embed, *pkg, embedFile, *unsafe, *byteAccesses}
 	t.Cleanup(func() {
-		*importPath, *embed, *pkg, embedFile, *unsafe = saved[0].(string), saved[1].(bool), saved[2].(string), saved[3].(string), saved[4].(bool)
+		*importPath, *embed, *pkg, embedFile, *unsafe, *byteAccesses = saved[0].(string), saved[1].(bool), saved[2].(string), saved[3].(string), saved[4].(bool), saved[5].(bool)
 	})
 	dir := t.TempDir()
-	*importPath, *embed, *pkg, *unsafe = "qjstest/qjs", true, "qjs", false
+	*importPath, *embed, *pkg, *unsafe, *byteAccesses = "qjstest/qjs", true, "qjs", false, bytes
 	embedFile = filepath.Join(dir, "qjs", "qjs.dat")
 	if err := os.MkdirAll(filepath.Join(dir, "qjs"), 0o755); err != nil {
 		t.Fatal(err)
@@ -119,30 +133,30 @@ func Test_quickjs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	for _, target := range []struct{ goos, goarch, pkgs string }{
-		{"linux", "amd64", "./driver"},
-		{"js", "wasm", "./qjs/..."},
-	} {
-		log := filepath.Join(dir, "compile-"+target.goarch+".log")
+	for _, target := range targets {
+		goos, goarch, _ := strings.Cut(target, "/")
+		log := filepath.Join(dir, "compile-"+goarch+".log")
 		args := []string{"build", "-p", "1", "-toolexec", self + " " + toolexecFlag + log}
-		if target.pkgs == "./driver" {
+		pkgs := "./qjs/..."
+		if target == "linux/amd64" {
 			args = append(args, "-o", filepath.Join(dir, "driver.bin"))
+			pkgs = "./driver"
 		} else {
 			args = append(args, "-o", os.DevNull)
 		}
-		cmd := exec.Command("go", append(args, target.pkgs)...)
+		cmd := exec.Command("go", append(args, pkgs)...)
 		cmd.Dir = dir
-		cmd.Env = append(os.Environ(), "GOOS="+target.goos, "GOARCH="+target.goarch,
+		cmd.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch,
 			"GOMAXPROCS=4", "GOFLAGS=", "GOTOOLCHAIN=local", "CGO_ENABLED=0", "GOGC=100", "GOMEMLIMIT=off")
 		if out, err := cmd.CombinedOutput(); err != nil {
-			t.Fatalf("go build for %s/%s: %v\n%s", target.goos, target.goarch, err, out)
+			t.Fatalf("go build for %s: %v\n%s", target, err, out)
 		}
 		peaks, err := readCompileLog(log, "qjstest/qjs")
 		if err != nil {
 			t.Fatal(err)
 		}
 		if len(peaks) == 0 {
-			t.Fatalf("%s/%s: no compile of the translation was measured (was it cached?)", target.goos, target.goarch)
+			t.Fatalf("%s: no compile of the translation was measured (was it cached?)", target)
 		}
 		max, maxPkg := 0.0, ""
 		for p, mib := range peaks {
@@ -150,10 +164,9 @@ func Test_quickjs(t *testing.T) {
 				max, maxPkg = mib, p
 			}
 		}
-		t.Logf("%s/%s: %d packages, largest compile %.0f MiB (%s)", target.goos, target.goarch, len(peaks), max, maxPkg)
-		if max > compileMemoryBound {
-			t.Errorf("%s/%s: compiling %s took %.0f MiB, over compileMemoryBound (%d MiB)",
-				target.goos, target.goarch, maxPkg, max, compileMemoryBound)
+		t.Logf("%s: %d packages, largest compile %.0f MiB (%s)", target, len(peaks), max, maxPkg)
+		if max > bound {
+			t.Errorf("%s: compiling %s took %.0f MiB, over the bound (%.0f MiB)", target, maxPkg, max, bound)
 		}
 	}
 
