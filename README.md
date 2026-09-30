@@ -310,7 +310,7 @@ an assumption about the engine, which the estimate was measured against:
   engine passes on the stack. For every function on a cycle of
   QuickJS-ng's call graph, the frame V8's two compilers give it
   (Liftoff and TurboFan, in Node 22's V8 12.4, read from
-  `--print-wasm-code`) is at most 0.995 of the estimate.
+  `--print-wasm-code`) is at most 0.975 of the estimate.
   A large constant per frame makes recursion through small frames that
   keep no shadow stack (deeply nested JSON, arrays walked by `flat`)
   and recursion through QuickJS's interpreter, whose frames also take

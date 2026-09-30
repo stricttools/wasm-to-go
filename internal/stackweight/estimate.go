@@ -12,7 +12,7 @@ const EstimateVersion = "max(272 + 2 per slot, 48 + 8 per slot) + 8 per stack pa
 //
 // Over every function on a cycle of QuickJS-ng's call graph, the frame of
 // either of V8's compilers (Liftoff and TurboFan, in Node 22's V8 12.4) is at
-// most 0.995 of the estimate. Among the estimates that bound every frame, a
+// most 0.975 of the estimate. Among the estimates that bound every frame, a
 // large constant per frame lets recursion whose frames are small and keep no
 // shadow stack (deeply nested JSON, arrays walked by flat) and recursion
 // through the interpreter (whose frames also take shadow stack) reach
