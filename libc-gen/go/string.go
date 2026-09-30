@@ -18,8 +18,8 @@ func memchr(s ptr, c int32, n ptr) ptr {
 
 func memmem(haystack, hn, needle, nn ptr) ptr {
 	hn, nn = haystack+hn, needle+nn
-	h := memory[uptr(haystack):uptr(hn)]
-	n := memory[uptr(needle):uptr(nn)]
+	h := memory[uptr(haystack):uptr(hn):len(memory)]
+	n := memory[uptr(needle):uptr(nn):len(memory)]
 	i := bytes.Index(h, n)
 	if i < 0 {
 		return 0
@@ -32,8 +32,8 @@ func memcmp(s1, s2, n ptr) int32 {
 		return 0
 	}
 	e1, e2 := s1+n, s2+n
-	b1 := memory[uptr(s1):uptr(e1)]
-	b2 := memory[uptr(s2):uptr(e2)]
+	b1 := memory[uptr(s1):uptr(e1):len(memory)]
+	b2 := memory[uptr(s2):uptr(e2):len(memory)]
 	return int32(bytes.Compare(b1, b2))
 }
 
@@ -42,8 +42,8 @@ func bcmp(s1, s2, n ptr) int32 {
 		return 0
 	}
 	e1, e2 := s1+n, s2+n
-	b1 := memory[uptr(s1):uptr(e1)]
-	b2 := memory[uptr(s2):uptr(e2)]
+	b1 := memory[uptr(s1):uptr(e1):len(memory)]
+	b2 := memory[uptr(s2):uptr(e2):len(memory)]
 	if bytes.Equal(b1, b2) {
 		return 0
 	}

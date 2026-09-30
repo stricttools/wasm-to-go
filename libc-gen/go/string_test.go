@@ -198,3 +198,24 @@ func Test_strcspn(t *testing.T) {
 		t.Errorf("got %v, want %d", got, want)
 	}
 }
+
+// A memory whose slice has spare capacity (an imported memory's, as its host
+// holds it, or a shared memory's): comparing or searching bytes past the
+// memory's end traps, as the module's own loads would.
+func Test_bounds_past_length(t *testing.T) {
+	memory = make([]byte, 1024, 2048)
+	traps := func(name string, f func()) {
+		t.Helper()
+		defer func() {
+			if recover() == nil {
+				t.Errorf("%s past the memory's end did not trap", name)
+			}
+		}()
+		f()
+	}
+	traps("memcmp", func() { memcmp(1020, 0, 8) })
+	traps("memcmp's second operand", func() { memcmp(0, 1020, 8) })
+	traps("bcmp", func() { bcmp(1020, 0, 8) })
+	traps("memmem's haystack", func() { memmem(1020, 8, 0, 1) })
+	traps("memmem's needle", func() { memmem(0, 8, 1020, 8) })
+}
