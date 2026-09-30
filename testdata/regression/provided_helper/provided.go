@@ -1,3 +1,8 @@
+// Input to wasm2go -provided, which copies these declarations into its
+// translation; this file is not built.
+
+//go:build ignore
+
 package wasm2go
 
 // The provided import reads memory through load64, which the module's own

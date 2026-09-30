@@ -41,6 +41,10 @@ func (m *Module) Xmemory() Memory {
 	return (*wasmMemory)(&m.memory)
 }
 
+func (m *Module) _peek(addr int32) int64 {
+	return int64(load64(m.memory, uint32(addr)))
+}
+
 //go:nosplit
 func i32(x int32) int32 { return x }
 

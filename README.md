@@ -12,11 +12,13 @@ wasm2go < input.wasm > output.go
 
 The input is a Wasm module, and the output is Go source
 with no dependencies beyond the standard library:
-a single file, or two with [`-unsafe`](#-unsafe-and-two-output-files).
+a single file, or two with [`-unsafe`](#-unsafe-and-two-output-files),
+or, for a large module, [several packages](#several-packages).
 
 ## Overview
 
-The generated Go file forms a self-contained package,
+The generated Go file forms a self-contained package
+(with its internal packages, for a large module),
 that exports a structure called `Module`
 and a `New` function to initialize it.
 
@@ -268,6 +270,59 @@ with the portable accesses of `encoding/binary`, and is built on every other pla
 `-tags` combine with the build constraint of each file.
 With `-noopt`, the two files differ only in their build constraints.
 
+## Provided functions
+
+`-provided file.go` names a Go file whose methods of `Module` implement
+imported functions (`libc-gen` writes such files). The translator reads it,
+and writes its declarations into its own output, with the imports they use,
+so the file itself must not be built: it begins with `//go:build ignore`,
+as `libc-gen`'s output does. The file's imports cannot be renamed.
+
+## Several packages
+
+A module with more code than one Go package may hold
+(`maxPackageSize` in [packages.go](packages.go), in AST nodes)
+is written as several packages, and `-importpath` must name the import path
+of the directory of `-o`:
+
+- the output package: `Module`, `New`, and the exports, as for one package;
+  `Module` holds an instance of the module's state;
+- `internal/instance`: that state, with its fields exported
+  to the other packages, and the imported interfaces and memory types
+  (the output package declares aliases of them);
+- `internal/functions1` to `internal/functionsN`: the module's functions,
+  as functions taking the instance, the provided functions in the last.
+  Functions are ordered callers first (the strongly connected components
+  of the call graph in topological order) and filled into packages in that
+  order, so a call to a function in a later package is a direct call,
+  and a call to one in an earlier package goes through a function variable
+  of `internal/instance`, which the output package sets when it is initialized.
+
+Writing again into the same directory removes the files of packages
+an earlier translation wrote there and this one does not;
+a file there that `wasm2go` did not write is an error.
+`-dwarfline` is not supported for a module written as several packages.
+
+See [compile cost](#compile-cost) for why.
+
+## Compile cost
+
+The Go compiler keeps every compiled function's SSA form and machine
+instructions reachable until it writes the package: the DWARF location list
+of each function holds a callback that refers to them
+(`GetPC`, set in `cmd/compile/internal/ssagen`'s `genssa`).
+So a compile process's memory grows with its package's code, whatever
+the size of each function, and one package of a large module needs gigabytes:
+QuickJS-ng translated into one package needed more than 4 GB.
+The translator therefore bounds each package's code, and writes a larger
+module as several packages, each compiled by its own process.
+
+It also keeps the code small where the compiler's memory goes:
+memory accesses are written as `encoding/binary` calls, not as calls
+of helper functions (see [memory accesses](#memory-accesses)),
+and integer constants as Go constants where Go cannot fold them
+(see [constants](#constants)).
+
 ## Usage
 
 ```
@@ -276,6 +331,8 @@ Usage: wasm2go [option]... [input.wasm]
         use line numbers from DWARF metadata
   -embed
         go:embed data sections from a .dat file
+  -importpath string
+        import path of the directory of -o; required when the module is written as several packages
   -nohost
         don't generate interfaces for imports
   -noopt
@@ -285,7 +342,7 @@ Usage: wasm2go [option]... [input.wasm]
   -pkg string
         package name (default module name, or wasm2go)
   -provided value
-        file containing provided import functions
+        Go file providing imported functions, as methods of Module; the output holds its declarations, so the file must not be built itself (//go:build ignore)
   -tags string
         go:build tags to include in the generated file
   -unsafe

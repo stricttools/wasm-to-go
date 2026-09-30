@@ -174,3 +174,16 @@ func is[T any](n any) bool {
 	_, ok := n.(T)
 	return ok
 }
+
+// Size is the number of AST nodes of n, the measure of code the
+// translator bounds its packages by.
+func Size(n ast.Node) int {
+	count := 0
+	ast.Inspect(n, func(n ast.Node) bool {
+		if n != nil {
+			count++
+		}
+		return true
+	})
+	return count
+}

@@ -108,8 +108,12 @@ func Cases() []Case {
 // Results makes every call and returns one line per call,
 // "name a b -> result" with the operands and the result in hex,
 // or "trap: message" when the call trapped.
-func Results() []string {
-	m := reflect.ValueOf(New())
+func Results() []string { return ResultsOf(New()) }
+
+// ResultsOf is Results for module, a *Module of this translation of
+// determinism.wasm or of another.
+func ResultsOf(module any) []string {
+	m := reflect.ValueOf(module)
 	var lines []string
 	for _, c := range Cases() {
 		f := m.MethodByName("X" + c.Export)

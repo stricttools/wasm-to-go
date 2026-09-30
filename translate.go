@@ -14,6 +14,7 @@ import (
 	"io"
 	"maps"
 	"os"
+	pathpkg "path"
 	"path/filepath"
 	"slices"
 	"strconv"
@@ -94,10 +95,16 @@ type translator struct {
 	data      []dataSegment
 	dylink    *dylinkDef
 	// Facts for the module-wide passes.
-	indirect        map[*ast.CallExpr]indirectCall
+	indirect map[*ast.CallExpr]indirectCall
+	// The translated functions.
+	code            []*ast.FuncDecl
 	providedDecls   map[string]*ast.FuncDecl
 	providedImports map[string]set[string]
-	helperNames     set[string]
+	// The -provided files, whose declarations the output holds, and the
+	// paths of the packages they import, by name.
+	providedFiles []*ast.File
+	providedPaths map[string]string
+	helperNames   set[string]
 	// Debug.
 	codeStart     uint64
 	debugSections map[string][]byte
@@ -107,7 +114,10 @@ type translator struct {
 // With generic, it writes two files, and needs -unsafe: w gets the code
 // for the platforms of passes.ExpandPlatforms, with the expand pass
 // applied, and generic the code for every other platform.
-func translate(r io.Reader, w, generic io.Writer) error {
+// A module whose code is larger than maxPackageSize is written as several
+// packages: the output package to w (and generic), the others to files
+// sub creates, at paths relative to the output file's directory.
+func translate(r io.Reader, w, generic io.Writer, sub func(rel string) (io.Writer, error)) error {
 	var t translator
 
 	t.in = offset.NewReader(r)
@@ -123,6 +133,7 @@ func translate(r io.Reader, w, generic io.Writer) error {
 	t.indirect = map[*ast.CallExpr]indirectCall{}
 	t.providedDecls = map[string]*ast.FuncDecl{}
 	t.providedImports = map[string]set[string]{}
+	t.providedPaths = map[string]string{}
 
 	helperNames, err := t.findHelpers(fset, helpersSrc, helpersAtomicsSrc)
 	if err != nil {
@@ -133,6 +144,18 @@ func translate(r io.Reader, w, generic io.Writer) error {
 		f, err := parser.ParseFile(fset, file, nil, 0)
 		if err != nil {
 			return err
+		}
+		t.providedFiles = append(t.providedFiles, f)
+		for _, imp := range f.Imports {
+			path, err := strconv.Unquote(imp.Path.Value)
+			if err != nil {
+				return err
+			}
+			if imp.Name != nil {
+				return fmt.Errorf("%s: imports %s as %s: the translator copies provided code into its output, "+
+					"with the imports it needs, which it cannot rename", file, imp.Path.Value, imp.Name.Name)
+			}
+			t.providedPaths[pathpkg.Base(path)] = path
 		}
 		for _, decl := range f.Decls {
 			if fn, ok := decl.(*ast.FuncDecl); ok {
@@ -230,6 +253,7 @@ func translate(r io.Reader, w, generic io.Writer) error {
 	}
 
 	t.out.Decls = append(t.out.Decls, t.createExportMethods()...)
+	t.out.Decls = append(t.out.Decls, t.providedCode()...)
 
 	// Add helpers.
 	if len(t.helpers) > 0 {
@@ -254,6 +278,7 @@ func translate(r io.Reader, w, generic io.Writer) error {
 
 	// The file for every platform (or the only file) accesses memory
 	// through the helpers' bodies; the expanded file through Expand's.
+	t.collectCode()
 	restore := t.lowerAccesses()
 
 	// Set imports.
@@ -309,6 +334,14 @@ func translate(r io.Reader, w, generic io.Writer) error {
 
 	passes.RemoveParens(&t.out)
 
+	if t.needsPackages() {
+		p, files, err := t.writePackages(moduleDecl)
+		if err != nil {
+			return err
+		}
+		return p.print(files, w, generic, sub, fset, restore)
+	}
+
 	if generic == nil {
 		return t.print(w, fset, *tags, moduleDecl)
 	}
@@ -318,35 +351,69 @@ func translate(r io.Reader, w, generic io.Writer) error {
 	if !*unsafe {
 		return errors.New("two output files need -unsafe")
 	}
-	platforms, err := constraint.Parse("//go:build " + passes.ExpandPlatforms)
+	expanded, others, err := expandConstraints()
 	if err != nil {
 		return err
 	}
-	var expanded, others constraint.Expr = platforms, &constraint.NotExpr{X: platforms}
-	if *tags != "" {
-		user, err := constraint.Parse("//go:build " + *tags)
-		if err != nil {
-			return fmt.Errorf("-tags: %w", err)
-		}
-		expanded = &constraint.AndExpr{X: user, Y: expanded}
-		others = &constraint.AndExpr{X: user, Y: others}
-	}
-	if err := t.print(generic, fset, others.String(), moduleDecl); err != nil {
+	if err := t.print(generic, fset, others, moduleDecl); err != nil {
 		return err
 	}
 	restore()
 	if !*noopt {
 		sites := 0
-		for i := range t.functions {
-			if fn := &t.functions[i]; fn.translator != nil {
-				sites += passes.Expand(fn.decl)
-			}
+		for _, decl := range t.code {
+			sites += passes.Expand(decl)
 		}
 		if sites > 0 && !t.packages.has("unsafe") {
 			return errors.New("expanded code needs an import of unsafe")
 		}
 	}
-	return t.print(w, fset, expanded.String(), moduleDecl)
+	return t.print(w, fset, expanded, moduleDecl)
+}
+
+// The build constraints of the expanded file and of the generic file.
+func expandConstraints() (expanded, generic string, err error) {
+	platforms, err := constraint.Parse("//go:build " + passes.ExpandPlatforms)
+	if err != nil {
+		return "", "", err
+	}
+	var e, g constraint.Expr = platforms, &constraint.NotExpr{X: platforms}
+	if *tags != "" {
+		user, err := constraint.Parse("//go:build " + *tags)
+		if err != nil {
+			return "", "", fmt.Errorf("-tags: %w", err)
+		}
+		e = &constraint.AndExpr{X: user, Y: e}
+		g = &constraint.AndExpr{X: user, Y: g}
+	}
+	return e.String(), g.String(), nil
+}
+
+// Sets t.code to the translated functions.
+func (t *translator) collectCode() {
+	for i := range t.functions {
+		if fn := &t.functions[i]; fn.translator != nil {
+			t.code = append(t.code, fn.decl)
+		}
+	}
+}
+
+// The declarations of the -provided files, which the output holds; their
+// imports are added to the output's.
+func (t *translator) providedCode() []ast.Decl {
+	var decls []ast.Decl
+	for _, f := range t.providedFiles {
+		for _, d := range f.Decls {
+			if gd, ok := d.(*ast.GenDecl); ok && gd.Tok == token.IMPORT {
+				continue
+			}
+			decls = append(decls, d)
+		}
+	}
+	for _, path := range t.providedPaths {
+		t.packages.add(path)
+	}
+	return decls
 }
 
 // Replaces the memory access helper calls of every translated function
@@ -357,13 +424,11 @@ func (t *translator) lowerAccesses() (restore func()) {
 	if *noopt {
 		return func() {}
 	}
-	for i := range t.functions {
-		if fn := &t.functions[i]; fn.translator != nil {
-			undo, sites := passes.Lower(fn.decl)
-			undos = append(undos, undo)
-			if sites > 0 {
-				t.packages.add("encoding/binary")
-			}
+	for _, decl := range t.code {
+		undo, sites := passes.Lower(decl)
+		undos = append(undos, undo)
+		if sites > 0 {
+			t.packages.add("encoding/binary")
 		}
 	}
 	return func() {
@@ -375,18 +440,24 @@ func (t *translator) lowerAccesses() (restore func()) {
 
 // Prints the Go file, under the build constraint tags if any.
 func (t *translator) print(w io.Writer, fset *token.FileSet, tags string, moduleDecl *ast.GenDecl) error {
+	return t.printFile(w, fset, &t.out, tags, moduleDecl.Doc != nil)
+}
+
+// Prints the Go file f, under the build constraint tags if any; doc says
+// it has doc comments without positions, which gofmt places.
+func (t *translator) printFile(w io.Writer, fset *token.FileSet, f *ast.File, tags string, doc bool) error {
 	var out bytes.Buffer
-	out.WriteString("// Code generated by wasm2go. DO NOT EDIT.\n\n")
+	out.WriteString(generatedLine + "\n\n")
 	if tags != "" {
 		out.WriteString("//go:build ")
 		out.WriteString(tags)
 		out.WriteString("\n\n")
 	}
-	err := format.Node(&out, fset, &t.out)
+	err := format.Node(&out, fset, f)
 	if err != nil {
 		return err
 	}
-	if moduleDecl.Doc != nil {
+	if doc {
 		// Printing the Module doc comment without positions
 		// leaves it attached to the package clause; gofmt fixes that.
 		src, err := format.Source(out.Bytes())

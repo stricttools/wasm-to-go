@@ -71,9 +71,11 @@ func Test_primes(t *testing.T) {
 }
 
 func Test_recursive_factorial(t *testing.T) {
-	want := []int32{1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800}
+	testFactorial(t, &recursion_test.Module{})
+}
 
-	var m recursion_test.Module
+func testFactorial(t *testing.T, m interface{ Xfactorial(int32) int32 }) {
+	want := []int32{1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800}
 
 	var got []int32
 	for i := range want {
@@ -86,8 +88,13 @@ func Test_recursive_factorial(t *testing.T) {
 }
 
 func Test_recursive_evenodd(t *testing.T) {
-	var m recursion_test.Module
+	testEvenOdd(t, &recursion_test.Module{})
+}
 
+func testEvenOdd(t *testing.T, m interface {
+	Xis_even(int32) int32
+	Xis_odd(int32) int32
+}) {
 	for i := range 100 {
 		even := m.Xis_even(int32(i))
 		odd := m.Xis_odd(int32(i))

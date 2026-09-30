@@ -53,6 +53,40 @@ func Test_translate_unsafe(t *testing.T) {
 	}
 }
 
+// Translates modules as several packages, into testdata/packages: with
+// a package limit of one node, each function has a package of its own,
+// so calls cross packages both ways, and the tests of packages_test.go
+// compare every call with the module translated as one package.
+func Test_translate_packages(t *testing.T) {
+	limit, path, flag := maxPackageSize, *importPath, *unsafe
+	maxPackageSize = 1
+	t.Cleanup(func() { maxPackageSize, *importPath, *unsafe, provided = limit, path, flag, nil })
+
+	tests := []struct {
+		name, wasm, provided string
+		unsafe               bool
+	}{
+		{name: "determinism", wasm: "testdata/determinism/determinism.wasm"},
+		{name: "dispatch", wasm: "testdata/regression/dispatch/dispatch.wasm"},
+		{name: "memgrow", wasm: "testdata/regression/memgrow/memgrow.wasm", provided: "testdata/regression/memgrow/provided.go"},
+		{name: "recursion", wasm: "testdata/recursion/recursion.wasm"},
+		{name: "bce", wasm: "testdata/regression/bce/bce.wasm", unsafe: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			*importPath = "github.com/stricttools/wasm-to-go/testdata/packages/" + tt.name
+			*unsafe = tt.unsafe
+			provided = nil
+			if tt.provided != "" {
+				provided = stringFlags{tt.provided}
+			}
+			if err := translateFile(tt.wasm, "testdata/packages/"+tt.name+"/"+tt.name); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+}
+
 // Translates modules together with a provided-imports file, which may
 // reference helpers the module itself does not use (provided_helper),
 // or grow memory (memgrow).
@@ -113,7 +147,8 @@ func Test_translateSpecTest(t *testing.T) {
 // translateFile translates the module in file into base.go, the way the
 // command does with `-o base.go`: with -unsafe, into two files, base.go
 // (expanded, for the platforms of passes.ExpandPlatforms) and
-// base_generic.go (for the others). A single file replaces both.
+// base_generic.go (for the others). A single file replaces both. A module
+// written as several packages has the others under base's directory.
 func translateFile(file, base string) error {
 	in, err := os.Open(file)
 	if err != nil {
@@ -126,7 +161,12 @@ func translateFile(file, base string) error {
 	if *unsafe {
 		generic = &gen
 	}
-	if err := translate(in, &out, generic); err != nil {
+	files := newPackageFiles(filepath.Dir(base))
+	err = translate(in, &out, generic, files.create)
+	if cerr := files.close(); err == nil {
+		err = cerr
+	}
+	if err != nil {
 		return err
 	}
 	if err := os.WriteFile(base+".go", out.Bytes(), 0644); err != nil {
@@ -413,7 +453,7 @@ func Test_translate_tags(t *testing.T) {
 	}
 	defer in.Close()
 	var out, gen bytes.Buffer
-	if err := translate(in, &out, &gen); err != nil {
+	if err := translate(in, &out, &gen, nil); err != nil {
 		t.Fatal(err)
 	}
 

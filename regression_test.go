@@ -114,8 +114,19 @@ func Test_regression_dispatch(t *testing.T) {
 		}
 	}
 
-	m := dispatch_test.New()
+	testDispatch(t, dispatch_test.New())
+}
 
+type dispatchModule interface {
+	Xcall(slot, v int32) int32
+	Xcall0(slot int32) int32
+	XcallExported(slot, v int32) int32
+	Xexported() *[]any
+	XcallMutated(slot, v int32) int32
+	XsetMutated(slot int32)
+}
+
+func testDispatch(t *testing.T, m dispatchModule) {
 	mustPanic := func(name string, f func()) {
 		t.Helper()
 		defer func() {
@@ -180,7 +191,24 @@ func Test_regression_memgrow(t *testing.T) {
 	env := &memgrowEnv{}
 	m := memgrow_test.New(env)
 	env.m = m
+	testMemgrow(t, m)
+}
 
+type memgrowModule interface {
+	Xdirect() int32
+	Xclosed(slot int32) int32
+	Xtable() *[]any
+	Xopen() int32
+	Xhost() int32
+	Xprovided() int32
+	Xpeek(addr int32) int32
+	Xmemory() interface {
+		Slice() *[]byte
+		Grow(delta, max int64) int64
+	}
+}
+
+func testMemgrow(t *testing.T, m memgrowModule) {
 	tests := []struct {
 		name string
 		call func() int32
@@ -206,7 +234,15 @@ func Test_regression_memgrow(t *testing.T) {
 	}
 }
 
-type memgrowEnv struct{ m *memgrow_test.Module }
+// The host of the memgrow module: its import grows memory.
+type memgrowEnv struct {
+	m interface {
+		Xmemory() interface {
+			Slice() *[]byte
+			Grow(delta, max int64) int64
+		}
+	}
+}
 
 func (e *memgrowEnv) Xgrow() int32 { return int32(e.m.Xmemory().Grow(1, 65536)) }
 
@@ -234,7 +270,23 @@ func Test_regression_bce(t *testing.T) {
 		}
 	}
 
-	m := bce_test.New()
+	testBCE(t, bce_test.New())
+}
+
+type bceModule interface {
+	Xsum(addr int32) int32
+	Xinc(addr int32)
+	Xwiden(addr int32) int64
+	Xwalk(addr, n int32) int32
+	Xbranch(addr, c int32) int32
+	Xcopy(addr int32) int32
+	Xmemory() interface {
+		Slice() *[]byte
+		Grow(delta, max int64) int64
+	}
+}
+
+func testBCE(t *testing.T, m bceModule) {
 	mem := *m.Xmemory().Slice()
 
 	mustPanic := func(name string, f func()) {

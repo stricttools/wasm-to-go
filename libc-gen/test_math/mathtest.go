@@ -42,13 +42,13 @@ func (m *Module) Xacos_(v0 int64) int64 {
 	{
 		v1 = math.Float64frombits(uint64(v0))
 		v0 = int64(math.Float64bits(v1))
-		v4 = int32(int64(uint64(v0)>>32)) & i32(0x7fffffff)
-		if uint32(v4) >= uint32(i32(0x3ff00000)) {
+		v4 = int32(int64(uint64(v0)>>32)) & int32(0x7fffffff)
+		if uint32(v4) >= uint32(int32(0x3ff00000)) {
 			p1 := math.Float64frombits(0x400921fb54442d18)
-			if v0 >= i64(0) {
+			if v0 >= int64(0) {
 				p1 = math.Float64frombits(0x0)
 			}
-			if int32(v0)|(v4-i32(0x3ff00000)) == 0 {
+			if int32(v0)|(v4-int32(0x3ff00000)) == 0 {
 				p0 = p1
 				goto l0
 			}
@@ -58,8 +58,8 @@ func (m *Module) Xacos_(v0 int64) int64 {
 		}
 		var p3 float64
 		{
-			if uint32(v4) <= uint32(i32(0x3fdfffff)) {
-				if uint32(v4) < uint32(i32(0x3c600001)) {
+			if uint32(v4) <= uint32(int32(0x3fdfffff)) {
+				if uint32(v4) < uint32(int32(0x3c600001)) {
 					p3 = math.Float64frombits(0x3ff921fb54442d18)
 					goto l1
 				}
@@ -69,7 +69,7 @@ func (m *Module) Xacos_(v0 int64) int64 {
 				p0 = t5
 				goto l0
 			}
-			if v0 < i64(0) {
+			if v0 < int64(0) {
 				v2 = f64_canon(float64(float64(v1+math.Float64frombits(0x3ff0000000000000)) * math.Float64frombits(0x3fe0000000000000)))
 				v1 = f64_canon(math.Sqrt(v2))
 				t6 := fn63(v2)
@@ -80,7 +80,7 @@ func (m *Module) Xacos_(v0 int64) int64 {
 			}
 			v1 = f64_canon(float64(float64(math.Float64frombits(0x3ff0000000000000)-v1) * math.Float64frombits(0x3fe0000000000000)))
 			v3 = f64_canon(math.Sqrt(v1))
-			v2 = math.Float64frombits(uint64(int64(math.Float64bits(v3)) & i64(-0x100000000)))
+			v2 = math.Float64frombits(uint64(int64(math.Float64bits(v3)) & int64(-0x100000000)))
 			t8 := fn63(v1)
 			v2 = f64_canon(float64(float64(float64(t8*v3)+float64(float64(v1-float64(v2*v2))/float64(v3+v2))) + v2))
 			p3 = f64_canon(float64(v2 + v2))
@@ -97,14 +97,14 @@ func (m *Module) Xacosh_(v0 int64) int64 {
 	var p0 float64
 	{
 		v1 = math.Float64frombits(uint64(v0))
-		v2 = int32(int64(uint64(int64(math.Float64bits(v1)))>>52)) & i32(2047)
-		if uint32(v2) <= uint32(i32(1023)) {
+		v2 = int32(int64(uint64(int64(math.Float64bits(v1)))>>52)) & int32(2047)
+		if uint32(v2) <= uint32(int32(1023)) {
 			v1 = f64_canon(float64(v1 + math.Float64frombits(0xbff0000000000000)))
 			t1 := m.fn64(f64_canon(float64(v1 + math.Sqrt(float64(float64(v1*v1)+float64(v1+v1))))))
 			p0 = t1
 			goto l0
 		}
-		if uint32(v2) <= uint32(i32(1048)) {
+		if uint32(v2) <= uint32(int32(1048)) {
 			t2 := m.fn65(f64_canon(float64(float64(v1+v1) + float64(math.Float64frombits(0xbff0000000000000)/float64(v1+math.Sqrt(float64(float64(v1*v1)+math.Float64frombits(0xbff0000000000000))))))))
 			p0 = t2
 			goto l0
@@ -121,10 +121,10 @@ func (m *Module) Xasin_(v0 int64) int64 {
 	var p0 float64
 	v1 = math.Float64frombits(uint64(v0))
 	v0 = int64(math.Float64bits(v1))
-	v5 = int32(int64(uint64(v0)>>32)) & i32(0x7fffffff)
-	if uint32(v5) >= uint32(i32(0x3ff00000)) {
+	v5 = int32(int64(uint64(v0)>>32)) & int32(0x7fffffff)
+	if uint32(v5) >= uint32(int32(0x3ff00000)) {
 		t1 := f64_canon(float64(float64(v1*math.Float64frombits(0x3ff921fb54442d18)) + math.Float64frombits(0x3870000000000000)))
-		if int32(v0)|(v5-i32(0x3ff00000)) == 0 {
+		if int32(v0)|(v5-int32(0x3ff00000)) == 0 {
 			p0 = t1
 			goto l0
 		}
@@ -133,8 +133,8 @@ func (m *Module) Xasin_(v0 int64) int64 {
 		goto l0
 	}
 	{
-		if uint32(v5) <= uint32(i32(0x3fdfffff)) {
-			if uint32(v5+i32(-0x100000)) < uint32(i32(0x3e400000)) {
+		if uint32(v5) <= uint32(int32(0x3fdfffff)) {
+			if uint32(v5+int32(-0x100000)) < uint32(int32(0x3e400000)) {
 				goto l1
 			}
 			t3 := fn63(f64_canon(float64(v1 * v1)))
@@ -148,21 +148,21 @@ func (m *Module) Xasin_(v0 int64) int64 {
 		v1 = t5
 		var p6 float64
 		{
-			if uint32(v5) >= uint32(i32(0x3fef3333)) {
+			if uint32(v5) >= uint32(int32(0x3fef3333)) {
 				v2 = f64_canon(float64(float64(v3*v1) + v3))
 				t7 := f64_canon(float64(math.Float64frombits(0x3ff921fb54442d18) - float64(float64(v2+v2)+math.Float64frombits(0xbc91a62633145c07))))
 				p6 = t7
 				goto l2
 			}
 			t8 := v2
-			v4 = math.Float64frombits(uint64(int64(math.Float64bits(v3)) & i64(-0x100000000)))
+			v4 = math.Float64frombits(uint64(int64(math.Float64bits(v3)) & int64(-0x100000000)))
 			v2 = f64_canon(float64(float64(t8-float64(v4*v4)) / float64(v3+v4)))
 			p6 = f64_canon(float64(float64(float64(math.Float64frombits(0x3fe921fb54442d18)-float64(v4+v4))-float64(float64(float64(v3+v3)*v1)-float64(math.Float64frombits(0x3c91a62633145c07)-float64(v2+v2)))) + math.Float64frombits(0x3fe921fb54442d18)))
 		}
 	l2:
 		v2 = p6
 		p9 := v2
-		if v0 < i64(0) {
+		if v0 < int64(0) {
 			p9 = f64_neg(v2)
 		}
 		v1 = p9
@@ -177,34 +177,34 @@ func (m *Module) Xasinh_(v0 int64) int64 {
 	var v1, v2 float64
 	var v3, v4 int32
 	t0 := m.g0
-	v3 = t0 - i32(16)
+	v3 = t0 - int32(16)
 	m.g0 = v3
 	v2 = math.Float64frombits(uint64(v0))
 	v1 = f64_abs(v2)
 	v0 = int64(math.Float64bits(v2))
-	v4 = int32(int64(uint64(v0)>>52)) & i32(2047)
-	if uint32(v4) >= uint32(i32(1049)) {
+	v4 = int32(int64(uint64(v0)>>52)) & int32(2047)
+	if uint32(v4) >= uint32(int32(1049)) {
 		t1 := m.fn65(v1)
 		v1 = f64_canon(float64(t1 + math.Float64frombits(0x3fe62e42fefa39ef)))
 		goto l0
 	}
-	if uint32(v4) >= uint32(i32(1024)) {
+	if uint32(v4) >= uint32(int32(1024)) {
 		t2 := m.fn65(f64_canon(float64(float64(v1+v1) + float64(math.Float64frombits(0x3ff0000000000000)/float64(v1+math.Sqrt(float64(float64(v2*v2)+math.Float64frombits(0x3ff0000000000000))))))))
 		v1 = t2
 		goto l0
 	}
-	if uint32(v4) >= uint32(i32(997)) {
+	if uint32(v4) >= uint32(int32(997)) {
 		t3 := v1
 		v1 = f64_canon(float64(v2 * v2))
 		t4 := m.fn64(f64_canon(float64(t3 + float64(v1/float64(math.Sqrt(float64(v1+math.Float64frombits(0x3ff0000000000000)))+math.Float64frombits(0x3ff0000000000000))))))
 		v1 = t4
 		goto l0
 	}
-	store64(mem, uint64(uint32(v3))+8, math.Float64bits(f64_canon(float64(v1+math.Float64frombits(0x4770000000000000)))))
+	binary.LittleEndian.PutUint64(mem[uint64(uint32(v3))+8:], math.Float64bits(f64_canon(float64(v1+math.Float64frombits(0x4770000000000000)))))
 l0:
-	m.g0 = v3 + i32(16)
+	m.g0 = v3 + int32(16)
 	p5 := v1
-	if v0 < i64(0) {
+	if v0 < int64(0) {
 		p5 = f64_neg(v1)
 	}
 	return int64(math.Float64bits(p5))
@@ -218,19 +218,19 @@ func (m *Module) Xatanh_(v0 int64) int64 {
 	var v1, v2 float64
 	var v3, v4 int32
 	t0 := m.g0
-	v3 = t0 - i32(16)
+	v3 = t0 - int32(16)
 	m.g0 = v3
 	v2 = math.Float64frombits(uint64(v0))
 	v1 = f64_abs(v2)
 	{
 		v0 = int64(math.Float64bits(v2))
-		v4 = int32(int64(uint64(v0)>>52)) & i32(2047)
-		if uint32(v4) <= uint32(i32(1021)) {
-			if uint32(v4) <= uint32(i32(990)) {
+		v4 = int32(int64(uint64(v0)>>52)) & int32(2047)
+		if uint32(v4) <= uint32(int32(1021)) {
+			if uint32(v4) <= uint32(int32(990)) {
 				if v4 != 0 {
 					goto l0
 				}
-				store32(mem, uint64(uint32(v3))+12, math.Float32bits(f32_canon(float32(v1))))
+				binary.LittleEndian.PutUint32(mem[uint64(uint32(v3))+12:], math.Float32bits(f32_canon(float32(v1))))
 				goto l0
 			}
 			v2 = f64_canon(float64(v1 + v1))
@@ -243,9 +243,9 @@ func (m *Module) Xatanh_(v0 int64) int64 {
 		v1 = f64_canon(float64(t2 * math.Float64frombits(0x3fe0000000000000)))
 	}
 l0:
-	m.g0 = v3 + i32(16)
+	m.g0 = v3 + int32(16)
 	p3 := v1
-	if v0 < i64(0) {
+	if v0 < int64(0) {
 		p3 = f64_neg(v1)
 	}
 	return int64(math.Float64bits(p3))
@@ -256,31 +256,31 @@ func (m *Module) Xcbrt_(v0 int64) int64 {
 	var p0 float64
 	{
 		v1 = math.Float64frombits(uint64(v0))
-		v4 = int32(int64(uint64(int64(math.Float64bits(v1)))>>32)) & i32(0x7fffffff)
+		v4 = int32(int64(uint64(int64(math.Float64bits(v1)))>>32)) & int32(0x7fffffff)
 		t1 := f64_canon(float64(v1 + v1))
-		if uint32(v4) >= uint32(i32(0x7ff00000)) {
+		if uint32(v4) >= uint32(int32(0x7ff00000)) {
 			p0 = t1
 			goto l0
 		}
 		{
 			var p2 int32
-			if uint32(v4) > uint32(i32(0xfffff)) {
+			if uint32(v4) > uint32(int32(0xfffff)) {
 				v2 = v1
-				p2 = i32(715094163)
+				p2 = int32(715094163)
 				goto l1
 			}
 			v2 = f64_canon(float64(v1 * math.Float64frombits(0x4350000000000000)))
-			v4 = int32(int64(uint64(int64(math.Float64bits(v2)))>>32)) & i32(0x7fffffff)
+			v4 = int32(int64(uint64(int64(math.Float64bits(v2)))>>32)) & int32(0x7fffffff)
 			if v4 == 0 {
 				goto l2
 			}
-			p2 = i32(696219795)
+			p2 = int32(696219795)
 		l1:
-			t3 := int32(uint32(v4) / uint32(i32(3)))
+			t3 := int32(uint32(v4) / uint32(int32(3)))
 			v3 = math.Copysign(math.Float64frombits(uint64(int64(uint32(p2+t3))<<32)), v2)
 			v2 = f64_canon(float64(float64(v3*v3) * float64(v3/v1)))
 			t4 := v1
-			v1 = math.Float64frombits(uint64(int64(math.Float64bits(f64_canon(float64(v3*float64(float64(float64(v2*float64(v2*v2))*float64(float64(v2*math.Float64frombits(0x3fc2b000d4e4edd7))+math.Float64frombits(0xbfe844cbbee751d9)))+float64(float64(v2*float64(float64(v2*math.Float64frombits(0x3ff9f1604a49d6c2))+math.Float64frombits(0xbffe28e092f02420)))+math.Float64frombits(0x3ffe03e60f61e692)))))))&i64(-0x40000000) + i64(0x80000000)))
+			v1 = math.Float64frombits(uint64(int64(math.Float64bits(f64_canon(float64(v3*float64(float64(float64(v2*float64(v2*v2))*float64(float64(v2*math.Float64frombits(0x3fc2b000d4e4edd7))+math.Float64frombits(0xbfe844cbbee751d9)))+float64(float64(v2*float64(float64(v2*math.Float64frombits(0x3ff9f1604a49d6c2))+math.Float64frombits(0xbffe28e092f02420)))+math.Float64frombits(0x3ffe03e60f61e692)))))))&int64(-0x40000000) + int64(0x80000000)))
 			v2 = f64_canon(float64(t4 / float64(v1*v1)))
 			v1 = f64_canon(float64(float64(v1*float64(float64(v2-v1)/float64(float64(v1+v1)+v2))) + v1))
 		}
@@ -302,15 +302,15 @@ func (m *Module) Xcosh_(v0 int64) int64 {
 	var v1, v2 float64
 	var v3 int32
 	t0 := m.g0
-	v3 = t0 - i32(16)
+	v3 = t0 - int32(16)
 	m.g0 = v3
 	var p1 float64
 	{
 		v1 = f64_abs(math.Float64frombits(uint64(v0)))
 		v0 = int64(math.Float64bits(v1))
-		if uint64(v0) <= uint64(i64(0x3fe62e41ffffffff)) {
-			if uint64(v0) <= uint64(i64(0x3e4fffffffffffff)) {
-				store64(mem, uint64(uint32(v3))+8, math.Float64bits(f64_canon(float64(v1+math.Float64frombits(0x4770000000000000)))))
+		if uint64(v0) <= uint64(int64(0x3fe62e41ffffffff)) {
+			if uint64(v0) <= uint64(int64(0x3e4fffffffffffff)) {
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(v3))+8:], math.Float64bits(f64_canon(float64(v1+math.Float64frombits(0x4770000000000000)))))
 				p1 = math.Float64frombits(0x3ff0000000000000)
 				goto l0
 			}
@@ -321,7 +321,7 @@ func (m *Module) Xcosh_(v0 int64) int64 {
 			p1 = t3
 			goto l0
 		}
-		if uint64(v0) <= uint64(i64(0x40862e41ffffffff)) {
+		if uint64(v0) <= uint64(int64(0x40862e41ffffffff)) {
 			t4 := m.fn72(v1)
 			v1 = t4
 			t5 := f64_canon(float64(float64(v1+float64(math.Float64frombits(0x3ff0000000000000)/v1)) * math.Float64frombits(0x3fe0000000000000)))
@@ -332,7 +332,7 @@ func (m *Module) Xcosh_(v0 int64) int64 {
 		p1 = t6
 	}
 l0:
-	m.g0 = v3 + i32(16)
+	m.g0 = v3 + int32(16)
 	return int64(math.Float64bits(p1))
 }
 func (m *Module) Xerf_(v0 int64) int64 {
@@ -343,15 +343,15 @@ func (m *Module) Xerf_(v0 int64) int64 {
 		v2 = math.Float64frombits(uint64(v0))
 		v0 = int64(math.Float64bits(v2))
 		v4 = int32(int64(uint64(v0) >> 32))
-		v3 = v4 & i32(0x7fffffff)
-		if uint32(v3) >= uint32(i32(0x7ff00000)) {
-			t1 := f64_canon(float64(float64(math.Float64frombits(0x3ff0000000000000)/v2) + float64(i32(1)-int32(uint32(v4)>>30)&i32(2))))
+		v3 = v4 & int32(0x7fffffff)
+		if uint32(v3) >= uint32(int32(0x7ff00000)) {
+			t1 := f64_canon(float64(float64(math.Float64frombits(0x3ff0000000000000)/v2) + float64(int32(1)-int32(uint32(v4)>>30)&int32(2))))
 			p0 = t1
 			goto l0
 		}
-		if uint32(v3) <= uint32(i32(0x3feaffff)) {
+		if uint32(v3) <= uint32(int32(0x3feaffff)) {
 			t2 := f64_canon(float64(float64(float64(v2*math.Float64frombits(0x4020000000000000))+float64(v2*math.Float64frombits(0x3ff06eba8214db69))) * math.Float64frombits(0x3fc0000000000000)))
-			if uint32(v3) <= uint32(i32(1043333119)) {
+			if uint32(v3) <= uint32(int32(1043333119)) {
 				p0 = t2
 				goto l0
 			}
@@ -362,12 +362,12 @@ func (m *Module) Xerf_(v0 int64) int64 {
 			goto l0
 		}
 		v1 = math.Float64frombits(0x3ff0000000000000)
-		if uint32(v3) <= uint32(i32(0x4017ffff)) {
+		if uint32(v3) <= uint32(int32(0x4017ffff)) {
 			t5 := m.fn74(v3, v2)
 			v1 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) - t5))
 		}
 		p6 := v1
-		if v0 < i64(0) {
+		if v0 < int64(0) {
 			p6 = f64_neg(v1)
 		}
 		p0 = p6
@@ -383,15 +383,15 @@ func (m *Module) Xerfc_(v0 int64) int64 {
 		v1 = math.Float64frombits(uint64(v0))
 		v0 = int64(math.Float64bits(v1))
 		v4 = int32(int64(uint64(v0) >> 32))
-		v3 = v4 & i32(0x7fffffff)
-		if uint32(v3) >= uint32(i32(0x7ff00000)) {
-			t1 := f64_canon(float64(float64(math.Float64frombits(0x3ff0000000000000)/v1) + float64(uint32(int32(uint32(v4)>>30)&i32(2)))))
+		v3 = v4 & int32(0x7fffffff)
+		if uint32(v3) >= uint32(int32(0x7ff00000)) {
+			t1 := f64_canon(float64(float64(math.Float64frombits(0x3ff0000000000000)/v1) + float64(uint32(int32(uint32(v4)>>30)&int32(2)))))
 			p0 = t1
 			goto l0
 		}
-		if uint32(v3) <= uint32(i32(0x3feaffff)) {
+		if uint32(v3) <= uint32(int32(0x3feaffff)) {
 			t2 := f64_canon(float64(math.Float64frombits(0x3ff0000000000000) - v1))
-			if uint32(v3) <= uint32(i32(0x3c6fffff)) {
+			if uint32(v3) <= uint32(int32(0x3c6fffff)) {
 				p0 = t2
 				goto l0
 			}
@@ -400,11 +400,11 @@ func (m *Module) Xerfc_(v0 int64) int64 {
 			v2 = f64_canon(float64(t3 * float64(float64(float64(v2*float64(float64(v2*float64(float64(v2*float64(float64(v2*math.Float64frombits(0xbef8ead6120016ac))+math.Float64frombits(0xbf77a291236668e4)))+math.Float64frombits(0xbf9d2a51dbd7194f)))+math.Float64frombits(0xbfd4cd7d691cb913)))+math.Float64frombits(0x3fc06eba8214db68))/float64(float64(v2*float64(float64(v2*float64(float64(v2*float64(float64(v2*float64(float64(v2*math.Float64frombits(0xbed09c4342a26120))+math.Float64frombits(0x3f215dc9221c1a10)))+math.Float64frombits(0x3f74d022c4d36b0f)))+math.Float64frombits(0x3fb0a54c5536ceba)))+math.Float64frombits(0x3fd97779cddadc09)))+math.Float64frombits(0x3ff0000000000000)))))
 			t4 := f64_canon(float64(math.Float64frombits(0x3ff0000000000000) - float64(v2+v1)))
 			var p5 int32
-			if uint32(v3) > uint32(i32(0x3fcfffff)) {
+			if uint32(v3) > uint32(int32(0x3fcfffff)) {
 				p5 = 1
 			}
 			var p6 int32
-			if v0 >= i64(0) {
+			if v0 >= int64(0) {
 				p6 = 1
 			}
 			if p5&p6 == 0 {
@@ -415,18 +415,18 @@ func (m *Module) Xerfc_(v0 int64) int64 {
 			p0 = t7
 			goto l0
 		}
-		if uint32(v3) <= uint32(i32(0x403bffff)) {
+		if uint32(v3) <= uint32(int32(0x403bffff)) {
 			t8 := m.fn74(v3, v1)
 			v1 = t8
 			p9 := f64_canon(float64(math.Float64frombits(0x4000000000000000) - v1))
-			if v0 >= i64(0) {
+			if v0 >= int64(0) {
 				p9 = v1
 			}
 			p0 = p9
 			goto l0
 		}
 		p10 := math.Float64frombits(0x4000000000000000)
-		if v0 >= i64(0) {
+		if v0 >= int64(0) {
 			p10 = math.Float64frombits(0x0)
 		}
 		p0 = p10
@@ -444,46 +444,46 @@ func (m *Module) Xexp2_(v0 int64) int64 {
 	var v5, v6, v7 int32
 	var v8 int64
 	t0 := m.g0
-	v5 = t0 - i32(16)
+	v5 = t0 - int32(16)
 	{
 		var p1 float64
 		{
 			v3 = math.Float64frombits(uint64(v0))
 			v0 = int64(math.Float64bits(v3))
-			v6 = int32(int64(uint64(v0)>>52)) & i32(2047)
-			if uint32(v6-i32(969)) >= uint32(i32(63)) {
+			v6 = int32(int64(uint64(v0)>>52)) & int32(2047)
+			if uint32(v6-int32(969)) >= uint32(int32(63)) {
 				v1 = f64_canon(float64(v3 + math.Float64frombits(0x3ff0000000000000)))
-				if uint32(v6) <= uint32(i32(968)) {
+				if uint32(v6) <= uint32(int32(968)) {
 					goto l0
 				}
 				{
-					if uint32(v6) < uint32(i32(1033)) {
+					if uint32(v6) < uint32(int32(1033)) {
 						goto l1
 					}
-					if v0 == i64(-0x10000000000000) {
+					if v0 == int64(-0x10000000000000) {
 						p1 = math.Float64frombits(0x0)
 						goto l2
 					}
 					_ = math.Float64frombits(0x0)
-					if v6 == i32(2047) {
+					if v6 == int32(2047) {
 						goto l0
 					}
-					if v0 >= i64(0) {
-						store64(mem, uint64(uint32(v5))+8, uint64(i64(0x7000000000000000)))
-						t2 := math.Float64frombits(load64(mem, uint64(uint32(v5))+8))
+					if v0 >= int64(0) {
+						binary.LittleEndian.PutUint64(mem[uint64(uint32(v5))+8:], uint64(int64(0x7000000000000000)))
+						t2 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v5))+8:]))
 						v1 = f64_canon(float64(t2 * math.Float64frombits(0x7000000000000000)))
 						goto l0
 					}
 					if uint64(v0) < uint64(i64(-0x3f6f340000000000)) {
 						goto l1
 					}
-					store64(mem, uint64(uint32(v5))+8, uint64(i64(0x1000000000000000)))
-					t3 := math.Float64frombits(load64(mem, uint64(uint32(v5))+8))
+					binary.LittleEndian.PutUint64(mem[uint64(uint32(v5))+8:], uint64(int64(0x1000000000000000)))
+					t3 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v5))+8:]))
 					v1 = f64_canon(float64(t3 * math.Float64frombits(0x1000000000000000)))
 					goto l0
 				}
 			l1:
-				p4 := i32(0)
+				p4 := int32(0)
 				if uint64(v0<<1) <= uint64(i64(-0x7ee6000000000000)) {
 					p4 = v6
 				}
@@ -497,25 +497,25 @@ func (m *Module) Xexp2_(v0 int64) int64 {
 			t7 := f64_canon(float64(v2 * float64(float64(v1*math.Float64frombits(0x3fac6b08d70cf4b5))+math.Float64frombits(0x3fcebfbdff82c424))))
 			t8 := f64_canon(float64(v1 * math.Float64frombits(0x3fe62e42fefa39ef)))
 			v8 = int64(math.Float64bits(v3))
-			v7 = int32(v8) << 4 & i32(2032)
-			t9 := math.Float64frombits(load64(mem, uint64(uint32(v7))+65712))
+			v7 = int32(v8) << 4 & int32(2032)
+			t9 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v7))+65712:]))
 			v1 = f64_canon(float64(t6 + float64(t7+float64(t8+t9))))
-			t10 := int64(load64(mem, uint64(uint32(v7))+65720))
+			t10 := int64(binary.LittleEndian.Uint64(mem[uint64(uint32(v7))+65720:]))
 			v0 = t10 + v8<<45
 			if v6 == 0 {
-				if v8&i64(0x80000000) == 0 {
-					v2 = math.Float64frombits(uint64(v0 - i64(0x10000000000000)))
+				if v8&int64(0x80000000) == 0 {
+					v2 = math.Float64frombits(uint64(v0 - int64(0x10000000000000)))
 					v1 = f64_canon(float64(float64(v2*v1) + v2))
 					v1 = f64_canon(float64(v1 + v1))
 					goto l0
 				}
-				v2 = math.Float64frombits(uint64(v0 + i64(0x3fe0000000000000)))
+				v2 = math.Float64frombits(uint64(v0 + int64(0x3fe0000000000000)))
 				v3 = f64_canon(float64(v2 * v1))
 				v1 = f64_canon(float64(v3 + v2))
 				if v1 < math.Float64frombits(0x3ff0000000000000) {
-					store64(mem, uint64(uint32(v5))+8, uint64(i64(0x10000000000000)))
-					t11 := math.Float64frombits(load64(mem, uint64(uint32(v5))+8))
-					store64(mem, uint64(uint32(v5))+8, math.Float64bits(f64_canon(float64(t11*math.Float64frombits(0x10000000000000)))))
+					binary.LittleEndian.PutUint64(mem[uint64(uint32(v5))+8:], uint64(int64(0x10000000000000)))
+					t11 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v5))+8:]))
+					binary.LittleEndian.PutUint64(mem[uint64(uint32(v5))+8:], math.Float64bits(f64_canon(float64(t11*math.Float64frombits(0x10000000000000)))))
 					v4 = f64_canon(float64(v1 + math.Float64frombits(0x3ff0000000000000)))
 					v1 = f64_canon(float64(float64(v4+float64(float64(v3+float64(v2-v1))+float64(v1+float64(math.Float64frombits(0x3ff0000000000000)-v4)))) + math.Float64frombits(0xbff0000000000000)))
 					p12 := v1
@@ -555,7 +555,7 @@ func (m *Module) Xj1_(v0 int64) int64 {
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xlgamma_(v0 int64) int64 {
-	t0 := m.fn86(math.Float64frombits(uint64(v0)), i32(83224))
+	t0 := m.fn86(math.Float64frombits(uint64(v0)), int32(83224))
 	return int64(math.Float64bits(t0))
 }
 func (m *Module) Xlog_(v0 int64) int64 {
@@ -571,52 +571,52 @@ func (m *Module) Xlog10_(v0 int64) int64 {
 		var p1 int32
 		v1 = math.Float64frombits(uint64(v0))
 		v0 = int64(math.Float64bits(v1))
-		if v0 <= i64(0xfffffffffffff) {
+		if v0 <= int64(0xfffffffffffff) {
 			if v1 == math.Float64frombits(0x0) {
 				p0 = math.Float64frombits(0xfff0000000000000)
 				goto l0
 			}
 			_ = math.Float64frombits(0xfff0000000000000)
-			if v0 >= i64(0) {
+			if v0 >= int64(0) {
 				goto l1
 			}
 			t2 := f64_canon(float64(float64(v1-v1) / math.Float64frombits(0x0)))
 			p0 = t2
 			goto l0
 		}
-		if uint64(v0) > uint64(i64(0x7fefffffffffffff)) {
+		if uint64(v0) > uint64(int64(0x7fefffffffffffff)) {
 			goto l2
 		}
-		v11 = i32(-1023)
+		v11 = int32(-1023)
 		v13 = int64(uint64(v0) >> 32)
-		if v13 != i64(0x3ff00000) {
+		if v13 != int64(0x3ff00000) {
 			t3 := int32(v13)
 			p1 = t3
 			goto l3
 		}
 		if int32(v0) != 0 {
-			p1 = i32(0x3ff00000)
+			p1 = int32(0x3ff00000)
 			goto l3
 		}
 		p0 = math.Float64frombits(0x0)
 		goto l0
 	l1:
-		v11 = i32(-1077)
+		v11 = int32(-1077)
 		v0 = int64(math.Float64bits(f64_canon(float64(v1 * math.Float64frombits(0x4350000000000000)))))
 		p1 = int32(int64(uint64(v0) >> 32))
 	l3:
 		v12 = p1
 		t4 := v11
-		v11 = v12 + i32(614242)
+		v11 = v12 + int32(614242)
 		v10 = float64(t4 + int32(uint32(v11)>>20))
 		v6 = f64_canon(float64(v10 * math.Float64frombits(0x3fd34413509f6000)))
-		v3 = f64_canon(float64(math.Float64frombits(uint64(v0&i64(0xffffffff)|int64(uint32(v11&i32(0xfffff)+i32(1072079006)))<<32)) + math.Float64frombits(0xbff0000000000000)))
+		v3 = f64_canon(float64(math.Float64frombits(uint64(v0&int64(0xffffffff)|int64(uint32(v11&int32(0xfffff)+int32(1072079006)))<<32)) + math.Float64frombits(0xbff0000000000000)))
 		v4 = f64_canon(float64(v3 * float64(v3*math.Float64frombits(0x3fe0000000000000))))
 		v7 = f64_canon(float64(v3 / float64(v3+math.Float64frombits(0x4000000000000000))))
 		v8 = f64_canon(float64(v7 * v7))
 		v2 = f64_canon(float64(v8 * v8))
 		t5 := v6
-		v9 = math.Float64frombits(uint64(int64(math.Float64bits(f64_canon(float64(v3-v4)))) & i64(-0x100000000)))
+		v9 = math.Float64frombits(uint64(int64(math.Float64bits(f64_canon(float64(v3-v4)))) & int64(-0x100000000)))
 		v1 = f64_canon(float64(v9 * math.Float64frombits(0x3fdbcb7b15200000)))
 		v5 = f64_canon(float64(t5 + v1))
 		t6 := v5
@@ -642,8 +642,8 @@ func (m *Module) Xlog2_(v0 int64) int64 {
 	{
 		v1 = math.Float64frombits(uint64(v0))
 		v0 = int64(math.Float64bits(v1))
-		if uint64(v0-i64(0x3feea4af00000000)) <= uint64(i64(0x210a9ffffffff)) {
-			if v0 == i64(0x3ff0000000000000) {
+		if uint64(v0-int64(0x3feea4af00000000)) <= uint64(int64(0x210a9ffffffff)) {
+			if v0 == int64(0x3ff0000000000000) {
 				p0 = math.Float64frombits(0x0)
 				goto l0
 			}
@@ -652,7 +652,7 @@ func (m *Module) Xlog2_(v0 int64) int64 {
 			v2 = f64_canon(float64(v1 * v1))
 			v3 = f64_canon(float64(v2 * float64(float64(v1*math.Float64frombits(0x3fdec709dc3a03f7))+math.Float64frombits(0xbfe71547652b82fe))))
 			t1 := v3
-			v4 = math.Float64frombits(uint64(int64(math.Float64bits(v1)) & i64(-0x100000000)))
+			v4 = math.Float64frombits(uint64(int64(math.Float64bits(v1)) & int64(-0x100000000)))
 			v5 = f64_canon(float64(v4 * math.Float64frombits(0x3ff7154765200000)))
 			v6 = f64_canon(float64(t1 + v5))
 			t2 := v6
@@ -662,26 +662,26 @@ func (m *Module) Xlog2_(v0 int64) int64 {
 			goto l0
 		}
 		t4 := m.g0
-		v8 = t4 - i32(16)
+		v8 = t4 - int32(16)
 		{
 			v9 = int32(int64(uint64(v0) >> 48))
-			if uint32(v9-i32(32752)) <= uint32(i32(-32737)) {
+			if uint32(v9-int32(32752)) <= uint32(i32(-32737)) {
 				if v1 == math.Float64frombits(0x0) {
-					store64(mem, uint64(uint32(v8))+8, uint64(i64(-0x4010000000000000)))
-					t5 := math.Float64frombits(load64(mem, uint64(uint32(v8))+8))
+					binary.LittleEndian.PutUint64(mem[uint64(uint32(v8))+8:], uint64(i64(-0x4010000000000000)))
+					t5 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+8:]))
 					t6 := f64_canon(float64(t5 / math.Float64frombits(0x0)))
 					p0 = t6
 					goto l0
 				}
-				if v0 == i64(0x7ff0000000000000) {
+				if v0 == int64(0x7ff0000000000000) {
 					goto l1
 				}
 				var p7 int32
-				if v9&i32(32752) != i32(32752) {
+				if v9&int32(32752) != int32(32752) {
 					p7 = 1
 				}
 				var p8 int32
-				if v0 >= i64(0) {
+				if v0 >= int64(0) {
 					p8 = 1
 				}
 				if p7&p8 == 0 {
@@ -690,18 +690,18 @@ func (m *Module) Xlog2_(v0 int64) int64 {
 					p0 = t9
 					goto l0
 				}
-				v0 = int64(math.Float64bits(f64_canon(float64(v1*math.Float64frombits(0x4330000000000000))))) - i64(0x340000000000000)
+				v0 = int64(math.Float64bits(f64_canon(float64(v1*math.Float64frombits(0x4330000000000000))))) - int64(0x340000000000000)
 			}
-			v10 = v0 - i64(0x3fe6000000000000)
-			v8 = int32(int64(uint64(v10)>>46)) & i32(63) << 4
-			t10 := math.Float64frombits(load64(mem, uint64(uint32(v8))+72152))
+			v10 = v0 - int64(0x3fe6000000000000)
+			v8 = int32(int64(uint64(v10)>>46)) & int32(63) << 4
+			t10 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+72152:]))
 			v3 = f64_canon(float64(t10 + float64(v10>>52)))
-			t11 := math.Float64frombits(load64(mem, uint64(uint32(v8))+72144))
-			t12 := math.Float64frombits(load64(mem, uint64(uint32(v8))+73168))
-			t13 := math.Float64frombits(load64(mem, uint64(uint32(v8))+73176))
+			t11 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+72144:]))
+			t12 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+73168:]))
+			t13 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+73176:]))
 			t14 := v3
-			v1 = f64_canon(float64(t11 * float64(float64(math.Float64frombits(uint64(v0-v10&i64(-0x10000000000000)))-t12)-t13)))
-			v4 = math.Float64frombits(uint64(int64(math.Float64bits(v1)) & i64(-0x100000000)))
+			v1 = f64_canon(float64(t11 * float64(float64(math.Float64frombits(uint64(v0-v10&int64(-0x10000000000000)))-t12)-t13)))
+			v4 = math.Float64frombits(uint64(int64(math.Float64bits(v1)) & int64(-0x100000000)))
 			v5 = f64_canon(float64(v4 * math.Float64frombits(0x3ff7154765200000)))
 			v6 = f64_canon(float64(t14 + v5))
 			t15 := v6
@@ -739,15 +739,15 @@ func (m *Module) Xround_(v0 int64) int64 {
 	var v4 int32
 	v1 = math.Float64frombits(uint64(v0))
 	v0 = int64(math.Float64bits(v1))
-	v4 = int32(int64(uint64(v0)>>52)) & i32(2047)
-	if uint32(v4) <= uint32(i32(1074)) {
+	v4 = int32(int64(uint64(v0)>>52)) & int32(2047)
+	if uint32(v4) <= uint32(int32(1074)) {
 		var p0 float64
 		{
 			v3 = f64_abs(v1)
 			v2 = f64_canon(float64(v3 + math.Float64frombits(0x4330000000000000)))
-			if uint32(v4) <= uint32(i32(1021)) {
+			if uint32(v4) <= uint32(int32(1021)) {
 				t1 := m.g0
-				store64(mem, uint64(uint32(t1-i32(16)))+8, math.Float64bits(v2))
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(t1-int32(16)))+8:], math.Float64bits(v2))
 				t2 := f64_canon(float64(v1 * math.Float64frombits(0x0)))
 				p0 = t2
 				goto l0
@@ -771,7 +771,7 @@ func (m *Module) Xround_(v0 int64) int64 {
 		l1:
 			v1 = p3
 			p6 := v1
-			if v0 < i64(0) {
+			if v0 < int64(0) {
 				p6 = f64_neg(v1)
 			}
 			p0 = p6
@@ -792,11 +792,11 @@ func (m *Module) Xsinh_(v0 int64) int64 {
 	{
 		v1 = f64_abs(v2)
 		v0 = int64(math.Float64bits(v1))
-		if uint64(v0) <= uint64(i64(0x40862e41ffffffff)) {
+		if uint64(v0) <= uint64(int64(0x40862e41ffffffff)) {
 			t0 := m.fn71(v1)
 			v1 = t0
-			if uint64(v0) <= uint64(i64(0x3fefffffffffffff)) {
-				if uint64(v0) < uint64(i64(0x3e50000000000000)) {
+			if uint64(v0) <= uint64(int64(0x3fefffffffffffff)) {
+				if uint64(v0) < uint64(int64(0x3e50000000000000)) {
 					goto l0
 				}
 				v2 = f64_canon(float64(v3 * float64(float64(v1+v1)-float64(float64(v1*v1)/float64(v1+math.Float64frombits(0x3ff0000000000000))))))
@@ -819,38 +819,38 @@ func (m *Module) Xtan_(v0 int64) int64 {
 	var v1 float64
 	var v2, v3 int32
 	t0 := m.g0
-	v2 = t0 - i32(16)
+	v2 = t0 - int32(16)
 	m.g0 = v2
 	{
 		v1 = math.Float64frombits(uint64(v0))
-		v3 = int32(int64(uint64(int64(math.Float64bits(v1)))>>32)) & i32(0x7fffffff)
-		if uint32(v3) <= uint32(i32(1072243195)) {
-			if uint32(v3) <= uint32(i32(0x3e3fffff)) {
+		v3 = int32(int64(uint64(int64(math.Float64bits(v1)))>>32)) & int32(0x7fffffff)
+		if uint32(v3) <= uint32(int32(1072243195)) {
+			if uint32(v3) <= uint32(int32(0x3e3fffff)) {
 				t2 := v2
 				p1 := f64_canon(float64(v1 + math.Float64frombits(0x4770000000000000)))
-				if uint32(v3) < uint32(i32(0x100000)) {
+				if uint32(v3) < uint32(int32(0x100000)) {
 					p1 = f64_canon(float64(v1 * math.Float64frombits(0x3870000000000000)))
 				}
-				store64(mem, uint32(t2), math.Float64bits(p1))
+				binary.LittleEndian.PutUint64(mem[uint32(t2):], math.Float64bits(p1))
 				goto l0
 			}
-			t3 := fn91(v1, math.Float64frombits(0x0), i32(0))
+			t3 := fn91(v1, math.Float64frombits(0x0), int32(0))
 			v1 = t3
 			goto l0
 		}
-		if uint32(v3) >= uint32(i32(0x7ff00000)) {
+		if uint32(v3) >= uint32(int32(0x7ff00000)) {
 			v1 = f64_canon(float64(v1 - v1))
 			goto l0
 		}
 		t4 := m.fn69(v1, v2)
 		v3 = t4
-		t5 := math.Float64frombits(load64(mem, uint32(v2)))
-		t6 := math.Float64frombits(load64(mem, uint64(uint32(v2))+8))
-		t7 := fn91(t5, t6, v3&i32(1))
+		t5 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v2):]))
+		t6 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v2))+8:]))
+		t7 := fn91(t5, t6, v3&int32(1))
 		v1 = t7
 	}
 l0:
-	m.g0 = v2 + i32(16)
+	m.g0 = v2 + int32(16)
 	return int64(math.Float64bits(v1))
 }
 func (m *Module) Xtanh_(v0 int64) int64 {
@@ -858,13 +858,13 @@ func (m *Module) Xtanh_(v0 int64) int64 {
 	var v1, v2 float64
 	var v3 int32
 	t0 := m.g0
-	v3 = t0 - i32(16)
+	v3 = t0 - int32(16)
 	m.g0 = v3
 	v2 = math.Float64frombits(uint64(v0))
 	v1 = f64_abs(v2)
 	v0 = int64(math.Float64bits(v1))
-	if uint64(v0) >= uint64(i64(0x3fe193eb00000000)) {
-		if uint64(v0) >= uint64(i64(0x4034000100000000)) {
+	if uint64(v0) >= uint64(int64(0x3fe193eb00000000)) {
+		if uint64(v0) >= uint64(int64(0x4034000100000000)) {
 			v1 = f64_canon(float64(float64(math.Float64frombits(0x8000000000000000)/v1) + math.Float64frombits(0x3ff0000000000000)))
 			goto l0
 		}
@@ -872,23 +872,23 @@ func (m *Module) Xtanh_(v0 int64) int64 {
 		v1 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) - float64(math.Float64frombits(0x4000000000000000)/float64(t1+math.Float64frombits(0x4000000000000000)))))
 		goto l0
 	}
-	if uint64(v0) >= uint64(i64(0x3fd058af00000000)) {
+	if uint64(v0) >= uint64(int64(0x3fd058af00000000)) {
 		t2 := m.fn71(f64_canon(float64(v1 + v1)))
 		v1 = t2
 		v1 = f64_canon(float64(v1 / float64(v1+math.Float64frombits(0x4000000000000000))))
 		goto l0
 	}
-	if uint64(v0) >= uint64(i64(0x10000000000000)) {
+	if uint64(v0) >= uint64(int64(0x10000000000000)) {
 		t3 := m.fn71(f64_canon(float64(v1 * math.Float64frombits(0xc000000000000000))))
 		v1 = t3
 		v1 = f64_canon(float64(f64_neg(v1) / float64(v1+math.Float64frombits(0x4000000000000000))))
 		goto l0
 	}
-	store32(mem, uint64(uint32(v3))+12, math.Float32bits(f32_canon(float32(v1))))
+	binary.LittleEndian.PutUint32(mem[uint64(uint32(v3))+12:], math.Float32bits(f32_canon(float32(v1))))
 l0:
-	m.g0 = v3 + i32(16)
+	m.g0 = v3 + int32(16)
 	p4 := v1
-	if int64(math.Float64bits(v2)) < i64(0) {
+	if int64(math.Float64bits(v2)) < int64(0) {
 		p4 = f64_neg(v1)
 	}
 	return int64(math.Float64bits(p4))
@@ -898,20 +898,20 @@ func (m *Module) Xtgamma_(v0 int64) int64 {
 	var v1, v2, v3, v4, v5, v6, v7 float64
 	var v8, v9, v10, v11 int32
 	t0 := m.g0
-	v10 = t0 - i32(16)
+	v10 = t0 - int32(16)
 	m.g0 = v10
 	var p1 float64
 	{
 		v1 = math.Float64frombits(uint64(v0))
 		v0 = int64(math.Float64bits(v1))
-		v8 = int32(int64(uint64(v0)>>32)) & i32(0x7fffffff)
+		v8 = int32(int64(uint64(v0)>>32)) & int32(0x7fffffff)
 		t2 := f64_canon(float64(v1 + math.Float64frombits(0x7ff0000000000000)))
-		if uint32(v8) >= uint32(i32(0x7ff00000)) {
+		if uint32(v8) >= uint32(int32(0x7ff00000)) {
 			p1 = t2
 			goto l0
 		}
 		t3 := f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / v1))
-		if uint32(v8) <= uint32(i32(0x3c8fffff)) {
+		if uint32(v8) <= uint32(int32(0x3c8fffff)) {
 			p1 = t3
 			goto l0
 		}
@@ -920,7 +920,7 @@ func (m *Module) Xtgamma_(v0 int64) int64 {
 			if v4 != v1 {
 				goto l1
 			}
-			if v0 < i64(0) {
+			if v0 < int64(0) {
 				p1 = math.Float64frombits(0x7ff8000000000000)
 				goto l0
 			}
@@ -928,14 +928,14 @@ func (m *Module) Xtgamma_(v0 int64) int64 {
 			if !(v1 <= math.Float64frombits(0x4037000000000000)) {
 				goto l1
 			}
-			t4 := math.Float64frombits(load64(mem, uint32(i32_trunc_sat_f64_s(v1)<<3+i32(74184))))
+			t4 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(i32_trunc_sat_f64_s(v1)<<3+int32(74184)):]))
 			p1 = t4
 			goto l0
 		}
 	l1:
-		if uint32(v8) >= uint32(i32(0x40670000)) {
-			if v0 < i64(0) {
-				store32(mem, uint64(uint32(v10))+12, math.Float32bits(f32_canon(float32(float64(math.Float64frombits(0x3810000000000000)/v1)))))
+		if uint32(v8) >= uint32(int32(0x40670000)) {
+			if v0 < int64(0) {
+				binary.LittleEndian.PutUint32(mem[uint64(uint32(v10))+12:], math.Float32bits(f32_canon(float32(float64(math.Float64frombits(0x3810000000000000)/v1)))))
 				p5 := math.Float64frombits(0x8000000000000000)
 				if math.Floor(float64(v1*math.Float64frombits(0x3fe0000000000000))) == float64(v4*math.Float64frombits(0x3fe0000000000000)) {
 					p5 = math.Float64frombits(0x0)
@@ -957,33 +957,33 @@ func (m *Module) Xtgamma_(v0 int64) int64 {
 		v5 = f64_canon(float64(float64(v4+math.Float64frombits(0xc0161945b9800000)) - v2))
 		t8 := f64_canon(float64(float64(v4-v2) + math.Float64frombits(0xc0161945b9800000)))
 		if !(v2 < math.Float64frombits(0x4020000000000000)) {
-			v8 = i32(-104)
+			v8 = int32(-104)
 		l3:
 			{
 				if v8 == 0 {
 					goto l2
 				}
-				t9 := math.Float64frombits(load64(mem, uint32(v8+i32(83160))))
+				t9 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v8+int32(83160)):]))
 				v7 = f64_canon(float64(float64(v7/v2) + t9))
-				t10 := math.Float64frombits(load64(mem, uint32(v8+i32(83048))))
+				t10 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v8+int32(83048)):]))
 				v3 = f64_canon(float64(float64(v3/v2) + t10))
-				v8 = v8 + i32(8)
+				v8 = v8 + int32(8)
 				goto l3
 			}
 		}
-		v9 = i32(12)
-		v8 = i32(96)
+		v9 = int32(12)
+		v8 = int32(96)
 	l4:
 		{
-			if v9 < i32(0) {
+			if v9 < int32(0) {
 				goto l2
 			}
-			t11 := math.Float64frombits(load64(mem, uint32(v8+i32(83056))))
+			t11 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v8+int32(83056)):]))
 			v7 = f64_canon(float64(float64(v7*v2) + t11))
-			t12 := math.Float64frombits(load64(mem, uint32(v8+i32(82944))))
+			t12 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v8+int32(82944)):]))
 			v3 = f64_canon(float64(float64(v3*v2) + t12))
-			v8 = v8 - i32(8)
-			v9 = v9 - i32(1)
+			v8 = v8 - int32(8)
+			v9 = v9 - int32(1)
 			goto l4
 		}
 	l2:
@@ -999,16 +999,16 @@ func (m *Module) Xtgamma_(v0 int64) int64 {
 			v1 = f64_canon(float64(v2 * math.Float64frombits(0x3fe0000000000000)))
 			v1 = f64_canon(float64(v1 - math.Floor(v1)))
 			v1 = f64_canon(float64(v1 + v1))
-			v8 = (i32_trunc_sat_f64_s(float64(v1*math.Float64frombits(0x4010000000000000))) + i32(1)) / i32(2)
+			v8 = (i32_trunc_sat_f64_s(float64(v1*math.Float64frombits(0x4010000000000000))) + int32(1)) / int32(2)
 			v1 = f64_canon(float64(float64(v1-float64(float64(v8)*math.Float64frombits(0x3fe0000000000000))) * math.Float64frombits(0x400921fb54442d18)))
 			v6 = f64_neg(v6)
 			v5 = f64_neg(v5)
 			t16 := v3
 			t17 := v2
 			var p15 float64
-			switch v8 - i32(1) {
+			switch v8 - int32(1) {
 			default:
-				t18 := fn70(v1, math.Float64frombits(0x0), i32(0))
+				t18 := fn70(v1, math.Float64frombits(0x0), int32(0))
 				p15 = t18
 				goto l9
 			case 0:
@@ -1016,7 +1016,7 @@ func (m *Module) Xtgamma_(v0 int64) int64 {
 				p15 = t19
 				goto l9
 			case 1:
-				t20 := fn70(f64_neg(v1), math.Float64frombits(0x0), i32(0))
+				t20 := fn70(f64_neg(v1), math.Float64frombits(0x0), int32(0))
 				p15 = t20
 				goto l9
 			case 2:
@@ -1031,7 +1031,7 @@ func (m *Module) Xtgamma_(v0 int64) int64 {
 		p1 = f64_canon(float64(v2 * float64(v2*float64(v3+float64(float64(float64(v5*math.Float64frombits(0x40181945b9800000))*v3)/v4)))))
 	}
 l0:
-	m.g0 = v10 + i32(16)
+	m.g0 = v10 + int32(16)
 	return int64(math.Float64bits(p1))
 }
 func (m *Module) Xtrunc_(v0 int64) int64 {
@@ -1068,20 +1068,20 @@ func (m *Module) Xatan2_(v0, v1 int64) int64 {
 		v0 = int64(math.Float64bits(v4))
 		v5 = int32(int64(uint64(v0) >> 32))
 		v8 = int32(v0)
-		if v8|(v5-i32(0x3ff00000)) == 0 {
+		if v8|(v5-int32(0x3ff00000)) == 0 {
 			t3 := m.fn66(v2)
 			v3 = t3
 			goto l0
 		}
-		v9 = int32(uint32(v5)>>30) & i32(2)
+		v9 = int32(uint32(v5)>>30) & int32(2)
 		t4 := v9
 		v0 = int64(math.Float64bits(v2))
 		v6 = t4 | int32(int64(uint64(v0)>>63))
 		{
 			{
-				v7 = int32(int64(uint64(v0)>>32)) & i32(0x7fffffff)
+				v7 = int32(int64(uint64(v0)>>32)) & int32(0x7fffffff)
 				if v7|int32(v0) == 0 {
-					switch v6 - i32(2) {
+					switch v6 - int32(2) {
 					case 0:
 						v3 = math.Float64frombits(0x400921fb54442d18)
 						goto l0
@@ -1093,18 +1093,18 @@ func (m *Module) Xatan2_(v0, v1 int64) int64 {
 					}
 				}
 				v3 = math.Copysign(math.Float64frombits(0x3ff921fb54442d18), v2)
-				v5 = v5 & i32(0x7fffffff)
+				v5 = v5 & int32(0x7fffffff)
 				if v5|v8 == 0 {
 					goto l0
 				}
-				if v5 != i32(0x7ff00000) {
+				if v5 != int32(0x7ff00000) {
 					v3 = math.Copysign(math.Float64frombits(0x3ff921fb54442d18), v2)
 					var p6 int32
-					if v7 != i32(0x7ff00000) {
+					if v7 != int32(0x7ff00000) {
 						p6 = 1
 					}
 					var p7 int32
-					if uint32(v5+i32(0x4000000)) >= uint32(v7) {
+					if uint32(v5+int32(0x4000000)) >= uint32(v7) {
 						p7 = 1
 					}
 					if p6&p7 == 0 {
@@ -1113,7 +1113,7 @@ func (m *Module) Xatan2_(v0, v1 int64) int64 {
 					var p8 float64
 					{
 						if v9 != 0 {
-							if uint32(v7+i32(0x4000000)) < uint32(v5) {
+							if uint32(v7+int32(0x4000000)) < uint32(v5) {
 								p8 = math.Float64frombits(0x0)
 								goto l6
 							}
@@ -1124,7 +1124,7 @@ func (m *Module) Xatan2_(v0, v1 int64) int64 {
 					}
 				l6:
 					v2 = p8
-					switch v6 - i32(1) {
+					switch v6 - int32(1) {
 					default:
 						goto l3
 					case 0:
@@ -1138,15 +1138,15 @@ func (m *Module) Xatan2_(v0, v1 int64) int64 {
 						goto l0
 					}
 				}
-				if v7 != i32(0x7ff00000) {
+				if v7 != int32(0x7ff00000) {
 					goto l5
 				}
-				t5 := math.Float64frombits(load64(mem, uint64(uint32(v6<<3))+83160))
+				t5 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v6<<3))+83160:]))
 				v3 = t5
 				goto l0
 			}
 		l5:
-			t10 := math.Float64frombits(load64(mem, uint64(uint32(v6<<3))+83192))
+			t10 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v6<<3))+83192:]))
 			v2 = t10
 		}
 	l3:
@@ -1187,9 +1187,9 @@ func (m *Module) Xfmax_(v0, v1 int64) int64 {
 				goto l0
 			}
 			v0 = int64(math.Float64bits(v2))
-			if v0^int64(math.Float64bits(v3)) < i64(0) {
+			if v0^int64(math.Float64bits(v3)) < int64(0) {
 				p1 := v2
-				if v0 < i64(0) {
+				if v0 < int64(0) {
 					p1 = v3
 				}
 				v2 = p1
@@ -1219,9 +1219,9 @@ func (m *Module) Xfmin_(v0, v1 int64) int64 {
 				goto l0
 			}
 			v0 = int64(math.Float64bits(v2))
-			if v0^int64(math.Float64bits(v3)) < i64(0) {
+			if v0^int64(math.Float64bits(v3)) < int64(0) {
 				p1 := v3
-				if v0 < i64(0) {
+				if v0 < int64(0) {
 					p1 = v2
 				}
 				v2 = p1
@@ -1261,8 +1261,8 @@ func (m *Module) Xfmod_(v0, v1 int64) int64 {
 			}
 			if p1|p2 == 0 {
 				v5 = int64(math.Float64bits(v7))
-				v3 = int32(int64(uint64(v5)>>52)) & i32(2047)
-				if v3 != i32(2047) {
+				v3 = int32(int64(uint64(v5)>>52)) & int32(2047)
+				if v3 != int32(2047) {
 					goto l0
 				}
 			}
@@ -1281,43 +1281,43 @@ func (m *Module) Xfmod_(v0, v1 int64) int64 {
 			p0 = p4
 			goto l1
 		}
-		v4 = int32(int64(uint64(v6)>>52)) & i32(2047)
+		v4 = int32(int64(uint64(v6)>>52)) & int32(2047)
 		var p5 int64
 		if v3 == 0 {
 			v0 = v5 << 12
 		l2:
-			if v0 >= i64(0) {
-				v2 = v2 + i32(1)
+			if v0 >= int64(0) {
+				v2 = v2 + int32(1)
 				v0 = v0 << 1
 				goto l2
 			}
-			v3 = i32(0) - v2
-			t6 := i64_shl(v5, int64(uint32(v2+i32(1))))
+			v3 = int32(0) - v2
+			t6 := i64_shl(v5, int64(uint32(v2+int32(1))))
 			p5 = t6
 			goto l3
 		}
-		p5 = v5&i64(0xfffffffffffff) | i64(0x10000000000000)
+		p5 = v5&int64(0xfffffffffffff) | int64(0x10000000000000)
 	l3:
 		v0 = p5
 		var p7 int64
 		if v4 == 0 {
 			v1 = v6 << 12
-			v2 = i32(0)
+			v2 = int32(0)
 		l4:
-			if v1 >= i64(0) {
-				v2 = v2 + i32(1)
+			if v1 >= int64(0) {
+				v2 = v2 + int32(1)
 				v1 = v1 << 1
 				goto l4
 			}
-			v4 = i32(0) - v2
-			t8 := i64_shl(v6, int64(uint32(v2+i32(1))))
+			v4 = int32(0) - v2
+			t8 := i64_shl(v6, int64(uint32(v2+int32(1))))
 			p7 = t8
 			goto l5
 		}
-		p7 = v6&i64(0xfffffffffffff) | i64(0x10000000000000)
+		p7 = v6&int64(0xfffffffffffff) | int64(0x10000000000000)
 	l5:
 		v6 = p7
-		v5 = v5 & i64(-0x8000000000000000)
+		v5 = v5 & int64(-0x8000000000000000)
 		p9 := v4
 		if v3 < v4 {
 			p9 = v3
@@ -1329,11 +1329,11 @@ func (m *Module) Xfmod_(v0, v1 int64) int64 {
 			goto l6
 		}
 		{
-			if v1 < i64(0) {
+			if v1 < int64(0) {
 				goto l7
 			}
 			v0 = v1
-			if v0 != i64(0) {
+			if v0 != int64(0) {
 				goto l7
 			}
 			t10 := f64_canon(float64(v7 * math.Float64frombits(0x0)))
@@ -1341,16 +1341,16 @@ func (m *Module) Xfmod_(v0, v1 int64) int64 {
 			goto l1
 		}
 	l7:
-		v3 = v3 - i32(1)
+		v3 = v3 - int32(1)
 		v0 = v0 << 1
 		goto l8
 	l6:
 		{
-			if v1 < i64(0) {
+			if v1 < int64(0) {
 				goto l10
 			}
 			v0 = v1
-			if v0 != i64(0) {
+			if v0 != int64(0) {
 				goto l10
 			}
 			t11 := f64_canon(float64(v7 * math.Float64frombits(0x0)))
@@ -1358,14 +1358,14 @@ func (m *Module) Xfmod_(v0, v1 int64) int64 {
 			goto l1
 		}
 	l10:
-		if uint64(v0) <= uint64(i64(0xfffffffffffff)) {
-			v2 = v2 - i32(1)
+		if uint64(v0) <= uint64(int64(0xfffffffffffff)) {
+			v2 = v2 - int32(1)
 			v0 = v0 << 1
 			goto l10
 		}
-		p12 := i64_shr_u(v0, int64(uint32(i32(1)-v2)))
-		if v2 > i32(0) {
-			p12 = v0 - i64(0x10000000000000) | int64(uint32(v2))<<52
+		p12 := i64_shr_u(v0, int64(uint32(int32(1)-v2)))
+		if v2 > int32(0) {
+			p12 = v0 - int64(0x10000000000000) | int64(uint32(v2))<<52
 		}
 		p0 = math.Float64frombits(uint64(p12 | v5))
 	}
@@ -1378,7 +1378,7 @@ func (m *Module) Xhypot_(v0, v1 int64) int64 {
 	var v4, v5, v6, v7 float64
 	var v8, v9 int64
 	t0 := m.g0
-	v2 = t0 - i32(32)
+	v2 = t0 - int32(32)
 	m.g0 = v2
 	v6 = f64_abs(math.Float64frombits(uint64(v0)))
 	t1 := int64(math.Float64bits(v6))
@@ -1396,7 +1396,7 @@ func (m *Module) Xhypot_(v0, v1 int64) int64 {
 		v4 = p3
 		v0 = int64(math.Float64bits(v4))
 		v1 = int64(uint64(v0) >> 52)
-		if v1 == i64(2047) {
+		if v1 == int64(2047) {
 			goto l0
 		}
 		p4 := v6
@@ -1410,21 +1410,21 @@ func (m *Module) Xhypot_(v0, v1 int64) int64 {
 			}
 			v8 = int64(math.Float64bits(v5))
 			v9 = int64(uint64(v8) >> 52)
-			if v9 == i64(2047) {
+			if v9 == int64(2047) {
 				goto l1
 			}
-			if int32(v9)-int32(v1) >= i32(65) {
+			if int32(v9)-int32(v1) >= int32(65) {
 				v4 = f64_canon(float64(v6 + v7))
 				goto l0
 			}
 			var p5 float64
-			if uint64(v8) >= uint64(i64(0x5fe0000000000000)) {
+			if uint64(v8) >= uint64(int64(0x5fe0000000000000)) {
 				v4 = f64_canon(float64(v4 * math.Float64frombits(0x1430000000000000)))
 				v5 = f64_canon(float64(v5 * math.Float64frombits(0x1430000000000000)))
 				p5 = math.Float64frombits(0x6bb0000000000000)
 				goto l2
 			}
-			if uint64(v0) > uint64(i64(0x23cfffffffffffff)) {
+			if uint64(v0) > uint64(int64(0x23cfffffffffffff)) {
 				p5 = math.Float64frombits(0x3ff0000000000000)
 				goto l2
 			}
@@ -1433,12 +1433,12 @@ func (m *Module) Xhypot_(v0, v1 int64) int64 {
 			v5 = f64_canon(float64(v5 * math.Float64frombits(0x6bb0000000000000)))
 			p5 = math.Float64frombits(0x1430000000000000)
 		l2:
-			m.fn76(v2+i32(24), v2+i32(16), v5)
-			m.fn76(v2+i32(8), v2, v4)
-			t6 := math.Float64frombits(load64(mem, uint32(v2)))
-			t7 := math.Float64frombits(load64(mem, uint64(uint32(v2))+16))
-			t8 := math.Float64frombits(load64(mem, uint64(uint32(v2))+8))
-			t9 := math.Float64frombits(load64(mem, uint64(uint32(v2))+24))
+			m.fn76(v2+int32(24), v2+int32(16), v5)
+			m.fn76(v2+int32(8), v2, v4)
+			t6 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v2):]))
+			t7 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v2))+16:]))
+			t8 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v2))+8:]))
+			t9 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v2))+24:]))
 			v4 = f64_canon(float64(p5 * math.Sqrt(float64(float64(float64(t6+t7)+t8)+t9))))
 			goto l0
 		}
@@ -1446,7 +1446,7 @@ func (m *Module) Xhypot_(v0, v1 int64) int64 {
 		v4 = v5
 	}
 l0:
-	m.g0 = v2 + i32(32)
+	m.g0 = v2 + int32(32)
 	return int64(math.Float64bits(v4))
 }
 func (m *Module) Xnextafter_(v0, v1 int64) int64 {
@@ -1471,7 +1471,7 @@ func (m *Module) Xnextafter_(v0, v1 int64) int64 {
 			goto l0
 		}
 		t3 := m.g0
-		v5 = t3 - i32(16)
+		v5 = t3 - int32(16)
 		{
 			v0 = int64(math.Float64bits(v3))
 			t4 := v0
@@ -1479,10 +1479,10 @@ func (m *Module) Xnextafter_(v0, v1 int64) int64 {
 			if t4 == v1 {
 				goto l1
 			}
-			v7 = v1 & i64(0x7fffffffffffffff)
+			v7 = v1 & int64(0x7fffffffffffffff)
 			var p5 float64
 			{
-				v8 = v0 & i64(0x7fffffffffffffff)
+				v8 = v0 & int64(0x7fffffffffffffff)
 				if v8 == 0 {
 					if v7 == 0 {
 						goto l1
@@ -1491,9 +1491,9 @@ func (m *Module) Xnextafter_(v0, v1 int64) int64 {
 					p5 = t6
 					goto l2
 				}
-				t7 := math.Float64frombits(uint64(v0 - i64(1)))
+				t7 := math.Float64frombits(uint64(v0 - int64(1)))
 				var p8 int32
-				if v0^v1 >= i64(0) {
+				if v0^v1 >= int64(0) {
 					p8 = 1
 				}
 				var p9 int32
@@ -1504,20 +1504,20 @@ func (m *Module) Xnextafter_(v0, v1 int64) int64 {
 					p5 = t7
 					goto l2
 				}
-				p5 = math.Float64frombits(uint64(v0 + i64(1)))
+				p5 = math.Float64frombits(uint64(v0 + int64(1)))
 			}
 		l2:
 			v2 = p5
-			v6 = int32(int64(uint64(int64(math.Float64bits(v2)))>>52)) & i32(2047)
+			v6 = int32(int64(uint64(int64(math.Float64bits(v2)))>>52)) & int32(2047)
 			if v6 != 0 {
-				if v6 != i32(2047) {
+				if v6 != int32(2047) {
 					goto l1
 				}
-				store64(mem, uint64(uint32(v5))+8, math.Float64bits(f64_canon(float64(v3+v3))))
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(v5))+8:], math.Float64bits(f64_canon(float64(v3+v3))))
 				v4 = v2
 				goto l0
 			}
-			store64(mem, uint64(uint32(v5))+8, math.Float64bits(f64_canon(float64(float64(v3*v3)+float64(v2*v2)))))
+			binary.LittleEndian.PutUint64(mem[uint64(uint32(v5))+8:], math.Float64bits(f64_canon(float64(float64(v3*v3)+float64(v2*v2)))))
 		}
 	l1:
 		v4 = v2
@@ -1533,10 +1533,10 @@ func (m *Module) Xremainder_(v0, v1 int64) int64 {
 	var v2 int32
 	var _ float64
 	t0 := m.g0
-	v2 = t0 - i32(16)
+	v2 = t0 - int32(16)
 	m.g0 = v2
-	t1 := m.fn90(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)), v2+i32(12))
-	m.g0 = v2 + i32(16)
+	t1 := m.fn90(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)), v2+int32(12))
+	m.g0 = v2 + int32(16)
 	return int64(math.Float64bits(t1))
 }
 func (m *Module) Xfma_(v0, v1, v2 int64) int64 {
@@ -1557,14 +1557,14 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 	v2 = math.Float64frombits(uint64(v1))
 	v1 = int64(math.Float64bits(v2))
 	v13 = int32(int64(uint64(v1) >> 32))
-	v10 = v13 & i32(0x7fffffff)
+	v10 = v13 & int32(0x7fffffff)
 	t0 := v10
 	v14 = int32(v1)
 	var p1 int32
-	if v14 != i32(0) {
+	if v14 != int32(0) {
 		p1 = 1
 	}
-	if uint32(t0|p1) <= uint32(i32(0x7ff00000)) {
+	if uint32(t0|p1) <= uint32(int32(0x7ff00000)) {
 		var p2 float64
 		{
 			v12 = int32(v0)
@@ -1573,10 +1573,10 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 				p2 = t3
 				goto l0
 			}
-			t4 := v12 ^ i32(-1)
-			t5 := v12 - i32(1)
+			t4 := v12 ^ int32(-1)
+			t5 := v12 - int32(1)
 			var p6 int32
-			if v12 < i32(0) {
+			if v12 < int32(0) {
 				p6 = 1
 			}
 			v15 = p6
@@ -1601,7 +1601,7 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 					p10 = 1
 				}
 				var p11 int32
-				if v10 == i32(0x7ff00000) {
+				if v10 == int32(0x7ff00000) {
 					p11 = 1
 				}
 				if p10|p11 != 0 {
@@ -1611,11 +1611,11 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 				t12 := v4
 				v2 = float64(uint32(v11))
 				if t12 > v2 {
-					if uint32(v10) >= uint32(i32(0x52d00000)) {
+					if uint32(v10) >= uint32(int32(0x52d00000)) {
 						t13 := m.fn67(v4)
 						v2 = t13
 						var p14 float64
-						switch v11&i32(3) - i32(1) {
+						switch v11&int32(3) - int32(1) {
 						default:
 							t15 := m.fn80(v4)
 							t16 := f64_canon(float64(t15 - v2))
@@ -1639,8 +1639,8 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 						v3 = f64_canon(float64(float64(p14*math.Float64frombits(0x3fe20dd750429b6d)) / math.Sqrt(v4)))
 						goto l1
 					}
-					p22 := i32(0)
-					if v11 > i32(0) {
+					p22 := int32(0)
+					if v11 > int32(0) {
 						p22 = v11
 					}
 					v10 = p22
@@ -1648,26 +1648,26 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 					v2 = t23
 					t24 := m.fn82(v4)
 					v3 = t24
-					v11 = i32(2)
+					v11 = int32(2)
 				l7:
 					{
 						if v10 == 0 {
 							goto l1
 						}
-						v10 = v10 - i32(1)
+						v10 = v10 - int32(1)
 						t25 := f64_canon(float64(float64(v3*float64(float64(uint32(v11))/v4)) - v2))
-						v11 = v11 + i32(2)
+						v11 = v11 + int32(2)
 						v2 = v3
 						v3 = t25
 						goto l7
 					}
 				}
-				if uint32(v10) <= uint32(i32(0x3e0fffff)) {
-					if v11 > i32(32) {
+				if uint32(v10) <= uint32(int32(0x3e0fffff)) {
+					if v11 > int32(32) {
 						goto l1
 					}
-					p26 := i32(0)
-					if v11 > i32(0) {
+					p26 := int32(0)
+					if v11 > int32(0) {
 						p26 = v11
 					}
 					v10 = p26
@@ -1677,7 +1677,7 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 					v5 = v6
 				l8:
 					if v10 != 0 {
-						v10 = v10 - i32(1)
+						v10 = v10 - int32(1)
 						v5 = f64_canon(float64(v6 * v5))
 						v3 = f64_canon(float64(v3 * v2))
 						v2 = f64_canon(float64(v2 + math.Float64frombits(0x3ff0000000000000)))
@@ -1693,10 +1693,10 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 				v3 = f64_canon(float64(t27 + v9))
 				v2 = f64_canon(float64(float64(v7*v3) + math.Float64frombits(0xbff0000000000000)))
 				v5 = v7
-				v10 = i32(1)
+				v10 = int32(1)
 			l9:
 				if v2 < math.Float64frombits(0x41cdcd6500000000) {
-					v10 = v10 + i32(1)
+					v10 = v10 + int32(1)
 					v3 = f64_canon(float64(v9 + v3))
 					t28 := f64_canon(float64(float64(v3*v2) - v5))
 					v5 = v2
@@ -1706,10 +1706,10 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 					{
 						v2 = math.Float64frombits(0x0)
 					l10:
-						if v10 >= i32(0) {
+						if v10 >= int32(0) {
 							v3 = f64_canon(float64(v8 + float64(uint32(v10))))
 							v2 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / float64(float64(float64(v3+v3)/v4)-v2)))
-							v10 = v10 - i32(1)
+							v10 = v10 - int32(1)
 							goto l10
 						}
 						t29 := m.fn65(f64_abs(v7))
@@ -1720,7 +1720,7 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 						v3 = math.Float64frombits(0x3ff0000000000000)
 						v6 = v2
 					l14:
-						if v11 <= i32(0) {
+						if v11 <= int32(0) {
 							v5 = v2
 							goto l12
 						} else {
@@ -1737,8 +1737,8 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 							p30 = math.Float64frombits(0x3ff0000000000000)
 						l13:
 							v3 = p30
-							v10 = v10 - i32(2)
-							v11 = v11 - i32(1)
+							v10 = v10 - int32(2)
+							v11 = v11 - int32(1)
 							goto l14
 						}
 					}
@@ -1748,10 +1748,10 @@ func (m *Module) Xjn_(v0, v1 int64) int64 {
 				v3 = math.Float64frombits(0x3ff0000000000000)
 				v5 = v2
 			l15:
-				if v11 > i32(0) {
-					v11 = v11 - i32(1)
+				if v11 > int32(0) {
+					v11 = v11 - int32(1)
 					t32 := f64_canon(float64(float64(float64(v3*float64(uint32(v10)))/v4) - v5))
-					v10 = v10 - i32(2)
+					v10 = v10 - int32(2)
 					v5 = v3
 					v3 = t32
 					goto l15
@@ -1786,15 +1786,15 @@ func (m *Module) Xyn_(v0, v1 int64) int64 {
 	var v6, v7, v8, v9 int32
 	v3 = math.Float64frombits(uint64(v1))
 	v1 = int64(math.Float64bits(v3))
-	v7 = int32(int64(uint64(v1)>>32)) & i32(0x7fffffff)
+	v7 = int32(int64(uint64(v1)>>32)) & int32(0x7fffffff)
 	t0 := v7
 	v6 = int32(v1)
 	var p1 int32
-	if v6 != i32(0) {
+	if v6 != int32(0) {
 		p1 = 1
 	}
 	var p2 float64
-	if uint32(t0|p1) <= uint32(i32(0x7ff00000)) {
+	if uint32(t0|p1) <= uint32(int32(0x7ff00000)) {
 		var p3 float64
 		{
 			var p4 int32
@@ -1802,7 +1802,7 @@ func (m *Module) Xyn_(v0, v1 int64) int64 {
 				p4 = 1
 			}
 			var p5 int32
-			if v1 >= i64(0) {
+			if v1 >= int64(0) {
 				p5 = 1
 			}
 			if p4|p5 == 0 {
@@ -1810,7 +1810,7 @@ func (m *Module) Xyn_(v0, v1 int64) int64 {
 				goto l0
 			}
 			_ = math.Float64frombits(0x7ff8000000000000)
-			if v7 == i32(0x7ff00000) {
+			if v7 == int32(0x7ff00000) {
 				p3 = math.Float64frombits(0x0)
 				goto l0
 			}
@@ -1821,28 +1821,28 @@ func (m *Module) Xyn_(v0, v1 int64) int64 {
 				p3 = t6
 				goto l0
 			}
-			v8 = v6 & i32(-0x7fffffff)
-			p7 := v6 - i32(1)
-			if v6 < i32(0) {
-				p7 = v6 ^ i32(-1)
+			v8 = v6 & int32(-0x7fffffff)
+			p7 := v6 - int32(1)
+			if v6 < int32(0) {
+				p7 = v6 ^ int32(-1)
 			}
 			v9 = p7
 			if v9 == 0 {
 				t8 := m.fn84(v3)
 				v2 = t8
 				p9 := v2
-				if v8 == i32(-0x7fffffff) {
+				if v8 == int32(-0x7fffffff) {
 					p9 = f64_neg(v2)
 				}
 				p3 = p9
 				goto l0
 			}
 			{
-				if uint32(v7) >= uint32(i32(0x52d00000)) {
+				if uint32(v7) >= uint32(int32(0x52d00000)) {
 					t10 := m.fn80(v3)
 					v2 = t10
 					var p11 float64
-					switch v9&i32(3) - i32(1) {
+					switch v9&int32(3) - int32(1) {
 					default:
 						t12 := m.fn67(v3)
 						t13 := f64_canon(float64(f64_neg(v2) - t12))
@@ -1866,12 +1866,12 @@ func (m *Module) Xyn_(v0, v1 int64) int64 {
 					v2 = f64_canon(float64(float64(p11*math.Float64frombits(0x3fe20dd750429b6d)) / math.Sqrt(v3)))
 					goto l6
 				}
-				v7 = i32(0)
+				v7 = int32(0)
 				t19 := m.fn81(v3)
 				v4 = t19
 				t20 := m.fn84(v3)
 				v2 = t20
-				v6 = i32(2)
+				v6 = int32(2)
 			l7:
 				{
 					var p21 int32
@@ -1879,15 +1879,15 @@ func (m *Module) Xyn_(v0, v1 int64) int64 {
 						p21 = 1
 					}
 					var p22 int32
-					if int64(math.Float64bits(v2))&i64(-0x100000000) == i64(-0x10000000000000) {
+					if int64(math.Float64bits(v2))&int64(-0x100000000) == int64(-0x10000000000000) {
 						p22 = 1
 					}
 					if p21|p22 != 0 {
 						goto l6
 					}
-					v7 = v7 + i32(1)
+					v7 = v7 + int32(1)
 					t23 := f64_canon(float64(float64(float64(float64(uint32(v6))/v3)*v2) - v4))
-					v6 = v6 + i32(2)
+					v6 = v6 + int32(2)
 					v4 = v2
 					v2 = t23
 					goto l7
@@ -1895,7 +1895,7 @@ func (m *Module) Xyn_(v0, v1 int64) int64 {
 			}
 		l6:
 			p24 := v2
-			if v8 == i32(-0x7fffffff) {
+			if v8 == int32(-0x7fffffff) {
 				p24 = f64_neg(v2)
 			}
 			p3 = p24
@@ -1918,23 +1918,23 @@ func (m *Module) Xfrexp_(v0 int64) int64 {
 	var v1 int32
 	var _ float64
 	t0 := m.g0
-	v1 = t0 - i32(16)
+	v1 = t0 - int32(16)
 	m.g0 = v1
-	store32(mem, uint64(uint32(v1))+12, uint32(i32(0)))
-	t1 := m.fn75(math.Float64frombits(uint64(v0)), v1+i32(12))
-	m.g0 = v1 + i32(16)
+	binary.LittleEndian.PutUint32(mem[uint64(uint32(v1))+12:], uint32(int32(0)))
+	t1 := m.fn75(math.Float64frombits(uint64(v0)), v1+int32(12))
+	m.g0 = v1 + int32(16)
 	return int64(math.Float64bits(t1))
 }
 func (m *Module) Xfrexp_2(v0 int64) int64 {
 	mem := m.memory
 	var v1 int32
 	t0 := m.g0
-	v1 = t0 - i32(16)
+	v1 = t0 - int32(16)
 	m.g0 = v1
-	store32(mem, uint64(uint32(v1))+12, uint32(i32(0)))
-	_ = m.fn75(math.Float64frombits(uint64(v0)), v1+i32(12))
-	t2 := int64(int32(load32(mem, uint64(uint32(v1))+12)))
-	m.g0 = v1 + i32(16)
+	binary.LittleEndian.PutUint32(mem[uint64(uint32(v1))+12:], uint32(int32(0)))
+	_ = m.fn75(math.Float64frombits(uint64(v0)), v1+int32(12))
+	t2 := int64(int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v1))+12:])))
+	m.g0 = v1 + int32(16)
 	return t2
 }
 func (m *Module) Xmodf_(v0 int64) int64 {
@@ -1942,23 +1942,23 @@ func (m *Module) Xmodf_(v0 int64) int64 {
 	var v1 int32
 	var _ float64
 	t0 := m.g0
-	v1 = t0 - i32(16)
+	v1 = t0 - int32(16)
 	m.g0 = v1
-	store64(mem, uint64(uint32(v1))+8, uint64(i64(0)))
-	t1 := m.fn87(math.Float64frombits(uint64(v0)), v1+i32(8))
-	m.g0 = v1 + i32(16)
+	binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], uint64(int64(0)))
+	t1 := m.fn87(math.Float64frombits(uint64(v0)), v1+int32(8))
+	m.g0 = v1 + int32(16)
 	return int64(math.Float64bits(t1))
 }
 func (m *Module) Xmodf_2(v0 int64) int64 {
 	mem := m.memory
 	var v1 int32
 	t0 := m.g0
-	v1 = t0 - i32(16)
+	v1 = t0 - int32(16)
 	m.g0 = v1
-	store64(mem, uint64(uint32(v1))+8, uint64(i64(0)))
-	_ = m.fn87(math.Float64frombits(uint64(v0)), v1+i32(8))
-	t2 := int64(load64(mem, uint64(uint32(v1))+8))
-	m.g0 = v1 + i32(16)
+	binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], uint64(int64(0)))
+	_ = m.fn87(math.Float64frombits(uint64(v0)), v1+int32(8))
+	t2 := int64(binary.LittleEndian.Uint64(mem[uint64(uint32(v1))+8:]))
+	m.g0 = v1 + int32(16)
 	return t2
 }
 func (m *Module) Xlgamma_r_(v0 int64) int64 {
@@ -1966,23 +1966,23 @@ func (m *Module) Xlgamma_r_(v0 int64) int64 {
 	var v1 int32
 	var _ float64
 	t0 := m.g0
-	v1 = t0 - i32(16)
+	v1 = t0 - int32(16)
 	m.g0 = v1
-	store32(mem, uint64(uint32(v1))+12, uint32(i32(0)))
-	t1 := m.fn86(math.Float64frombits(uint64(v0)), v1+i32(12))
-	m.g0 = v1 + i32(16)
+	binary.LittleEndian.PutUint32(mem[uint64(uint32(v1))+12:], uint32(int32(0)))
+	t1 := m.fn86(math.Float64frombits(uint64(v0)), v1+int32(12))
+	m.g0 = v1 + int32(16)
 	return int64(math.Float64bits(t1))
 }
 func (m *Module) Xlgamma_r_2(v0 int64) int64 {
 	mem := m.memory
 	var v1 int32
 	t0 := m.g0
-	v1 = t0 - i32(16)
+	v1 = t0 - int32(16)
 	m.g0 = v1
-	store32(mem, uint64(uint32(v1))+12, uint32(i32(0)))
-	_ = m.fn86(math.Float64frombits(uint64(v0)), v1+i32(12))
-	t2 := int64(int32(load32(mem, uint64(uint32(v1))+12)))
-	m.g0 = v1 + i32(16)
+	binary.LittleEndian.PutUint32(mem[uint64(uint32(v1))+12:], uint32(int32(0)))
+	_ = m.fn86(math.Float64frombits(uint64(v0)), v1+int32(12))
+	t2 := int64(int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v1))+12:])))
+	m.g0 = v1 + int32(16)
 	return t2
 }
 func (m *Module) Xremquo_(v0, v1 int64) int64 {
@@ -1990,30 +1990,30 @@ func (m *Module) Xremquo_(v0, v1 int64) int64 {
 	var v2 int32
 	var _ float64
 	t0 := m.g0
-	v2 = t0 - i32(16)
+	v2 = t0 - int32(16)
 	m.g0 = v2
-	store32(mem, uint64(uint32(v2))+12, uint32(i32(0)))
-	t1 := m.fn90(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)), v2+i32(12))
-	m.g0 = v2 + i32(16)
+	binary.LittleEndian.PutUint32(mem[uint64(uint32(v2))+12:], uint32(int32(0)))
+	t1 := m.fn90(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)), v2+int32(12))
+	m.g0 = v2 + int32(16)
 	return int64(math.Float64bits(t1))
 }
 func (m *Module) Xremquo_2(v0, v1 int64) int64 {
 	mem := m.memory
 	var v2 int32
 	t0 := m.g0
-	v2 = t0 - i32(16)
+	v2 = t0 - int32(16)
 	m.g0 = v2
-	store32(mem, uint64(uint32(v2))+12, uint32(i32(0)))
-	_ = m.fn90(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)), v2+i32(12))
-	t2 := int64(int32(load32(mem, uint64(uint32(v2))+12)))
-	m.g0 = v2 + i32(16)
+	binary.LittleEndian.PutUint32(mem[uint64(uint32(v2))+12:], uint32(int32(0)))
+	_ = m.fn90(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)), v2+int32(12))
+	t2 := int64(int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v2))+12:])))
+	m.g0 = v2 + int32(16)
 	return t2
 }
 func (m *Module) Xlgamma_2(v0 int64) int64 {
 	mem := m.memory
-	store32(mem, uint32(i32(83224)), uint32(i32(0)))
-	_ = m.fn86(math.Float64frombits(uint64(v0)), i32(83224))
-	t1 := int64(int32(load32(mem, uint32(i32(83224)))))
+	binary.LittleEndian.PutUint32(mem[uint32(i32(83224)):], uint32(int32(0)))
+	_ = m.fn86(math.Float64frombits(uint64(v0)), int32(83224))
+	t1 := int64(int32(binary.LittleEndian.Uint32(mem[uint32(i32(83224)):])))
 	return t1
 }
 func fn63(v0 float64) float64 {
@@ -2025,13 +2025,13 @@ func (m *Module) fn64(v0 float64) float64 {
 	var v6, v7 int32
 	var v8 int64
 	t0 := m.g0
-	v6 = t0 - i32(16)
+	v6 = t0 - int32(16)
 	{
 		var p1 float64
 		{
 			{
 				v8 = int64(math.Float64bits(v0))
-				if v8 <= i64(0x3fda8279ffffffff) {
+				if v8 <= int64(0x3fda8279ffffffff) {
 					if uint64(v8) >= uint64(i64(-0x4010000000000000)) {
 						if v0 == math.Float64frombits(0xbff0000000000000) {
 							p1 = math.Float64frombits(0xfff0000000000000)
@@ -2041,11 +2041,11 @@ func (m *Module) fn64(v0 float64) float64 {
 						return f64_canon(float64(float64(v0-v0) / math.Float64frombits(0x0)))
 					}
 					v7 = int32(int64(uint64(v8) >> 32))
-					if uint32(v7<<1) <= uint32(i32(0x793fffff)) {
-						if v7&i32(0x7ff00000) != 0 {
+					if uint32(v7<<1) <= uint32(int32(0x793fffff)) {
+						if v7&int32(0x7ff00000) != 0 {
 							goto l1
 						}
-						store32(mem, uint64(uint32(v6))+12, math.Float32bits(f32_canon(float32(v0))))
+						binary.LittleEndian.PutUint32(mem[uint64(uint32(v6))+12:], math.Float32bits(f32_canon(float32(v0))))
 						goto l1
 					}
 					if uint64(v8) >= uint64(i64(-0x402d413b00000000)) {
@@ -2053,24 +2053,24 @@ func (m *Module) fn64(v0 float64) float64 {
 					}
 					goto l3
 				}
-				if uint64(v8) > uint64(i64(0x7fefffffffffffff)) {
+				if uint64(v8) > uint64(int64(0x7fefffffffffffff)) {
 					goto l1
 				}
 			l2:
 				v1 = f64_canon(float64(v0 + math.Float64frombits(0x3ff0000000000000)))
 				v8 = int64(math.Float64bits(v1))
-				v6 = int32(int64(uint64(v8)>>32)) + i32(614242)
+				v6 = int32(int64(uint64(v8)>>32)) + int32(614242)
 				p2 := f64_canon(float64(v0 - float64(v1+math.Float64frombits(0xbff0000000000000))))
-				if uint32(v6) > uint32(i32(0x400fffff)) {
+				if uint32(v6) > uint32(int32(0x400fffff)) {
 					p2 = f64_canon(float64(float64(v0-v1) + math.Float64frombits(0x3ff0000000000000)))
 				}
 				p3 := math.Float64frombits(0x0)
-				if uint32(v6) <= uint32(i32(0x434fffff)) {
+				if uint32(v6) <= uint32(int32(0x434fffff)) {
 					p3 = f64_canon(float64(p2 / v1))
 				}
 				v1 = p3
-				v0 = f64_canon(float64(math.Float64frombits(uint64(v8&i64(0xffffffff)|int64(uint32(v6&i32(0xfffff)+i32(1072079006)))<<32)) + math.Float64frombits(0xbff0000000000000)))
-				v4 = float64(int32(uint32(v6)>>20) - i32(1023))
+				v0 = f64_canon(float64(math.Float64frombits(uint64(v8&int64(0xffffffff)|int64(uint32(v6&int32(0xfffff)+int32(1072079006)))<<32)) + math.Float64frombits(0xbff0000000000000)))
+				v4 = float64(int32(uint32(v6)>>20) - int32(1023))
 				v5 = f64_canon(float64(float64(v4*math.Float64frombits(0x3dea39ef35793c76)) + v1))
 			}
 		l3:
@@ -2095,8 +2095,8 @@ func (m *Module) fn65(v0 float64) float64 {
 	var v6, v7 int64
 	var v8, v9 int32
 	v6 = int64(math.Float64bits(v0))
-	if uint64(v6-i64(0x3fee000000000000)) <= uint64(i64(0x308ffffffffff)) {
-		if v6 == i64(0x3ff0000000000000) {
+	if uint64(v6-int64(0x3fee000000000000)) <= uint64(int64(0x308ffffffffff)) {
+		if v6 == int64(0x3ff0000000000000) {
 			return math.Float64frombits(0x0)
 		}
 		v0 = f64_canon(float64(v0 + math.Float64frombits(0xbff0000000000000)))
@@ -2112,43 +2112,43 @@ func (m *Module) fn65(v0 float64) float64 {
 		return f64_canon(float64(t1 + float64(float64(v3*float64(float64(v3*float64(float64(v3*float64(float64(v3*math.Float64frombits(0xbfb5521375d145cd))+float64(float64(v2*math.Float64frombits(0x3fb78182f7afd085))+float64(float64(v0*math.Float64frombits(0xbfb999eb43b068ff))+math.Float64frombits(0x3fbc7184282ad6ca)))))+float64(float64(v2*math.Float64frombits(0xbfbfffffa4423d65))+float64(float64(v0*math.Float64frombits(0x3fc24924a344de30))+math.Float64frombits(0xbfc55555556745a7)))))+float64(float64(v2*math.Float64frombits(0x3fc999999995dd0c))+float64(float64(v0*math.Float64frombits(0xbfcffffffffffdcb))+math.Float64frombits(0x3fd5555555555577)))))+float64(float64(float64(float64(v0-v1)*math.Float64frombits(0xbfe0000000000000))*float64(v0+v1))+float64(v4+float64(v0-v5))))))
 	}
 	t3 := m.g0
-	v8 = t3 - i32(16)
+	v8 = t3 - int32(16)
 	{
 		v9 = int32(int64(uint64(v6) >> 48))
-		if uint32(v9-i32(32752)) <= uint32(i32(-32737)) {
+		if uint32(v9-int32(32752)) <= uint32(i32(-32737)) {
 			if v0 == math.Float64frombits(0x0) {
-				store64(mem, uint64(uint32(v8))+8, uint64(i64(-0x4010000000000000)))
-				t4 := math.Float64frombits(load64(mem, uint64(uint32(v8))+8))
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(v8))+8:], uint64(i64(-0x4010000000000000)))
+				t4 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+8:]))
 				return f64_canon(float64(t4 / math.Float64frombits(0x0)))
 			}
-			if v6 == i64(0x7ff0000000000000) {
+			if v6 == int64(0x7ff0000000000000) {
 				goto l0
 			}
 			var p5 int32
-			if v9&i32(32752) != i32(32752) {
+			if v9&int32(32752) != int32(32752) {
 				p5 = 1
 			}
 			var p6 int32
-			if v6 >= i64(0) {
+			if v6 >= int64(0) {
 				p6 = 1
 			}
 			if p5&p6 == 0 {
 				v0 = f64_canon(float64(v0 - v0))
 				return f64_canon(float64(v0 / v0))
 			}
-			v6 = int64(math.Float64bits(f64_canon(float64(v0*math.Float64frombits(0x4330000000000000))))) - i64(0x340000000000000)
+			v6 = int64(math.Float64bits(f64_canon(float64(v0*math.Float64frombits(0x4330000000000000))))) - int64(0x340000000000000)
 		}
-		v7 = v6 - i64(0x3fe6000000000000)
+		v7 = v6 - int64(0x3fe6000000000000)
 		v2 = float64(v7 >> 52)
 		t7 := f64_canon(float64(v2 * math.Float64frombits(0x3fe62e42fefa3800)))
-		v8 = int32(int64(uint64(v7)>>45)) & i32(127) << 4
-		t8 := math.Float64frombits(load64(mem, uint64(uint32(v8))+67912))
+		v8 = int32(int64(uint64(v7)>>45)) & int32(127) << 4
+		t8 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+67912:]))
 		v3 = f64_canon(float64(t7 + t8))
-		t9 := math.Float64frombits(load64(mem, uint64(uint32(v8))+67904))
-		t10 := math.Float64frombits(load64(mem, uint64(uint32(v8))+69952))
-		t11 := math.Float64frombits(load64(mem, uint64(uint32(v8))+69960))
+		t9 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+67904:]))
+		t10 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+69952:]))
+		t11 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+69960:]))
 		t12 := v3
-		v0 = f64_canon(float64(t9 * float64(float64(math.Float64frombits(uint64(v6-v7&i64(-0x10000000000000)))-t10)-t11)))
+		v0 = f64_canon(float64(t9 * float64(float64(math.Float64frombits(uint64(v6-v7&int64(-0x10000000000000)))-t10)-t11)))
 		v4 = f64_canon(float64(t12 + v0))
 		t13 := v4
 		t14 := v0
@@ -2164,60 +2164,60 @@ func (m *Module) fn66(v0 float64) float64 {
 	var v4, v5 int32
 	var v6 int64
 	t0 := m.g0
-	v5 = t0 - i32(16)
+	v5 = t0 - int32(16)
 	{
 		v6 = int64(math.Float64bits(v0))
-		v4 = int32(int64(uint64(v6)>>32)) & i32(0x7fffffff)
-		if uint32(v4) >= uint32(i32(0x44100000)) {
+		v4 = int32(int64(uint64(v6)>>32)) & int32(0x7fffffff)
+		if uint32(v4) >= uint32(int32(0x44100000)) {
 			if v0 != v0 {
 				goto l0
 			}
 			return math.Copysign(math.Float64frombits(0x3ff921fb54442d18), v0)
 		}
 		var p1 int32
-		if uint32(v4) <= uint32(i32(0x3fdbffff)) {
-			if uint32(v4) > uint32(i32(0x3e3fffff)) {
-				p1 = i32(-1)
+		if uint32(v4) <= uint32(int32(0x3fdbffff)) {
+			if uint32(v4) > uint32(int32(0x3e3fffff)) {
+				p1 = int32(-1)
 				goto l1
 			}
-			if uint32(v4) > uint32(i32(0xfffff)) {
+			if uint32(v4) > uint32(int32(0xfffff)) {
 				goto l0
 			}
-			store32(mem, uint64(uint32(v5))+12, math.Float32bits(f32_canon(float32(v0))))
+			binary.LittleEndian.PutUint32(mem[uint64(uint32(v5))+12:], math.Float32bits(f32_canon(float32(v0))))
 			return v0
 		}
 		v0 = f64_abs(v0)
-		if uint32(v4) <= uint32(i32(0x3ff2ffff)) {
-			if uint32(v4) <= uint32(i32(0x3fe5ffff)) {
+		if uint32(v4) <= uint32(int32(0x3ff2ffff)) {
+			if uint32(v4) <= uint32(int32(0x3fe5ffff)) {
 				v0 = f64_canon(float64(float64(float64(v0+v0)+math.Float64frombits(0xbff0000000000000)) / float64(v0+math.Float64frombits(0x4000000000000000))))
-				p1 = i32(0)
+				p1 = int32(0)
 				goto l1
 			}
 			v0 = f64_canon(float64(float64(v0+math.Float64frombits(0xbff0000000000000)) / float64(v0+math.Float64frombits(0x3ff0000000000000))))
-			p1 = i32(1)
+			p1 = int32(1)
 			goto l1
 		}
-		if uint32(v4) <= uint32(i32(0x40037fff)) {
+		if uint32(v4) <= uint32(int32(0x40037fff)) {
 			v0 = f64_canon(float64(float64(v0+math.Float64frombits(0xbff8000000000000)) / float64(float64(v0*math.Float64frombits(0x3ff8000000000000))+math.Float64frombits(0x3ff0000000000000))))
-			p1 = i32(2)
+			p1 = int32(2)
 			goto l1
 		}
 		v0 = f64_canon(float64(math.Float64frombits(0xbff0000000000000) / v0))
-		p1 = i32(3)
+		p1 = int32(3)
 	l1:
 		v2 = f64_canon(float64(v0 * v0))
 		v1 = f64_canon(float64(v2 * v2))
 		v3 = f64_canon(float64(v1 * float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*math.Float64frombits(0xbfa2b4442c6a6c2f))+math.Float64frombits(0xbfadde2d52defd9a)))+math.Float64frombits(0xbfb3b0f2af749a6d)))+math.Float64frombits(0xbfbc71c6fe231671)))+math.Float64frombits(0xbfc999999998ebc4))))
 		v1 = f64_canon(float64(v2 * float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*math.Float64frombits(0x3f90ad3ae322da11))+math.Float64frombits(0x3fa97b4b24760deb)))+math.Float64frombits(0x3fb10d66a0d03d51)))+math.Float64frombits(0x3fb745cdc54c206e)))+math.Float64frombits(0x3fc24924920083ff)))+math.Float64frombits(0x3fd555555555550d))))
-		if uint32(v4) <= uint32(i32(0x3fdbffff)) {
+		if uint32(v4) <= uint32(int32(0x3fdbffff)) {
 			return f64_canon(float64(v0 - float64(v0*float64(v3+v1))))
 		}
 		v5 = p1 << 3
-		t2 := math.Float64frombits(load64(mem, uint64(uint32(v5))+65536))
-		t3 := math.Float64frombits(load64(mem, uint64(uint32(v5))+65568))
+		t2 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v5))+65536:]))
+		t3 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v5))+65568:]))
 		v0 = f64_canon(float64(t2 - float64(float64(float64(v0*float64(v3+v1))-t3)-v0)))
 		p4 := v0
-		if v6 < i64(0) {
+		if v6 < int64(0) {
 			p4 = f64_neg(v0)
 		}
 		v0 = p4
@@ -2230,14 +2230,14 @@ func (m *Module) fn67(v0 float64) float64 {
 	var v1 float64
 	var v2, v3 int32
 	t0 := m.g0
-	v2 = t0 - i32(16)
+	v2 = t0 - int32(16)
 	m.g0 = v2
 	var p1 float64
 	{
-		v3 = int32(int64(uint64(int64(math.Float64bits(v0)))>>32)) & i32(0x7fffffff)
-		if uint32(v3) <= uint32(i32(1072243195)) {
-			if uint32(v3) <= uint32(i32(1044816029)) {
-				store64(mem, uint32(v2), math.Float64bits(f64_canon(float64(v0+math.Float64frombits(0x4770000000000000)))))
+		v3 = int32(int64(uint64(int64(math.Float64bits(v0)))>>32)) & int32(0x7fffffff)
+		if uint32(v3) <= uint32(int32(1072243195)) {
+			if uint32(v3) <= uint32(int32(1044816029)) {
+				binary.LittleEndian.PutUint64(mem[uint32(v2):], math.Float64bits(f64_canon(float64(v0+math.Float64frombits(0x4770000000000000)))))
 				p1 = math.Float64frombits(0x3ff0000000000000)
 				goto l0
 			}
@@ -2246,23 +2246,23 @@ func (m *Module) fn67(v0 float64) float64 {
 			goto l0
 		}
 		t3 := f64_canon(float64(v0 - v0))
-		if uint32(v3) >= uint32(i32(0x7ff00000)) {
+		if uint32(v3) >= uint32(int32(0x7ff00000)) {
 			p1 = t3
 			goto l0
 		}
 		t4 := m.fn69(v0, v2)
 		v3 = t4
-		t5 := math.Float64frombits(load64(mem, uint64(uint32(v2))+8))
+		t5 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v2))+8:]))
 		v0 = t5
-		t6 := math.Float64frombits(load64(mem, uint32(v2)))
+		t6 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v2):]))
 		v1 = t6
-		switch v3&i32(3) - i32(1) {
+		switch v3&int32(3) - int32(1) {
 		default:
 			t7 := fn68(v1, v0)
 			p1 = t7
 			goto l0
 		case 0:
-			t8 := fn70(v1, v0, i32(1))
+			t8 := fn70(v1, v0, int32(1))
 			t9 := f64_neg(t8)
 			p1 = t9
 			goto l0
@@ -2272,12 +2272,12 @@ func (m *Module) fn67(v0 float64) float64 {
 			p1 = t11
 			goto l0
 		case 2:
-			t12 := fn70(v1, v0, i32(1))
+			t12 := fn70(v1, v0, int32(1))
 			p1 = t12
 		}
 	}
 l0:
-	m.g0 = v2 + i32(16)
+	m.g0 = v2 + int32(16)
 	return p1
 }
 func fn68(v0, v1 float64) float64 {
@@ -2298,95 +2298,95 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 	var v26, v27, v28, v29 float64
 	var v30 int64
 	t0 := m.g0
-	v10 = t0 - i32(48)
+	v10 = t0 - int32(48)
 	m.g0 = v10
 	{
 		{
 			v30 = int64(math.Float64bits(v0))
 			v2 = int32(int64(uint64(v30) >> 32))
-			v5 = v2 & i32(0x7fffffff)
-			if uint32(v5) <= uint32(i32(1074752122)) {
-				if v2&i32(0xfffff) == i32(598523) {
+			v5 = v2 & int32(0x7fffffff)
+			if uint32(v5) <= uint32(int32(1074752122)) {
+				if v2&int32(0xfffff) == int32(598523) {
 					goto l0
 				}
-				if uint32(v5) <= uint32(i32(0x4002d97c)) {
-					if v30 >= i64(0) {
+				if uint32(v5) <= uint32(int32(0x4002d97c)) {
+					if v30 >= int64(0) {
 						t1 := v1
 						v0 = f64_canon(float64(v0 + math.Float64frombits(0xbff921fb54400000)))
 						v26 = f64_canon(float64(v0 + math.Float64frombits(0xbdd0b4611a626331)))
-						store64(mem, uint32(t1), math.Float64bits(v26))
-						store64(mem, uint64(uint32(v1))+8, math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0xbdd0b4611a626331)))))
-						v2 = i32(1)
+						binary.LittleEndian.PutUint64(mem[uint32(t1):], math.Float64bits(v26))
+						binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0xbdd0b4611a626331)))))
+						v2 = int32(1)
 						goto l1
 					}
 					t2 := v1
 					v0 = f64_canon(float64(v0 + math.Float64frombits(0x3ff921fb54400000)))
 					v26 = f64_canon(float64(v0 + math.Float64frombits(0x3dd0b4611a626331)))
-					store64(mem, uint32(t2), math.Float64bits(v26))
-					store64(mem, uint64(uint32(v1))+8, math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0x3dd0b4611a626331)))))
-					v2 = i32(-1)
+					binary.LittleEndian.PutUint64(mem[uint32(t2):], math.Float64bits(v26))
+					binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0x3dd0b4611a626331)))))
+					v2 = int32(-1)
 					goto l1
 				}
-				if v30 >= i64(0) {
+				if v30 >= int64(0) {
 					t3 := v1
 					v0 = f64_canon(float64(v0 + math.Float64frombits(0xc00921fb54400000)))
 					v26 = f64_canon(float64(v0 + math.Float64frombits(0xbde0b4611a626331)))
-					store64(mem, uint32(t3), math.Float64bits(v26))
-					store64(mem, uint64(uint32(v1))+8, math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0xbde0b4611a626331)))))
-					v2 = i32(2)
+					binary.LittleEndian.PutUint64(mem[uint32(t3):], math.Float64bits(v26))
+					binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0xbde0b4611a626331)))))
+					v2 = int32(2)
 					goto l1
 				}
 				t4 := v1
 				v0 = f64_canon(float64(v0 + math.Float64frombits(0x400921fb54400000)))
 				v26 = f64_canon(float64(v0 + math.Float64frombits(0x3de0b4611a626331)))
-				store64(mem, uint32(t4), math.Float64bits(v26))
-				store64(mem, uint64(uint32(v1))+8, math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0x3de0b4611a626331)))))
-				v2 = i32(-2)
+				binary.LittleEndian.PutUint64(mem[uint32(t4):], math.Float64bits(v26))
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0x3de0b4611a626331)))))
+				v2 = int32(-2)
 				goto l1
 			}
-			if uint32(v5) <= uint32(i32(1075594811)) {
-				if uint32(v5) <= uint32(i32(1075183036)) {
-					if v5 == i32(1074977148) {
+			if uint32(v5) <= uint32(int32(1075594811)) {
+				if uint32(v5) <= uint32(int32(1075183036)) {
+					if v5 == int32(1074977148) {
 						goto l0
 					}
-					if v30 >= i64(0) {
+					if v30 >= int64(0) {
 						t5 := v1
 						v0 = f64_canon(float64(v0 + math.Float64frombits(0xc012d97c7f300000)))
 						v26 = f64_canon(float64(v0 + math.Float64frombits(0xbde90e91a79394ca)))
-						store64(mem, uint32(t5), math.Float64bits(v26))
-						store64(mem, uint64(uint32(v1))+8, math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0xbde90e91a79394ca)))))
-						v2 = i32(3)
+						binary.LittleEndian.PutUint64(mem[uint32(t5):], math.Float64bits(v26))
+						binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0xbde90e91a79394ca)))))
+						v2 = int32(3)
 						goto l1
 					}
 					t6 := v1
 					v0 = f64_canon(float64(v0 + math.Float64frombits(0x4012d97c7f300000)))
 					v26 = f64_canon(float64(v0 + math.Float64frombits(0x3de90e91a79394ca)))
-					store64(mem, uint32(t6), math.Float64bits(v26))
-					store64(mem, uint64(uint32(v1))+8, math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0x3de90e91a79394ca)))))
-					v2 = i32(-3)
+					binary.LittleEndian.PutUint64(mem[uint32(t6):], math.Float64bits(v26))
+					binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0x3de90e91a79394ca)))))
+					v2 = int32(-3)
 					goto l1
 				}
-				if v5 == i32(1075388923) {
+				if v5 == int32(1075388923) {
 					goto l0
 				}
-				if v30 >= i64(0) {
+				if v30 >= int64(0) {
 					t7 := v1
 					v0 = f64_canon(float64(v0 + math.Float64frombits(0xc01921fb54400000)))
 					v26 = f64_canon(float64(v0 + math.Float64frombits(0xbdf0b4611a626331)))
-					store64(mem, uint32(t7), math.Float64bits(v26))
-					store64(mem, uint64(uint32(v1))+8, math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0xbdf0b4611a626331)))))
-					v2 = i32(4)
+					binary.LittleEndian.PutUint64(mem[uint32(t7):], math.Float64bits(v26))
+					binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0xbdf0b4611a626331)))))
+					v2 = int32(4)
 					goto l1
 				}
 				t8 := v1
 				v0 = f64_canon(float64(v0 + math.Float64frombits(0x401921fb54400000)))
 				v26 = f64_canon(float64(v0 + math.Float64frombits(0x3df0b4611a626331)))
-				store64(mem, uint32(t8), math.Float64bits(v26))
-				store64(mem, uint64(uint32(v1))+8, math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0x3df0b4611a626331)))))
-				v2 = i32(-4)
+				binary.LittleEndian.PutUint64(mem[uint32(t8):], math.Float64bits(v26))
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], math.Float64bits(f64_canon(float64(float64(v0-v26)+math.Float64frombits(0x3df0b4611a626331)))))
+				v2 = int32(-4)
 				goto l1
 			}
-			if uint32(v5) > uint32(i32(1094263290)) {
+			if uint32(v5) > uint32(int32(1094263290)) {
 				goto l2
 			}
 		l0:
@@ -2398,7 +2398,7 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 				v28 = f64_canon(float64(v26 * math.Float64frombits(0x3dd0b4611a626331)))
 				v29 = f64_canon(float64(t9 - v28))
 				if v29 < math.Float64frombits(0xbfe921fb54442d18) {
-					v2 = v2 - i32(1)
+					v2 = v2 - int32(1)
 					v26 = f64_canon(float64(v26 + math.Float64frombits(0xbff0000000000000)))
 					v28 = f64_canon(float64(v26 * math.Float64frombits(0x3dd0b4611a626331)))
 					v27 = f64_canon(float64(v0 + float64(v26*math.Float64frombits(0xbff921fb54400000))))
@@ -2407,7 +2407,7 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 				if !(v29 > math.Float64frombits(0x3fe921fb54442d18)) {
 					goto l3
 				}
-				v2 = v2 + i32(1)
+				v2 = v2 + int32(1)
 				v26 = f64_canon(float64(v26 + math.Float64frombits(0x3ff0000000000000)))
 				v28 = f64_canon(float64(v26 * math.Float64frombits(0x3dd0b4611a626331)))
 				v27 = f64_canon(float64(v0 + float64(v26*math.Float64frombits(0xbff921fb54400000))))
@@ -2415,10 +2415,10 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 		l3:
 			t10 := v1
 			v0 = f64_canon(float64(v27 - v28))
-			store64(mem, uint32(t10), math.Float64bits(v0))
+			binary.LittleEndian.PutUint64(mem[uint32(t10):], math.Float64bits(v0))
 			{
 				v3 = int32(uint32(v5) >> 20)
-				if v3-int32(int64(uint64(int64(math.Float64bits(v0)))>>52))&i32(2047) < i32(17) {
+				if v3-int32(int64(uint64(int64(math.Float64bits(v0)))>>52))&int32(2047) < int32(17) {
 					goto l4
 				}
 				t11 := f64_canon(float64(v26 * math.Float64frombits(0x3ba3198a2e037073)))
@@ -2429,8 +2429,8 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 				v28 = f64_canon(float64(t11 - float64(float64(t12-v27)-v0)))
 				t14 := v1
 				v0 = f64_canon(float64(v27 - v28))
-				store64(mem, uint32(t14), math.Float64bits(v0))
-				if v3-int32(int64(uint64(int64(math.Float64bits(v0)))>>52))&i32(2047) < i32(50) {
+				binary.LittleEndian.PutUint64(mem[uint32(t14):], math.Float64bits(v0))
+				if v3-int32(int64(uint64(int64(math.Float64bits(v0)))>>52))&int32(2047) < int32(50) {
 					goto l4
 				}
 				t15 := f64_canon(float64(v26 * math.Float64frombits(0x397b839a252049c1)))
@@ -2441,64 +2441,64 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 				v28 = f64_canon(float64(t15 - float64(float64(t16-v27)-v0)))
 				t18 := v1
 				v0 = f64_canon(float64(v27 - v28))
-				store64(mem, uint32(t18), math.Float64bits(v0))
+				binary.LittleEndian.PutUint64(mem[uint32(t18):], math.Float64bits(v0))
 			}
 		l4:
-			store64(mem, uint64(uint32(v1))+8, math.Float64bits(f64_canon(float64(float64(v27-v0)-v28))))
+			binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], math.Float64bits(f64_canon(float64(float64(v27-v0)-v28))))
 			goto l1
 		}
 	l2:
-		if uint32(v5) >= uint32(i32(0x7ff00000)) {
+		if uint32(v5) >= uint32(int32(0x7ff00000)) {
 			t19 := v1
 			v0 = f64_canon(float64(v0 - v0))
-			store64(mem, uint32(t19), math.Float64bits(v0))
-			store64(mem, uint64(uint32(v1))+8, math.Float64bits(v0))
-			v2 = i32(0)
+			binary.LittleEndian.PutUint64(mem[uint32(t19):], math.Float64bits(v0))
+			binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], math.Float64bits(v0))
+			v2 = int32(0)
 			goto l1
 		}
-		v0 = math.Float64frombits(uint64(v30&i64(0xfffffffffffff) | i64(0x4160000000000000)))
-		v2 = i32(0)
+		v0 = math.Float64frombits(uint64(v30&int64(0xfffffffffffff) | int64(0x4160000000000000)))
+		v2 = int32(0)
 	l5:
-		if v2 != i32(16) {
-			t20 := v10 + i32(16) + v2
+		if v2 != int32(16) {
+			t20 := v10 + int32(16) + v2
 			v26 = float64(i32_trunc_sat_f64_s(v0))
-			store64(mem, uint32(t20), math.Float64bits(v26))
-			v2 = v2 + i32(8)
+			binary.LittleEndian.PutUint64(mem[uint32(t20):], math.Float64bits(v26))
+			v2 = v2 + int32(8)
 			v0 = f64_canon(float64(float64(v0-v26) * math.Float64frombits(0x4170000000000000)))
 			goto l5
 		}
-		store64(mem, uint64(uint32(v10))+32, math.Float64bits(v0))
-		v2 = v10 + i32(32)
-		v12 = i32(4)
+		binary.LittleEndian.PutUint64(mem[uint64(uint32(v10))+32:], math.Float64bits(v0))
+		v2 = v10 + int32(32)
+		v12 = int32(4)
 	l6:
 		{
-			v12 = v12 - i32(1)
-			t21 := math.Float64frombits(load64(mem, uint32(v2)))
-			v2 = v2 - i32(8)
+			v12 = v12 - int32(1)
+			t21 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v2):]))
+			v2 = v2 - int32(8)
 			if t21 == math.Float64frombits(0x0) {
 				goto l6
 			}
 		}
-		v16 = v10 + i32(16)
+		v16 = v10 + int32(16)
 		t22 := m.g0
-		v7 = t22 - i32(560)
+		v7 = t22 - int32(560)
 		m.g0 = v7
-		t23 := int32(load32(mem, uint32(i32(74388))))
+		t23 := int32(binary.LittleEndian.Uint32(mem[uint32(i32(74388)):]))
 		v13 = t23
 		t24 := v13
-		v2 = v12 - i32(1)
+		v2 = v12 - int32(1)
 		v3 = t24 + v2
-		v3 = v3>>31 | v3 + i32(1)
-		v9 = int32(uint32(v5)>>20) - i32(1046)
-		v5 = (v9 - i32(3)) / i32(24)
-		p25 := i32(0)
-		if v5 > i32(0) {
+		v3 = v3>>31 | v3 + int32(1)
+		v9 = int32(uint32(v5)>>20) - int32(1046)
+		v5 = (v9 - int32(3)) / int32(24)
+		p25 := int32(0)
+		if v5 > int32(0) {
 			p25 = v5
 		}
 		v8 = p25
 		v4 = v8 - v2
-		v6 = v8<<2 - v12<<2 + i32(74404)
-		v2 = v7 + i32(320)
+		v6 = v8<<2 - v12<<2 + int32(74404)
+		v2 = v7 + int32(320)
 		var p26 int32
 	l7:
 		{
@@ -2506,27 +2506,27 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 			if v3 != 0 {
 				t29 := v2
 				var p28 float64
-				if v4 < i32(0) {
+				if v4 < int32(0) {
 					p28 = math.Float64frombits(0x0)
 				} else {
-					t30 := int32(load32(mem, uint32(v6)))
+					t30 := int32(binary.LittleEndian.Uint32(mem[uint32(v6):]))
 					p28 = float64(t30)
 				}
-				store64(mem, uint32(t29), math.Float64bits(p28))
-				v6 = v6 + i32(4)
-				v3 = v3 - i32(1)
-				v2 = v2 + i32(8)
-				v4 = v4 + i32(1)
+				binary.LittleEndian.PutUint64(mem[uint32(t29):], math.Float64bits(p28))
+				v6 = v6 + int32(4)
+				v3 = v3 - int32(1)
+				v2 = v2 + int32(8)
+				v4 = v4 + int32(1)
 				goto l7
 			} else {
-				v6 = i32(0)
-				p31 := i32(0)
-				if v12 > i32(0) {
+				v6 = int32(0)
+				p31 := int32(0)
+				if v12 > int32(0) {
 					p31 = v12
 				}
 				v17 = p31
-				v11 = v13 | v13>>31 + i32(1)
-				p27 = v12<<3 + v7 + i32(312)
+				v11 = v13 | v13>>31 + int32(1)
+				p27 = v12<<3 + v7 + int32(312)
 			}
 			p26 = p27
 		}
@@ -2541,53 +2541,53 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 			l9:
 				{
 					if v3 == 0 {
-						store64(mem, uint32(v7+v6<<3), math.Float64bits(v0))
-						v5 = v5 + i32(8)
-						v6 = v6 + i32(1)
+						binary.LittleEndian.PutUint64(mem[uint32(v7+v6<<3):], math.Float64bits(v0))
+						v5 = v5 + int32(8)
+						v6 = v6 + int32(1)
 						goto l35
 					}
-					v3 = v3 - i32(1)
-					t32 := math.Float64frombits(load64(mem, uint32(v2)))
-					t33 := math.Float64frombits(load64(mem, uint32(v4)))
+					v3 = v3 - int32(1)
+					t32 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v2):]))
+					t33 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v4):]))
 					v0 = f64_canon(float64(float64(t32*t33) + v0))
-					v4 = v4 - i32(8)
-					v2 = v2 + i32(8)
+					v4 = v4 - int32(8)
+					v2 = v2 + int32(8)
 					goto l9
 				}
 			}
-			v20 = v7 + i32(476)
+			v20 = v7 + int32(476)
 			v21 = v20 + v13<<2
-			v22 = v8<<2 + i32(74400)
-			v15 = v8*i32(-24) + v9
-			v23 = i32(47) - v15
-			v18 = i32(48) - v15
-			v24 = v7 - i32(8)
-			v11 = v15 - i32(24)
+			v22 = v8<<2 + int32(74400)
+			v15 = v8*int32(-24) + v9
+			v23 = int32(47) - v15
+			v18 = int32(48) - v15
+			v24 = v7 - int32(8)
+			v11 = v15 - int32(24)
 			var p34 int32
-			if v11 <= i32(0) {
+			if v11 <= int32(0) {
 				p34 = 1
 			}
 			v19 = p34
-			v25 = v11 - i32(1)
+			v25 = v11 - int32(1)
 			v2 = v13
 		l25:
 			{
 				v5 = v2 << 3
 				v4 = v5 + v24
 				v3 = v2 & (v2 >> 31)
-				t35 := math.Float64frombits(load64(mem, uint32(v5+v7)))
+				t35 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v5+v7):]))
 				v0 = t35
-				v6 = v7 + i32(480)
+				v6 = v7 + int32(480)
 			l10:
 				if v2 != v3 {
 					t36 := v6
 					v26 = float64(i32_trunc_sat_f64_s(float64(v0 * math.Float64frombits(0x3e70000000000000))))
-					store32(mem, uint32(t36), uint32(i32_trunc_sat_f64_s(float64(float64(v26*math.Float64frombits(0xc170000000000000))+v0))))
-					v3 = v3 + i32(1)
-					v6 = v6 + i32(4)
-					t37 := math.Float64frombits(load64(mem, uint32(v4)))
+					binary.LittleEndian.PutUint32(mem[uint32(t36):], uint32(i32_trunc_sat_f64_s(float64(float64(v26*math.Float64frombits(0xc170000000000000))+v0))))
+					v3 = v3 + int32(1)
+					v6 = v6 + int32(4)
+					t37 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v4):]))
 					v0 = f64_canon(float64(t37 + v26))
-					v4 = v4 - i32(8)
+					v4 = v4 - int32(8)
 					goto l10
 				}
 				t38 := fn85(v0, v11)
@@ -2601,86 +2601,86 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 						{
 							if v19 == 0 {
 								v5 = v2<<2 + v7
-								t40 := int32(load32(mem, uint64(uint32(v5))+476))
+								t40 := int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v5))+476:]))
 								v8 = t40
 								v3 = i32_shr_s(v8, v18)
 								t41 := v5
 								v5 = v8 - i32_shl(v3, v18)
-								store32(mem, uint64(uint32(t41))+476, uint32(v5))
+								binary.LittleEndian.PutUint32(mem[uint64(uint32(t41))+476:], uint32(v5))
 								v14 = v3 + v14
 								t42 := i32_shr_s(v5, v23)
 								p39 = t42
 								goto l11
 							}
 							if v11 != 0 {
-								v9 = i32(2)
+								v9 = int32(2)
 								if v0 >= math.Float64frombits(0x3fe0000000000000) {
 									goto l14
 								}
-								v9 = i32(0)
+								v9 = int32(0)
 								goto l13
 							}
-							t43 := int32(load32(mem, uint64(uint32(v2<<2+v7))+476))
+							t43 := int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v2<<2+v7))+476:]))
 							p39 = t43 >> 23
 						}
 					l11:
 						v9 = p39
-						if v9 <= i32(0) {
+						if v9 <= int32(0) {
 							goto l13
 						}
 						goto l14
 					}
 				l14:
-					v5 = i32(0)
-					p44 := i32(0)
-					if v2 > i32(0) {
+					v5 = int32(0)
+					p44 := int32(0)
+					if v2 > int32(0) {
 						p44 = v2
 					}
 					v4 = p44
-					v3 = v7 + i32(480)
+					v3 = v7 + int32(480)
 				l20:
 					{
 						var p45 int32
 						{
 							if v4 != 0 {
-								t46 := int32(load32(mem, uint32(v3)))
+								t46 := int32(binary.LittleEndian.Uint32(mem[uint32(v3):]))
 								v8 = t46
 								t48 := v3
 								var p47 int32
 								if v5 != 0 {
-									p47 = i32(0xffffff)
+									p47 = int32(0xffffff)
 								} else {
 									if v8 == 0 {
 										goto l15
 									}
-									p47 = i32(0x1000000)
+									p47 = int32(0x1000000)
 								}
-								store32(mem, uint32(t48), uint32(p47-v8))
-								p45 = i32(1)
+								binary.LittleEndian.PutUint32(mem[uint32(t48):], uint32(p47-v8))
+								p45 = int32(1)
 								goto l16
 							}
 							if v19 != 0 {
 								goto l17
 							}
-							v3 = i32(0x7fffff)
+							v3 = int32(0x7fffff)
 							switch v25 {
 							default:
 								goto l17
 							case 1:
-								v3 = i32(0x3fffff)
+								v3 = int32(0x3fffff)
 								fallthrough
 							case 0:
 								v8 = v2<<2 + v7
-								t49 := int32(load32(mem, uint64(uint32(v8))+476))
-								store32(mem, uint64(uint32(v8))+476, uint32(t49&v3))
+								t49 := int32(binary.LittleEndian.Uint32(mem[uint64(uint32(v8))+476:]))
+								binary.LittleEndian.PutUint32(mem[uint64(uint32(v8))+476:], uint32(t49&v3))
 							}
 						l17:
-							v14 = v14 + i32(1)
-							if v9 != i32(2) {
+							v14 = v14 + int32(1)
+							if v9 != int32(2) {
 								goto l13
 							}
 							v0 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) - v0))
-							v9 = i32(2)
+							v9 = int32(2)
 							if v5 == 0 {
 								goto l13
 							}
@@ -2689,37 +2689,37 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 							goto l13
 						}
 					l15:
-						p45 = i32(0)
+						p45 = int32(0)
 					l16:
 						v5 = p45
-						v4 = v4 - i32(1)
-						v3 = v3 + i32(4)
+						v4 = v4 - int32(1)
+						v3 = v3 + int32(4)
 						goto l20
 					}
 				}
 			l13:
 				if v0 == math.Float64frombits(0x0) {
 					v4 = v20 + v2<<2
-					v6 = i32(0)
+					v6 = int32(0)
 					v3 = v2
 				l21:
 					if v3 > v13 {
-						v3 = v3 - i32(1)
-						t51 := int32(load32(mem, uint32(v4)))
+						v3 = v3 - int32(1)
+						t51 := int32(binary.LittleEndian.Uint32(mem[uint32(v4):]))
 						v6 = t51 | v6
-						v4 = v4 - i32(4)
+						v4 = v4 - int32(4)
 						goto l21
 					}
 					v3 = v21
 					v8 = v2
 					if v6 != 0 {
-						v3 = v2<<2 + v7 + i32(476)
+						v3 = v2<<2 + v7 + int32(476)
 					l22:
 						{
-							v2 = v2 - i32(1)
-							v11 = v11 - i32(24)
-							t52 := int32(load32(mem, uint32(v3)))
-							v3 = v3 - i32(4)
+							v2 = v2 - int32(1)
+							v11 = v11 - int32(24)
+							t52 := int32(binary.LittleEndian.Uint32(mem[uint32(v3):]))
+							v3 = v3 - int32(4)
 							if t52 == 0 {
 								goto l22
 							}
@@ -2728,9 +2728,9 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 					}
 				l24:
 					{
-						v8 = v8 + i32(1)
-						t53 := int32(load32(mem, uint32(v3)))
-						v3 = v3 - i32(4)
+						v8 = v8 + int32(1)
+						t53 := int32(binary.LittleEndian.Uint32(mem[uint32(v3):]))
+						v3 = v3 - int32(4)
 						if t53 == 0 {
 							goto l24
 						}
@@ -2740,65 +2740,65 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 						p54 = v2
 					}
 					v6 = p54
-					v5 = v7 + i32(320) + (v2+v12)<<3
+					v5 = v7 + int32(320) + (v2+v12)<<3
 				l27:
 					if v2 == v6 {
 						v2 = v8
 						goto l25
 					} else {
-						t55 := v7 + i32(320) + (v2+v12)<<3
+						t55 := v7 + int32(320) + (v2+v12)<<3
 						t56 := v22
-						v9 = v2 + i32(1)
-						t57 := int32(load32(mem, uint32(t56+v9<<2)))
-						store64(mem, uint32(t55), math.Float64bits(float64(t57)))
+						v9 = v2 + int32(1)
+						t57 := int32(binary.LittleEndian.Uint32(mem[uint32(t56+v9<<2):]))
+						binary.LittleEndian.PutUint64(mem[uint32(t55):], math.Float64bits(float64(t57)))
 						v0 = math.Float64frombits(0x0)
 						v3 = v17
 						v4 = v5
 						v2 = v16
 					l26:
 						if v3 != 0 {
-							v3 = v3 - i32(1)
-							t58 := math.Float64frombits(load64(mem, uint32(v2)))
-							t59 := math.Float64frombits(load64(mem, uint32(v4)))
+							v3 = v3 - int32(1)
+							t58 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v2):]))
+							t59 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v4):]))
 							v0 = f64_canon(float64(float64(t58*t59) + v0))
-							v4 = v4 - i32(8)
-							v2 = v2 + i32(8)
+							v4 = v4 - int32(8)
+							v2 = v2 + int32(8)
 							goto l26
 						}
-						store64(mem, uint32(v7+v9<<3), math.Float64bits(v0))
-						v5 = v5 + i32(8)
+						binary.LittleEndian.PutUint64(mem[uint32(v7+v9<<3):], math.Float64bits(v0))
+						v5 = v5 + int32(8)
 						v2 = v9
 						goto l27
 					}
 				}
 			}
 			{
-				t60 := fn85(v0, i32(24)-v15)
+				t60 := fn85(v0, int32(24)-v15)
 				v0 = t60
 				if v0 >= math.Float64frombits(0x4170000000000000) {
-					t61 := v7 + i32(480) + v2<<2
+					t61 := v7 + int32(480) + v2<<2
 					v3 = i32_trunc_sat_f64_s(float64(v0 * math.Float64frombits(0x3e70000000000000)))
-					store32(mem, uint32(t61), uint32(i32_trunc_sat_f64_s(float64(float64(float64(v3)*math.Float64frombits(0xc170000000000000))+v0))))
-					v2 = v2 + i32(1)
+					binary.LittleEndian.PutUint32(mem[uint32(t61):], uint32(i32_trunc_sat_f64_s(float64(float64(float64(v3)*math.Float64frombits(0xc170000000000000))+v0))))
+					v2 = v2 + int32(1)
 					v11 = v15
 					goto l28
 				}
 				v3 = i32_trunc_sat_f64_s(v0)
 			}
 		l28:
-			store32(mem, uint32(v7+i32(480)+v2<<2), uint32(v3))
+			binary.LittleEndian.PutUint32(mem[uint32(v7+int32(480)+v2<<2):], uint32(v3))
 		l23:
 			v4 = v7 + v2<<3
-			v6 = v7 + i32(480) + v2<<2
+			v6 = v7 + int32(480) + v2<<2
 			t62 := fn85(math.Float64frombits(0x3ff0000000000000), v11)
 			v0 = t62
 			v3 = v2
 		l33:
-			if v3 < i32(0) {
+			if v3 < int32(0) {
 				v6 = v7 + v2<<3
 				v5 = v2
 			l30:
-				if v5 >= i32(0) {
+				if v5 >= int32(0) {
 					t63 := v13
 					v8 = v2 - v5
 					p64 := v8
@@ -2807,35 +2807,35 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 					}
 					v3 = p64
 					p65 := v3
-					if v3 < i32(0) {
-						p65 = i32(-1)
+					if v3 < int32(0) {
+						p65 = int32(-1)
 					}
-					v4 = p65 + i32(1)
+					v4 = p65 + int32(1)
 					v0 = math.Float64frombits(0x0)
-					v3 = i32(0)
+					v3 = int32(0)
 				l29:
 					if v4 != 0 {
-						t66 := math.Float64frombits(load64(mem, uint32(v3+i32(77168))))
-						t67 := math.Float64frombits(load64(mem, uint32(v3+v6)))
+						t66 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v3+int32(77168)):]))
+						t67 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v3+v6):]))
 						v0 = f64_canon(float64(float64(t66*t67) + v0))
-						v4 = v4 - i32(1)
-						v3 = v3 + i32(8)
+						v4 = v4 - int32(1)
+						v3 = v3 + int32(8)
 						goto l29
 					}
-					store64(mem, uint32(v7+i32(160)+v8<<3), math.Float64bits(v0))
-					v6 = v6 - i32(8)
-					v5 = v5 - i32(1)
+					binary.LittleEndian.PutUint64(mem[uint32(v7+int32(160)+v8<<3):], math.Float64bits(v0))
+					v6 = v6 - int32(8)
+					v5 = v5 - int32(1)
 					goto l30
 				}
-				v4 = v7 + i32(160) + v2<<3
+				v4 = v7 + int32(160) + v2<<3
 				v0 = math.Float64frombits(0x0)
 				v3 = v2
 			l31:
-				if v3 >= i32(0) {
-					v3 = v3 - i32(1)
-					t68 := math.Float64frombits(load64(mem, uint32(v4)))
+				if v3 >= int32(0) {
+					v3 = v3 - int32(1)
+					t68 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v4):]))
 					v0 = f64_canon(float64(v0 + t68))
-					v4 = v4 - i32(8)
+					v4 = v4 - int32(8)
 					goto l31
 				}
 				t70 := v10
@@ -2843,21 +2843,21 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 				if v9 != 0 {
 					p69 = f64_neg(v0)
 				}
-				store64(mem, uint32(t70), math.Float64bits(p69))
-				p71 := i32(0)
-				if v2 > i32(0) {
+				binary.LittleEndian.PutUint64(mem[uint32(t70):], math.Float64bits(p69))
+				p71 := int32(0)
+				if v2 > int32(0) {
 					p71 = v2
 				}
 				v3 = p71
-				t72 := math.Float64frombits(load64(mem, uint64(uint32(v7))+160))
+				t72 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v7))+160:]))
 				v0 = f64_canon(float64(t72 - v0))
-				v4 = v7 + i32(160) | i32(8)
+				v4 = v7 + int32(160) | int32(8)
 			l32:
 				if v3 != 0 {
-					v3 = v3 - i32(1)
-					t73 := math.Float64frombits(load64(mem, uint32(v4)))
+					v3 = v3 - int32(1)
+					t73 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v4):]))
 					v0 = f64_canon(float64(v0 + t73))
-					v4 = v4 + i32(8)
+					v4 = v4 + int32(8)
 					goto l32
 				}
 				t75 := v10
@@ -2865,36 +2865,36 @@ func (m *Module) fn69(v0 float64, v1 int32) int32 {
 				if v9 != 0 {
 					p74 = f64_neg(v0)
 				}
-				store64(mem, uint64(uint32(t75))+8, math.Float64bits(p74))
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(t75))+8:], math.Float64bits(p74))
 			} else {
-				t76 := int32(load32(mem, uint32(v6)))
-				store64(mem, uint32(v4), math.Float64bits(f64_canon(float64(v0*float64(t76)))))
-				v4 = v4 - i32(8)
-				v6 = v6 - i32(4)
-				v3 = v3 - i32(1)
+				t76 := int32(binary.LittleEndian.Uint32(mem[uint32(v6):]))
+				binary.LittleEndian.PutUint64(mem[uint32(v4):], math.Float64bits(f64_canon(float64(v0*float64(t76)))))
+				v4 = v4 - int32(8)
+				v6 = v6 - int32(4)
+				v3 = v3 - int32(1)
 				v0 = f64_canon(float64(v0 * math.Float64frombits(0x3e70000000000000)))
 				goto l33
 			}
-			m.g0 = v7 + i32(560)
-			v2 = v14 & i32(7)
+			m.g0 = v7 + int32(560)
+			v2 = v14 & int32(7)
 			goto l34
 		}
 	l34:
-		t77 := math.Float64frombits(load64(mem, uint32(v10)))
+		t77 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v10):]))
 		v0 = t77
-		if v30 < i64(0) {
-			store64(mem, uint32(v1), math.Float64bits(f64_neg(v0)))
-			t78 := math.Float64frombits(load64(mem, uint64(uint32(v10))+8))
-			store64(mem, uint64(uint32(v1))+8, math.Float64bits(f64_neg(t78)))
-			v2 = i32(0) - v2
+		if v30 < int64(0) {
+			binary.LittleEndian.PutUint64(mem[uint32(v1):], math.Float64bits(f64_neg(v0)))
+			t78 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v10))+8:]))
+			binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], math.Float64bits(f64_neg(t78)))
+			v2 = int32(0) - v2
 			goto l1
 		}
-		store64(mem, uint32(v1), math.Float64bits(v0))
-		t79 := math.Float64frombits(load64(mem, uint64(uint32(v10))+8))
-		store64(mem, uint64(uint32(v1))+8, math.Float64bits(t79))
+		binary.LittleEndian.PutUint64(mem[uint32(v1):], math.Float64bits(v0))
+		t79 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v10))+8:]))
+		binary.LittleEndian.PutUint64(mem[uint64(uint32(v1))+8:], math.Float64bits(t79))
 	}
 l1:
-	m.g0 = v10 + i32(48)
+	m.g0 = v10 + int32(48)
 	return v2
 }
 func fn70(v0, v1 float64, v2 int32) float64 {
@@ -2913,18 +2913,18 @@ func (m *Module) fn71(v0 float64) float64 {
 	var v3, v4, v5, v6 float64
 	var v7 int64
 	t0 := m.g0
-	v2 = t0 - i32(16)
+	v2 = t0 - int32(16)
 	{
 		{
 			var p1 float64
 			{
 				v7 = int64(math.Float64bits(v0))
-				v1 = int32(int64(uint64(v7)>>32)) & i32(0x7fffffff)
-				if uint32(v1) >= uint32(i32(1078159482)) {
+				v1 = int32(int64(uint64(v7)>>32)) & int32(0x7fffffff)
+				if uint32(v1) >= uint32(int32(1078159482)) {
 					if v0 != v0 {
 						goto l0
 					}
-					if v7 < i64(0) {
+					if v7 < int64(0) {
 						return math.Float64frombits(0xbff0000000000000)
 					}
 					if !(v0 > math.Float64frombits(0x40862e42fefa39ef)) {
@@ -2932,28 +2932,28 @@ func (m *Module) fn71(v0 float64) float64 {
 					}
 					return f64_canon(float64(v0 * math.Float64frombits(0x7fe0000000000000)))
 				}
-				if uint32(v1) < uint32(i32(1071001155)) {
-					if uint32(v1) > uint32(i32(0x3c8fffff)) {
-						v1 = i32(0)
+				if uint32(v1) < uint32(int32(1071001155)) {
+					if uint32(v1) > uint32(int32(0x3c8fffff)) {
+						v1 = int32(0)
 						goto l4
 					}
-					if uint32(v1) > uint32(i32(0xfffff)) {
+					if uint32(v1) > uint32(int32(0xfffff)) {
 						goto l0
 					}
-					store32(mem, uint64(uint32(v2))+12, math.Float32bits(f32_canon(float32(v0))))
+					binary.LittleEndian.PutUint32(mem[uint64(uint32(v2))+12:], math.Float32bits(f32_canon(float32(v0))))
 					return v0
 				}
-				if uint32(v1) > uint32(i32(0x3ff0a2b1)) {
+				if uint32(v1) > uint32(int32(0x3ff0a2b1)) {
 					goto l1
 				}
-				if v7 >= i64(0) {
-					v1 = i32(1)
+				if v7 >= int64(0) {
+					v1 = int32(1)
 					v3 = math.Float64frombits(0x3dea39ef35793c76)
 					t2 := f64_canon(float64(v0 + math.Float64frombits(0xbfe62e42fee00000)))
 					p1 = t2
 					goto l3
 				}
-				v1 = i32(-1)
+				v1 = int32(-1)
 				v3 = math.Float64frombits(0xbdea39ef35793c76)
 				t3 := f64_canon(float64(v0 + math.Float64frombits(0x3fe62e42fee00000)))
 				p1 = t3
@@ -2982,7 +2982,7 @@ func (m *Module) fn71(v0 float64) float64 {
 			return f64_canon(float64(v0 - float64(float64(v0*v5)-v4)))
 		}
 		v3 = f64_canon(float64(float64(float64(v0*float64(v5-v3))-v3) - v4))
-		switch v1 + i32(1) {
+		switch v1 + int32(1) {
 		case 0:
 			return f64_canon(float64(float64(float64(v0-v3)*math.Float64frombits(0x3fe0000000000000)) + math.Float64frombits(0xbfe0000000000000)))
 		case 2:
@@ -2992,18 +2992,18 @@ func (m *Module) fn71(v0 float64) float64 {
 			v0 = f64_canon(float64(v0 - v3))
 			return f64_canon(float64(float64(v0+v0) + math.Float64frombits(0x3ff0000000000000)))
 		default:
-			v4 = math.Float64frombits(uint64(int64(uint32(v1+i32(1023))) << 52))
-			if uint32(v1) >= uint32(i32(57)) {
+			v4 = math.Float64frombits(uint64(int64(uint32(v1+int32(1023))) << 52))
+			if uint32(v1) >= uint32(int32(57)) {
 				v0 = f64_canon(float64(float64(v0-v3) + math.Float64frombits(0x3ff0000000000000)))
 				p6 := f64_canon(float64(v0 * v4))
-				if v1 == i32(1024) {
+				if v1 == int32(1024) {
 					p6 = f64_canon(float64(float64(v0+v0) * math.Float64frombits(0x7fe0000000000000)))
 				}
 				return f64_canon(float64(p6 + math.Float64frombits(0xbff0000000000000)))
 			}
-			v5 = math.Float64frombits(uint64(int64(uint32(v1^i32(1023))) << 52))
+			v5 = math.Float64frombits(uint64(int64(uint32(v1^int32(1023))) << 52))
 			p7 := f64_canon(float64(float64(v0-float64(v3+v5)) + math.Float64frombits(0x3ff0000000000000)))
-			if uint32(v1) <= uint32(i32(19)) {
+			if uint32(v1) <= uint32(int32(19)) {
 				p7 = f64_canon(float64(float64(math.Float64frombits(0x3ff0000000000000)-v5) + float64(v0-v3)))
 			}
 			v0 = f64_canon(float64(p7 * v4))
@@ -3018,37 +3018,37 @@ func (m *Module) fn72(v0 float64) float64 {
 	var v4, v5, v6 int32
 	var v7, v8 int64
 	t0 := m.g0
-	v4 = t0 - i32(16)
+	v4 = t0 - int32(16)
 	var p1 float64
 	{
 		{
 			v7 = int64(math.Float64bits(v0))
-			v5 = int32(int64(uint64(v7)>>52)) & i32(2047)
-			if uint32(v5-i32(969)) < uint32(i32(63)) {
+			v5 = int32(int64(uint64(v7)>>52)) & int32(2047)
+			if uint32(v5-int32(969)) < uint32(int32(63)) {
 				v6 = v5
 				goto l0
 			}
-			if uint32(v5) <= uint32(i32(968)) {
+			if uint32(v5) <= uint32(int32(968)) {
 				return f64_canon(float64(v0 + math.Float64frombits(0x3ff0000000000000)))
 			}
-			if uint32(v5) < uint32(i32(1033)) {
+			if uint32(v5) < uint32(int32(1033)) {
 				goto l0
 			}
-			if v7 == i64(-0x10000000000000) {
+			if v7 == int64(-0x10000000000000) {
 				p1 = math.Float64frombits(0x0)
 				goto l1
 			}
 			_ = math.Float64frombits(0x0)
-			if v5 == i32(2047) {
+			if v5 == int32(2047) {
 				return f64_canon(float64(v0 + math.Float64frombits(0x3ff0000000000000)))
 			}
-			if v7 < i64(0) {
-				store64(mem, uint64(uint32(v4))+8, uint64(i64(0x1000000000000000)))
-				t2 := math.Float64frombits(load64(mem, uint64(uint32(v4))+8))
+			if v7 < int64(0) {
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(v4))+8:], uint64(int64(0x1000000000000000)))
+				t2 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v4))+8:]))
 				return f64_canon(float64(t2 * math.Float64frombits(0x1000000000000000)))
 			}
-			store64(mem, uint64(uint32(v4))+8, uint64(i64(0x7000000000000000)))
-			t3 := math.Float64frombits(load64(mem, uint64(uint32(v4))+8))
+			binary.LittleEndian.PutUint64(mem[uint64(uint32(v4))+8:], uint64(int64(0x7000000000000000)))
+			t3 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v4))+8:]))
 			return f64_canon(float64(t3 * math.Float64frombits(0x7000000000000000)))
 		}
 	l0:
@@ -3060,23 +3060,23 @@ func (m *Module) fn72(v0 float64) float64 {
 		t5 := f64_canon(float64(v1 * float64(float64(v0*math.Float64frombits(0x3fc555555555543c))+math.Float64frombits(0x3fdffffffffffdbd))))
 		t6 := v0
 		v8 = int64(math.Float64bits(v2))
-		v5 = int32(v8) << 4 & i32(2032)
-		t7 := math.Float64frombits(load64(mem, uint64(uint32(v5))+65712))
+		v5 = int32(v8) << 4 & int32(2032)
+		t7 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v5))+65712:]))
 		v0 = f64_canon(float64(t4 + float64(t5+float64(t6+t7))))
-		t8 := int64(load64(mem, uint64(uint32(v5))+65720))
+		t8 := int64(binary.LittleEndian.Uint64(mem[uint64(uint32(v5))+65720:]))
 		v7 = t8 + v8<<45
 		if v6 == 0 {
-			if v8&i64(0x80000000) == 0 {
-				v1 = math.Float64frombits(uint64(v7 - i64(0x3f10000000000000)))
+			if v8&int64(0x80000000) == 0 {
+				v1 = math.Float64frombits(uint64(v7 - int64(0x3f10000000000000)))
 				return f64_canon(float64(float64(float64(v1*v0)+v1) * math.Float64frombits(0x7f00000000000000)))
 			}
-			v1 = math.Float64frombits(uint64(v7 + i64(0x3fe0000000000000)))
+			v1 = math.Float64frombits(uint64(v7 + int64(0x3fe0000000000000)))
 			v2 = f64_canon(float64(v1 * v0))
 			v0 = f64_canon(float64(v2 + v1))
 			if v0 < math.Float64frombits(0x3ff0000000000000) {
-				store64(mem, uint64(uint32(v4))+8, uint64(i64(0x10000000000000)))
-				t9 := math.Float64frombits(load64(mem, uint64(uint32(v4))+8))
-				store64(mem, uint64(uint32(v4))+8, math.Float64bits(f64_canon(float64(t9*math.Float64frombits(0x10000000000000)))))
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(v4))+8:], uint64(int64(0x10000000000000)))
+				t9 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v4))+8:]))
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(v4))+8:], math.Float64bits(f64_canon(float64(t9*math.Float64frombits(0x10000000000000)))))
 				v3 = f64_canon(float64(v0 + math.Float64frombits(0x3ff0000000000000)))
 				v0 = f64_canon(float64(float64(v3+float64(float64(v2+float64(v1-v0))+float64(v0+float64(math.Float64frombits(0x3ff0000000000000)-v3)))) + math.Float64frombits(0xbff0000000000000)))
 				p10 := v0
@@ -3100,16 +3100,16 @@ func (m *Module) fn73(v0, v1 float64) float64 {
 func (m *Module) fn74(v0 int32, v1 float64) float64 {
 	var v2, v3 float64
 	v3 = f64_abs(v1)
-	if uint32(v0) <= uint32(i32(0x3ff3ffff)) {
+	if uint32(v0) <= uint32(int32(0x3ff3ffff)) {
 		v1 = f64_canon(float64(v3 + math.Float64frombits(0xbff0000000000000)))
 		return f64_canon(float64(math.Float64frombits(0x3fc3d4fa80000000) - float64(float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*math.Float64frombits(0xbf61bf380a96073f))+math.Float64frombits(0x3fa22a36599795eb)))+math.Float64frombits(0xbfbc63983d3e28ec)))+math.Float64frombits(0x3fd45fca805120e4)))+math.Float64frombits(0xbfd7d240fbb8c3f1)))+math.Float64frombits(0x3fda8d00ad92b34d)))+math.Float64frombits(0xbf6359b8bef77538))/float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*math.Float64frombits(0x3f888b545735151d))+math.Float64frombits(0x3f8bedc26b51dd1c)))+math.Float64frombits(0x3fc02660e763351f)))+math.Float64frombits(0x3fb2635cd99fe9a7)))+math.Float64frombits(0x3fe14af092eb6f33)))+math.Float64frombits(0x3fbb3e6618eee323)))+math.Float64frombits(0x3ff0000000000000)))))
 	}
 	v1 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / float64(v1*v1)))
-	v2 = math.Float64frombits(uint64(int64(math.Float64bits(v3)) & i64(0x7fffffff00000000)))
+	v2 = math.Float64frombits(uint64(int64(math.Float64bits(v3)) & int64(0x7fffffff00000000)))
 	t0 := m.fn72(f64_canon(float64(math.Float64frombits(0xbfe2000000000000) - float64(v2*v2))))
 	t2 := f64_canon(float64(float64(v2-v3) * float64(v3+v2)))
 	var p1 float64
-	if uint32(v0) <= uint32(i32(0x4006db6c)) {
+	if uint32(v0) <= uint32(int32(0x4006db6c)) {
 		v2 = f64_canon(float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*math.Float64frombits(0xbfaeeff2ee749a62))+math.Float64frombits(0x401a47ef8e484a93)))+math.Float64frombits(0x405b28a3ee48ae2c)))+math.Float64frombits(0x407ad02157700314)))+math.Float64frombits(0x40842b1921ec2868)))+math.Float64frombits(0x407b290dd58a1a71)))+math.Float64frombits(0x4061350c526ae721))) + math.Float64frombits(0x4033a6b9bd707687)))
 		t3 := f64_canon(float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*float64(float64(v1*math.Float64frombits(0xc023a0efc69ac25c))+math.Float64frombits(0xc054526557e4d2f2)))+math.Float64frombits(0xc067135cebccabb2)))+math.Float64frombits(0xc0644cb184282266)))+math.Float64frombits(0xc04f300ae4cba38d)))+math.Float64frombits(0xc0251e0441b0e726)))+math.Float64frombits(0xbfe63416e4ba7360))) + math.Float64frombits(0xbf843412600d6435)))
 		p1 = t3
@@ -3126,24 +3126,24 @@ func (m *Module) fn75(v0 float64, v1 int32) float64 {
 	var v2 int32
 	var v3 int64
 	v3 = int64(math.Float64bits(v0))
-	v2 = int32(int64(uint64(v3)>>52)) & i32(2047)
-	if v2 != i32(2047) {
+	v2 = int32(int64(uint64(v3)>>52)) & int32(2047)
+	if v2 != int32(2047) {
 		if v2 == 0 {
 			t1 := v1
 			var p0 int32
 			if v0 == math.Float64frombits(0x0) {
-				p0 = i32(0)
+				p0 = int32(0)
 			} else {
 				t2 := m.fn75(f64_canon(float64(v0*math.Float64frombits(0x43f0000000000000))), v1)
 				v0 = t2
-				t3 := int32(load32(mem, uint32(v1)))
-				p0 = t3 + i32(-64)
+				t3 := int32(binary.LittleEndian.Uint32(mem[uint32(v1):]))
+				p0 = t3 + int32(-64)
 			}
-			store32(mem, uint32(t1), uint32(p0))
+			binary.LittleEndian.PutUint32(mem[uint32(t1):], uint32(p0))
 			return v0
 		}
-		store32(mem, uint32(v1), uint32(v2-i32(1022)))
-		v0 = math.Float64frombits(uint64(v3&i64(-0x7ff0000000000001) | i64(0x3fe0000000000000)))
+		binary.LittleEndian.PutUint32(mem[uint32(v1):], uint32(v2-int32(1022)))
+		v0 = math.Float64frombits(uint64(v3&int64(-0x7ff0000000000001) | int64(0x3fe0000000000000)))
 	}
 	return v0
 }
@@ -3152,73 +3152,73 @@ func (m *Module) fn76(v0, v1 int32, v2 float64) {
 	var v3, v4 float64
 	t0 := v0
 	v4 = f64_canon(float64(v2 * v2))
-	store64(mem, uint32(t0), math.Float64bits(v4))
+	binary.LittleEndian.PutUint64(mem[uint32(t0):], math.Float64bits(v4))
 	t1 := v1
 	t2 := v2
 	v3 = f64_canon(float64(v2 * math.Float64frombits(0x41a0000002000000)))
 	v2 = f64_canon(float64(v3 + float64(v2-v3)))
 	v3 = f64_canon(float64(t2 - v2))
-	store64(mem, uint32(t1), math.Float64bits(f64_canon(float64(float64(v3*v3)+float64(float64(float64(v2+v2)*v3)+float64(float64(v2*v2)-v4))))))
+	binary.LittleEndian.PutUint64(mem[uint32(t1):], math.Float64bits(f64_canon(float64(float64(v3*v3)+float64(float64(float64(v2+v2)*v3)+float64(float64(v2*v2)-v4))))))
 }
 func (m *Module) fn77(v0 float64) int32 {
 	mem := m.memory
 	var v1, v2 int32
 	var v3 int64
 	t0 := m.g0
-	v1 = t0 - i32(16)
+	v1 = t0 - int32(16)
 	{
 		v3 = int64(math.Float64bits(v0))
-		v2 = int32(int64(uint64(v3)>>52)) & i32(2047)
-		if v2 != i32(2047) {
+		v2 = int32(int64(uint64(v3)>>52)) & int32(2047)
+		if v2 != int32(2047) {
 			if v2 != 0 {
 				goto l0
 			}
 			v3 = v3 << 12
 			if v3 == 0 {
-				store32(mem, uint64(uint32(v1))+8, uint32(i32(0x7fc00000)))
-				return i32(-0x80000000)
+				binary.LittleEndian.PutUint32(mem[uint64(uint32(v1))+8:], uint32(int32(0x7fc00000)))
+				return int32(-0x80000000)
 			}
-			v1 = i32(-1023)
+			v1 = int32(-1023)
 		l3:
-			if v3 < i64(0) {
+			if v3 < int64(0) {
 				goto l2
 			}
 			v3 = v3 << 1
-			v1 = v1 - i32(1)
+			v1 = v1 - int32(1)
 			goto l3
 		}
-		store32(mem, uint64(uint32(v1))+12, uint32(i32(0x7fc00000)))
-		p1 := i32(-0x80000000)
-		if v3&i64(0xfffffffffffff) == 0 {
-			p1 = i32(0x7fffffff)
+		binary.LittleEndian.PutUint32(mem[uint64(uint32(v1))+12:], uint32(int32(0x7fc00000)))
+		p1 := int32(-0x80000000)
+		if v3&int64(0xfffffffffffff) == 0 {
+			p1 = int32(0x7fffffff)
 		}
 		return p1
 	}
 l0:
-	v1 = v2 - i32(1023)
+	v1 = v2 - int32(1023)
 l2:
 	return v1
 }
 func (m *Module) fn78(v0 float64) float64 {
 	var v1 float64
 	var v2 int32
-	v2 = int32(int64(uint64(int64(math.Float64bits(v0)))>>32)) & i32(0x7fffffff)
-	if uint32(v2) >= uint32(i32(0x7ff00000)) {
+	v2 = int32(int64(uint64(int64(math.Float64bits(v0)))>>32)) & int32(0x7fffffff)
+	if uint32(v2) >= uint32(int32(0x7ff00000)) {
 		return f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / float64(v0*v0)))
 	}
 	v1 = f64_abs(v0)
-	if uint32(v2) >= uint32(i32(0x40000000)) {
-		t0 := m.fn79(v2, v1, i32(0))
+	if uint32(v2) >= uint32(int32(0x40000000)) {
+		t0 := m.fn79(v2, v1, int32(0))
 		return t0
 	}
-	if uint32(v2) >= uint32(i32(0x3f200000)) {
+	if uint32(v2) >= uint32(int32(0x3f200000)) {
 		v1 = f64_canon(float64(v1 * math.Float64frombits(0x3fe0000000000000)))
 		t1 := f64_canon(float64(float64(v1+math.Float64frombits(0x3ff0000000000000)) * float64(math.Float64frombits(0x3ff0000000000000)-v1)))
 		v0 = f64_canon(float64(v0 * v0))
 		return f64_canon(float64(t1 + float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*math.Float64frombits(0xbe33d5e773d63fce))+math.Float64frombits(0x3ebeb1d10c503919)))+math.Float64frombits(0xbf28e6a5b61ac6e9)))+math.Float64frombits(0x3f8ffffffffffffd)))/float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*math.Float64frombits(0x3e1408bcf4745d8f))+math.Float64frombits(0x3ea13b54ce84d5a9)))+math.Float64frombits(0x3f1ea6d2dd57dbf4)))+math.Float64frombits(0x3f8ffce882c8c2a4)))+math.Float64frombits(0x3ff0000000000000))))))
 	}
 	p2 := v1
-	if uint32(v2) > uint32(i32(0x37ffffff)) {
+	if uint32(v2) > uint32(int32(0x37ffffff)) {
 		p2 = f64_canon(float64(v1 * float64(v1*math.Float64frombits(0x3fd0000000000000))))
 	}
 	return f64_canon(float64(math.Float64frombits(0x3ff0000000000000) - p2))
@@ -3239,7 +3239,7 @@ func (m *Module) fn79(v0 int32, v1 float64, v2 int32) float64 {
 	v5 = p3
 	v6 = f64_canon(float64(t2 + v5))
 	{
-		if uint32(v0) > uint32(i32(0x7fdfffff)) {
+		if uint32(v0) > uint32(int32(0x7fdfffff)) {
 			goto l0
 		}
 		t4 := m.fn67(f64_canon(float64(v1 + v1)))
@@ -3252,83 +3252,83 @@ func (m *Module) fn79(v0 int32, v1 float64, v2 int32) float64 {
 		}
 		v5 = f64_canon(float64(v4 / v6))
 	l1:
-		if uint32(v0) > uint32(i32(0x47ffffff)) {
+		if uint32(v0) > uint32(int32(0x47ffffff)) {
 			goto l0
 		}
 		var p6 int32
 		{
-			v8 = int32(int64(uint64(int64(math.Float64bits(v1)))>>32)) & i32(0x7fffffff)
+			v8 = int32(int64(uint64(int64(math.Float64bits(v1)))>>32)) & int32(0x7fffffff)
 			var p7 int32
-			if uint32(v8) > uint32(i32(0x401fffff)) {
+			if uint32(v8) > uint32(int32(0x401fffff)) {
 				p7 = 1
 			}
 			v9 = p7
 			if v9 != 0 {
-				v0 = i32(81408)
-				p6 = i32(81456)
+				v0 = int32(81408)
+				p6 = int32(81456)
 				goto l2
 			}
-			if uint32(v8) > uint32(i32(1074933386)) {
-				v0 = i32(81504)
-				p6 = i32(81552)
+			if uint32(v8) > uint32(int32(1074933386)) {
+				v0 = int32(81504)
+				p6 = int32(81552)
 				goto l2
 			}
 			var p8 int32
-			if uint32(v8) > uint32(i32(0x4006db6c)) {
+			if uint32(v8) > uint32(int32(0x4006db6c)) {
 				p8 = 1
 			}
 			v7 = p8
-			p9 := i32(81696)
+			p9 := int32(81696)
 			if v7 != 0 {
-				p9 = i32(81600)
+				p9 = int32(81600)
 			}
 			v0 = p9
-			p10 := i32(81744)
+			p10 := int32(81744)
 			if v7 != 0 {
-				p10 = i32(81648)
+				p10 = int32(81648)
 			}
 			p6 = p10
 		}
 	l2:
 		v7 = p6
 		v3 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / float64(v1*v1)))
-		t11 := math.Float64frombits(load64(mem, uint64(uint32(v0))+40))
-		t12 := math.Float64frombits(load64(mem, uint64(uint32(v0))+32))
-		t13 := math.Float64frombits(load64(mem, uint64(uint32(v0))+24))
-		t14 := math.Float64frombits(load64(mem, uint64(uint32(v0))+16))
-		t15 := math.Float64frombits(load64(mem, uint64(uint32(v0))+8))
-		t16 := math.Float64frombits(load64(mem, uint32(v0)))
-		t17 := math.Float64frombits(load64(mem, uint64(uint32(v7))+32))
-		t18 := math.Float64frombits(load64(mem, uint64(uint32(v7))+24))
-		t19 := math.Float64frombits(load64(mem, uint64(uint32(v7))+16))
-		t20 := math.Float64frombits(load64(mem, uint64(uint32(v7))+8))
-		t21 := math.Float64frombits(load64(mem, uint32(v7)))
+		t11 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+40:]))
+		t12 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+32:]))
+		t13 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+24:]))
+		t14 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+16:]))
+		t15 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+8:]))
+		t16 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v0):]))
+		t17 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v7))+32:]))
+		t18 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v7))+24:]))
+		t19 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v7))+16:]))
+		t20 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v7))+8:]))
+		t21 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v7):]))
 		t23 := f64_canon(float64(float64(float64(float64(v3*float64(float64(v3*float64(float64(v3*float64(float64(v3*float64(float64(v3*t11)+t12))+t13))+t14))+t15))+t16)/float64(float64(v3*float64(float64(v3*float64(float64(v3*float64(float64(v3*float64(float64(v3*t17)+t18))+t19))+t20))+t21))+math.Float64frombits(0x3ff0000000000000))) + math.Float64frombits(0x3ff0000000000000)))
 		var p22 int32
 		{
 			if v9 != 0 {
-				v0 = i32(81792)
-				p22 = i32(81840)
+				v0 = int32(81792)
+				p22 = int32(81840)
 				goto l3
 			}
-			if uint32(v8) > uint32(i32(1074933386)) {
-				v0 = i32(81888)
-				p22 = i32(81936)
+			if uint32(v8) > uint32(int32(1074933386)) {
+				v0 = int32(81888)
+				p22 = int32(81936)
 				goto l3
 			}
 			var p24 int32
-			if uint32(v8) > uint32(i32(0x4006db6c)) {
+			if uint32(v8) > uint32(int32(0x4006db6c)) {
 				p24 = 1
 			}
 			v7 = p24
-			p25 := i32(82080)
+			p25 := int32(82080)
 			if v7 != 0 {
-				p25 = i32(81984)
+				p25 = int32(81984)
 			}
 			v0 = p25
-			p26 := i32(82128)
+			p26 := int32(82128)
 			if v7 != 0 {
-				p26 = i32(82032)
+				p26 = int32(82032)
 			}
 			p22 = p26
 		}
@@ -3339,18 +3339,18 @@ func (m *Module) fn79(v0 int32, v1 float64, v2 int32) float64 {
 		if v2 != 0 {
 			p27 = v5
 		}
-		t29 := math.Float64frombits(load64(mem, uint64(uint32(v0))+40))
-		t30 := math.Float64frombits(load64(mem, uint64(uint32(v0))+32))
-		t31 := math.Float64frombits(load64(mem, uint64(uint32(v0))+24))
-		t32 := math.Float64frombits(load64(mem, uint64(uint32(v0))+16))
-		t33 := math.Float64frombits(load64(mem, uint64(uint32(v0))+8))
-		t34 := math.Float64frombits(load64(mem, uint32(v0)))
-		t35 := math.Float64frombits(load64(mem, uint64(uint32(v7))+40))
-		t36 := math.Float64frombits(load64(mem, uint64(uint32(v7))+32))
-		t37 := math.Float64frombits(load64(mem, uint64(uint32(v7))+24))
-		t38 := math.Float64frombits(load64(mem, uint64(uint32(v7))+16))
-		t39 := math.Float64frombits(load64(mem, uint64(uint32(v7))+8))
-		t40 := math.Float64frombits(load64(mem, uint32(v7)))
+		t29 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+40:]))
+		t30 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+32:]))
+		t31 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+24:]))
+		t32 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+16:]))
+		t33 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+8:]))
+		t34 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v0):]))
+		t35 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v7))+40:]))
+		t36 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v7))+32:]))
+		t37 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v7))+24:]))
+		t38 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v7))+16:]))
+		t39 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v7))+8:]))
+		t40 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v7):]))
 		v6 = f64_canon(float64(t28 + float64(p27*float64(float64(float64(float64(float64(v3*float64(float64(v3*float64(float64(v3*float64(float64(v3*float64(float64(v3*t29)+t30))+t31))+t32))+t33))+t34)/float64(float64(v3*float64(float64(v3*float64(float64(v3*float64(float64(v3*float64(float64(v3*float64(float64(v3*t35)+t36))+t37))+t38))+t39))+t40))+math.Float64frombits(0x3ff0000000000000)))+math.Float64frombits(0xbfc0000000000000))/v1))))
 	}
 l0:
@@ -3361,37 +3361,37 @@ func (m *Module) fn80(v0 float64) float64 {
 	var v1, v2 int32
 	var v3 float64
 	t0 := m.g0
-	v1 = t0 - i32(16)
+	v1 = t0 - int32(16)
 	m.g0 = v1
 	{
-		v2 = int32(int64(uint64(int64(math.Float64bits(v0)))>>32)) & i32(0x7fffffff)
-		if uint32(v2) <= uint32(i32(1072243195)) {
-			if uint32(v2) <= uint32(i32(0x3e4fffff)) {
+		v2 = int32(int64(uint64(int64(math.Float64bits(v0)))>>32)) & int32(0x7fffffff)
+		if uint32(v2) <= uint32(int32(1072243195)) {
+			if uint32(v2) <= uint32(int32(0x3e4fffff)) {
 				t2 := v1
 				p1 := f64_canon(float64(v0 + math.Float64frombits(0x4770000000000000)))
-				if uint32(v2) < uint32(i32(0x100000)) {
+				if uint32(v2) < uint32(int32(0x100000)) {
 					p1 = f64_canon(float64(v0 * math.Float64frombits(0x3870000000000000)))
 				}
-				store64(mem, uint32(t2), math.Float64bits(p1))
+				binary.LittleEndian.PutUint64(mem[uint32(t2):], math.Float64bits(p1))
 				goto l0
 			}
-			t3 := fn70(v0, math.Float64frombits(0x0), i32(0))
+			t3 := fn70(v0, math.Float64frombits(0x0), int32(0))
 			v0 = t3
 			goto l0
 		}
-		if uint32(v2) >= uint32(i32(0x7ff00000)) {
+		if uint32(v2) >= uint32(int32(0x7ff00000)) {
 			v0 = f64_canon(float64(v0 - v0))
 			goto l0
 		}
 		t4 := m.fn69(v0, v1)
 		v2 = t4
-		t5 := math.Float64frombits(load64(mem, uint64(uint32(v1))+8))
+		t5 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v1))+8:]))
 		v0 = t5
-		t6 := math.Float64frombits(load64(mem, uint32(v1)))
+		t6 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v1):]))
 		v3 = t6
-		switch v2&i32(3) - i32(1) {
+		switch v2&int32(3) - int32(1) {
 		default:
-			t7 := fn70(v3, v0, i32(1))
+			t7 := fn70(v3, v0, int32(1))
 			v0 = t7
 			goto l0
 		case 0:
@@ -3399,7 +3399,7 @@ func (m *Module) fn80(v0 float64) float64 {
 			v0 = t8
 			goto l0
 		case 1:
-			t9 := fn70(v3, v0, i32(1))
+			t9 := fn70(v3, v0, int32(1))
 			v0 = f64_neg(t9)
 			goto l0
 		case 2:
@@ -3408,7 +3408,7 @@ func (m *Module) fn80(v0 float64) float64 {
 		}
 	}
 l0:
-	m.g0 = v1 + i32(16)
+	m.g0 = v1 + int32(16)
 	return v0
 }
 func (m *Module) fn81(v0 float64) float64 {
@@ -3419,17 +3419,17 @@ func (m *Module) fn81(v0 float64) float64 {
 	if int32(v1)|v2<<1 == 0 {
 		return math.Float64frombits(0xfff0000000000000)
 	}
-	if v1 < i64(0) {
+	if v1 < int64(0) {
 		return math.Float64frombits(0x7ff8000000000000)
 	}
-	if uint64(v1) >= uint64(i64(0x7ff0000000000000)) {
+	if uint64(v1) >= uint64(int64(0x7ff0000000000000)) {
 		return f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / v0))
 	}
-	if uint64(v1) >= uint64(i64(0x4000000000000000)) {
-		t0 := m.fn79(v2, v0, i32(1))
+	if uint64(v1) >= uint64(int64(0x4000000000000000)) {
+		t0 := m.fn79(v2, v0, int32(1))
 		return t0
 	}
-	if uint64(v1) >= uint64(i64(0x3e40000000000000)) {
+	if uint64(v1) >= uint64(int64(0x3e40000000000000)) {
 		t1 := m.fn78(v0)
 		t2 := m.fn65(v0)
 		t3 := f64_canon(float64(float64(t1*t2) * math.Float64frombits(0x3fe45f306dc9c883)))
@@ -3443,17 +3443,17 @@ func (m *Module) fn82(v0 float64) float64 {
 	var v1 int32
 	var v2 int64
 	v2 = int64(math.Float64bits(v0))
-	v1 = int32(int64(uint64(v2)>>32)) & i32(0x7fffffff)
-	if uint32(v1) >= uint32(i32(0x7ff00000)) {
+	v1 = int32(int64(uint64(v2)>>32)) & int32(0x7fffffff)
+	if uint32(v1) >= uint32(int32(0x7ff00000)) {
 		return f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / float64(v0*v0)))
 	}
-	if uint32(v1) >= uint32(i32(0x40000000)) {
-		t0 := m.fn83(v1, f64_abs(v0), i32(0), int32(int64(uint64(v2)>>63)))
+	if uint32(v1) >= uint32(int32(0x40000000)) {
+		t0 := m.fn83(v1, f64_abs(v0), int32(0), int32(int64(uint64(v2)>>63)))
 		return t0
 	}
 	t2 := v0
 	var p1 float64
-	if uint32(v1) >= uint32(i32(0x38000000)) {
+	if uint32(v1) >= uint32(int32(0x38000000)) {
 		v0 = f64_canon(float64(v0 * v0))
 		p1 = f64_canon(float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*math.Float64frombits(0x3e6aaafa46ca0bd9))+math.Float64frombits(0xbef0c5c6ba169668)))+math.Float64frombits(0x3f570d9f98472c61)))+math.Float64frombits(0xbfb0000000000000))) / float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*math.Float64frombits(0x3dab2acfcfb97ed8))+math.Float64frombits(0x3e35ac88c97dff2c)))+math.Float64frombits(0x3eb3bff8333f8498)))+math.Float64frombits(0x3f285f56b9cdf664)))+math.Float64frombits(0x3f939d0b12637e53)))+math.Float64frombits(0x3ff0000000000000))))
 	} else {
@@ -3477,7 +3477,7 @@ func (m *Module) fn83(v0 int32, v1 float64, v2, v3 int32) float64 {
 	v6 = t2
 	v7 = f64_canon(float64(t3 - v6))
 	{
-		if uint32(v0) > uint32(i32(0x7fdfffff)) {
+		if uint32(v0) > uint32(int32(0x7fdfffff)) {
 			goto l0
 		}
 		t4 := m.fn67(f64_canon(float64(v1 + v1)))
@@ -3490,83 +3490,83 @@ func (m *Module) fn83(v0 int32, v1 float64, v2, v3 int32) float64 {
 		}
 		v6 = f64_canon(float64(v5 / v7))
 	l1:
-		if uint32(v0) > uint32(i32(0x47ffffff)) {
+		if uint32(v0) > uint32(int32(0x47ffffff)) {
 			goto l0
 		}
 		var p6 int32
 		{
-			v9 = int32(int64(uint64(int64(math.Float64bits(v1)))>>32)) & i32(0x7fffffff)
+			v9 = int32(int64(uint64(int64(math.Float64bits(v1)))>>32)) & int32(0x7fffffff)
 			var p7 int32
-			if uint32(v9) > uint32(i32(0x401fffff)) {
+			if uint32(v9) > uint32(int32(0x401fffff)) {
 				p7 = 1
 			}
 			v10 = p7
 			if v10 != 0 {
-				v0 = i32(82176)
-				p6 = i32(82224)
+				v0 = int32(82176)
+				p6 = int32(82224)
 				goto l2
 			}
-			if uint32(v9) > uint32(i32(1074933386)) {
-				v0 = i32(82272)
-				p6 = i32(82320)
+			if uint32(v9) > uint32(int32(1074933386)) {
+				v0 = int32(82272)
+				p6 = int32(82320)
 				goto l2
 			}
 			var p8 int32
-			if uint32(v9) > uint32(i32(0x4006db6c)) {
+			if uint32(v9) > uint32(int32(0x4006db6c)) {
 				p8 = 1
 			}
 			v8 = p8
-			p9 := i32(82464)
+			p9 := int32(82464)
 			if v8 != 0 {
-				p9 = i32(82368)
+				p9 = int32(82368)
 			}
 			v0 = p9
-			p10 := i32(82512)
+			p10 := int32(82512)
 			if v8 != 0 {
-				p10 = i32(82416)
+				p10 = int32(82416)
 			}
 			p6 = p10
 		}
 	l2:
 		v8 = p6
 		v4 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / float64(v1*v1)))
-		t11 := math.Float64frombits(load64(mem, uint64(uint32(v0))+40))
-		t12 := math.Float64frombits(load64(mem, uint64(uint32(v0))+32))
-		t13 := math.Float64frombits(load64(mem, uint64(uint32(v0))+24))
-		t14 := math.Float64frombits(load64(mem, uint64(uint32(v0))+16))
-		t15 := math.Float64frombits(load64(mem, uint64(uint32(v0))+8))
-		t16 := math.Float64frombits(load64(mem, uint32(v0)))
-		t17 := math.Float64frombits(load64(mem, uint64(uint32(v8))+32))
-		t18 := math.Float64frombits(load64(mem, uint64(uint32(v8))+24))
-		t19 := math.Float64frombits(load64(mem, uint64(uint32(v8))+16))
-		t20 := math.Float64frombits(load64(mem, uint64(uint32(v8))+8))
-		t21 := math.Float64frombits(load64(mem, uint32(v8)))
+		t11 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+40:]))
+		t12 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+32:]))
+		t13 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+24:]))
+		t14 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+16:]))
+		t15 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+8:]))
+		t16 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v0):]))
+		t17 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+32:]))
+		t18 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+24:]))
+		t19 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+16:]))
+		t20 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+8:]))
+		t21 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v8):]))
 		t23 := f64_canon(float64(float64(float64(float64(v4*float64(float64(v4*float64(float64(v4*float64(float64(v4*float64(float64(v4*t11)+t12))+t13))+t14))+t15))+t16)/float64(float64(v4*float64(float64(v4*float64(float64(v4*float64(float64(v4*float64(float64(v4*t17)+t18))+t19))+t20))+t21))+math.Float64frombits(0x3ff0000000000000))) + math.Float64frombits(0x3ff0000000000000)))
 		var p22 int32
 		{
 			if v10 != 0 {
-				v0 = i32(82560)
-				p22 = i32(82608)
+				v0 = int32(82560)
+				p22 = int32(82608)
 				goto l3
 			}
-			if uint32(v9) > uint32(i32(1074933386)) {
-				v0 = i32(82656)
-				p22 = i32(82704)
+			if uint32(v9) > uint32(int32(1074933386)) {
+				v0 = int32(82656)
+				p22 = int32(82704)
 				goto l3
 			}
 			var p24 int32
-			if uint32(v9) > uint32(i32(0x4006db6c)) {
+			if uint32(v9) > uint32(int32(0x4006db6c)) {
 				p24 = 1
 			}
 			v8 = p24
-			p25 := i32(82848)
+			p25 := int32(82848)
 			if v8 != 0 {
-				p25 = i32(82752)
+				p25 = int32(82752)
 			}
 			v0 = p25
-			p26 := i32(82896)
+			p26 := int32(82896)
 			if v8 != 0 {
-				p26 = i32(82800)
+				p26 = int32(82800)
 			}
 			p22 = p26
 		}
@@ -3577,18 +3577,18 @@ func (m *Module) fn83(v0 int32, v1 float64, v2, v3 int32) float64 {
 		if v2 != 0 {
 			p27 = v6
 		}
-		t29 := math.Float64frombits(load64(mem, uint64(uint32(v0))+40))
-		t30 := math.Float64frombits(load64(mem, uint64(uint32(v0))+32))
-		t31 := math.Float64frombits(load64(mem, uint64(uint32(v0))+24))
-		t32 := math.Float64frombits(load64(mem, uint64(uint32(v0))+16))
-		t33 := math.Float64frombits(load64(mem, uint64(uint32(v0))+8))
-		t34 := math.Float64frombits(load64(mem, uint32(v0)))
-		t35 := math.Float64frombits(load64(mem, uint64(uint32(v8))+40))
-		t36 := math.Float64frombits(load64(mem, uint64(uint32(v8))+32))
-		t37 := math.Float64frombits(load64(mem, uint64(uint32(v8))+24))
-		t38 := math.Float64frombits(load64(mem, uint64(uint32(v8))+16))
-		t39 := math.Float64frombits(load64(mem, uint64(uint32(v8))+8))
-		t40 := math.Float64frombits(load64(mem, uint32(v8)))
+		t29 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+40:]))
+		t30 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+32:]))
+		t31 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+24:]))
+		t32 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+16:]))
+		t33 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v0))+8:]))
+		t34 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v0):]))
+		t35 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+40:]))
+		t36 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+32:]))
+		t37 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+24:]))
+		t38 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+16:]))
+		t39 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v8))+8:]))
+		t40 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint32(v8):]))
 		v7 = f64_canon(float64(t28 + float64(p27*float64(float64(float64(float64(float64(v4*float64(float64(v4*float64(float64(v4*float64(float64(v4*float64(float64(v4*t29)+t30))+t31))+t32))+t33))+t34)/float64(float64(v4*float64(float64(v4*float64(float64(v4*float64(float64(v4*float64(float64(v4*float64(float64(v4*t35)+t36))+t37))+t38))+t39))+t40))+math.Float64frombits(0x3ff0000000000000)))+math.Float64frombits(0x3fd8000000000000))/v1))))
 	}
 l0:
@@ -3607,17 +3607,17 @@ func (m *Module) fn84(v0 float64) float64 {
 	if int32(v2)|v3<<1 == 0 {
 		return math.Float64frombits(0xfff0000000000000)
 	}
-	if v2 < i64(0) {
+	if v2 < int64(0) {
 		return math.Float64frombits(0x7ff8000000000000)
 	}
-	if uint64(v2) >= uint64(i64(0x7ff0000000000000)) {
+	if uint64(v2) >= uint64(int64(0x7ff0000000000000)) {
 		return f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / v0))
 	}
-	if uint64(v2) >= uint64(i64(0x4000000000000000)) {
-		t0 := m.fn83(v3, v0, i32(1), i32(0))
+	if uint64(v2) >= uint64(int64(0x4000000000000000)) {
+		t0 := m.fn83(v3, v0, int32(1), int32(0))
 		return t0
 	}
-	if uint64(v2) <= uint64(i64(0x3c8fffffffffffff)) {
+	if uint64(v2) <= uint64(int64(0x3c8fffffffffffff)) {
 		return f64_canon(float64(math.Float64frombits(0xbfe45f306dc9c883) / v0))
 	}
 	t1 := v0
@@ -3628,67 +3628,67 @@ func (m *Module) fn84(v0 float64) float64 {
 }
 func fn85(v0 float64, v1 int32) float64 {
 	{
-		if v1 >= i32(1024) {
+		if v1 >= int32(1024) {
 			v0 = f64_canon(float64(v0 * math.Float64frombits(0x7fe0000000000000)))
-			if uint32(v1) < uint32(i32(2047)) {
-				v1 = v1 - i32(1023)
+			if uint32(v1) < uint32(int32(2047)) {
+				v1 = v1 - int32(1023)
 				goto l0
 			}
 			v0 = f64_canon(float64(v0 * math.Float64frombits(0x7fe0000000000000)))
 			p0 := v1
-			if uint32(v1) >= uint32(i32(3069)) {
-				p0 = i32(3069)
+			if uint32(v1) >= uint32(int32(3069)) {
+				p0 = int32(3069)
 			}
-			v1 = p0 - i32(2046)
+			v1 = p0 - int32(2046)
 			goto l0
 		}
-		if v1 > i32(-1023) {
+		if v1 > int32(-1023) {
 			goto l0
 		}
 		v0 = f64_canon(float64(v0 * math.Float64frombits(0x360000000000000)))
 		if uint32(v1) > uint32(i32(-1992)) {
-			v1 = v1 + i32(969)
+			v1 = v1 + int32(969)
 			goto l0
 		}
 		v0 = f64_canon(float64(v0 * math.Float64frombits(0x360000000000000)))
 		p1 := v1
 		if uint32(v1) <= uint32(i32(-2960)) {
-			p1 = i32(-2960)
+			p1 = int32(-2960)
 		}
-		v1 = p1 + i32(1938)
+		v1 = p1 + int32(1938)
 	}
 l0:
-	return f64_canon(float64(v0 * math.Float64frombits(uint64(int64(uint32(v1+i32(1023)))<<52))))
+	return f64_canon(float64(v0 * math.Float64frombits(uint64(int64(uint32(v1+int32(1023)))<<52))))
 }
 func (m *Module) fn86(v0 float64, v1 int32) float64 {
 	mem := m.memory
 	var v2, v3, v4, v5 float64
 	var v6, v7 int32
 	var v8 int64
-	store32(mem, uint32(v1), uint32(i32(1)))
+	binary.LittleEndian.PutUint32(mem[uint32(v1):], uint32(int32(1)))
 	v8 = int64(math.Float64bits(v0))
-	v6 = int32(int64(uint64(v8)>>32)) & i32(0x7fffffff)
-	if uint32(v6) >= uint32(i32(0x7ff00000)) {
+	v6 = int32(int64(uint64(v8)>>32)) & int32(0x7fffffff)
+	if uint32(v6) >= uint32(int32(0x7ff00000)) {
 		return f64_canon(float64(v0 * v0))
 	}
-	if uint32(v6) <= uint32(i32(0x3b8fffff)) {
-		if v8 < i64(0) {
-			store32(mem, uint32(v1), uint32(i32(-1)))
+	if uint32(v6) <= uint32(int32(0x3b8fffff)) {
+		if v8 < int64(0) {
+			binary.LittleEndian.PutUint32(mem[uint32(v1):], uint32(i32(-1)))
 			v0 = f64_neg(v0)
 		}
 		t0 := m.fn65(v0)
 		return f64_neg(t0)
 	}
-	if v8 < i64(0) {
+	if v8 < int64(0) {
 		v2 = f64_canon(float64(v0 * math.Float64frombits(0xbfe0000000000000)))
 		v2 = f64_canon(float64(v2 - math.Floor(v2)))
 		v2 = f64_canon(float64(v2 + v2))
-		v7 = (i32_trunc_sat_f64_s(float64(v2*math.Float64frombits(0x4010000000000000))) + i32(1)) / i32(2)
+		v7 = (i32_trunc_sat_f64_s(float64(v2*math.Float64frombits(0x4010000000000000))) + int32(1)) / int32(2)
 		v2 = f64_canon(float64(float64(v2+float64(float32(float32(v7)*math.Float32frombits(0xbf000000)))) * math.Float64frombits(0x400921fb54442d18)))
 		var p1 float64
-		switch v7 - i32(1) {
+		switch v7 - int32(1) {
 		default:
-			t2 := fn70(v2, math.Float64frombits(0x0), i32(0))
+			t2 := fn70(v2, math.Float64frombits(0x0), int32(0))
 			p1 = t2
 			goto l4
 		case 0:
@@ -3696,7 +3696,7 @@ func (m *Module) fn86(v0 float64, v1 int32) float64 {
 			p1 = t3
 			goto l4
 		case 1:
-			t4 := fn70(f64_neg(v2), math.Float64frombits(0x0), i32(0))
+			t4 := fn70(f64_neg(v2), math.Float64frombits(0x0), int32(0))
 			p1 = t4
 			goto l4
 		case 2:
@@ -3710,7 +3710,7 @@ func (m *Module) fn86(v0 float64, v1 int32) float64 {
 		}
 		v0 = f64_neg(v0)
 		if v2 > math.Float64frombits(0x0) {
-			store32(mem, uint32(v1), uint32(i32(-1)))
+			binary.LittleEndian.PutUint32(mem[uint32(v1):], uint32(i32(-1)))
 			goto l5
 		}
 		v2 = f64_neg(v2)
@@ -3722,39 +3722,39 @@ func (m *Module) fn86(v0 float64, v1 int32) float64 {
 		if int32(v8) == 0 {
 			v2 = math.Float64frombits(0x0)
 			var p7 int32
-			if v6 == i32(0x3ff00000) {
+			if v6 == int32(0x3ff00000) {
 				p7 = 1
 			}
 			var p8 int32
-			if v6 == i32(0x40000000) {
+			if v6 == int32(0x40000000) {
 				p8 = 1
 			}
 			if p7|p8 != 0 {
 				goto l6
 			}
 		}
-		if uint32(v6) <= uint32(i32(0x3fffffff)) {
+		if uint32(v6) <= uint32(int32(0x3fffffff)) {
 			{
 				var p9 float64
 				{
 					var p10 float64
-					if uint32(v6) <= uint32(i32(0x3feccccc)) {
+					if uint32(v6) <= uint32(int32(0x3feccccc)) {
 						v3 = math.Float64frombits(0x3ff0000000000000)
 						t11 := m.fn65(v0)
 						v2 = f64_neg(t11)
 						t12 := v2
-						if uint32(v6) > uint32(i32(1072130371)) {
+						if uint32(v6) > uint32(int32(1072130371)) {
 							p10 = t12
 							goto l7
 						}
-						if uint32(v6) <= uint32(i32(1070442080)) {
+						if uint32(v6) <= uint32(int32(1070442080)) {
 							goto l8
 						}
 						t13 := f64_canon(float64(v0 + math.Float64frombits(0xbfdd8b618d5af8fc)))
 						p9 = t13
 						goto l9
 					}
-					if uint32(v6) <= uint32(i32(0x3ffbb4c2)) {
+					if uint32(v6) <= uint32(int32(0x3ffbb4c2)) {
 						goto l10
 					}
 					v3 = math.Float64frombits(0x4000000000000000)
@@ -3766,7 +3766,7 @@ func (m *Module) fn86(v0 float64, v1 int32) float64 {
 					goto l6
 				}
 			l10:
-				if uint32(v6) < uint32(i32(0x3ff3b4c4)) {
+				if uint32(v6) < uint32(int32(0x3ff3b4c4)) {
 					goto l11
 				}
 				v2 = math.Float64frombits(0x0)
@@ -3787,13 +3787,13 @@ func (m *Module) fn86(v0 float64, v1 int32) float64 {
 			v2 = f64_canon(float64(v2 + float64(float64(v0*math.Float64frombits(0xbfe0000000000000))+float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*math.Float64frombits(0x3f8b678bbf2bab09))+math.Float64frombits(0x3fcd4eaef6010924)))+math.Float64frombits(0x3fef497644ea8450)))+math.Float64frombits(0x3ff7475cd119bd6f)))+math.Float64frombits(0x3fe4401e8b005dff)))+math.Float64frombits(0xbfb3c467e37db0c8)))/float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*math.Float64frombits(0x3f6a5abb57d0cf61))+math.Float64frombits(0x3fbaae55d6537c88)))+math.Float64frombits(0x3fe89dfbe45050af)))+math.Float64frombits(0x40010725a42b18f5)))+math.Float64frombits(0x4003a5d7c2bd619c)))+math.Float64frombits(0x3ff0000000000000))))))
 			goto l6
 		}
-		if uint32(v6) <= uint32(i32(0x401fffff)) {
+		if uint32(v6) <= uint32(int32(0x401fffff)) {
 			v3 = math.Float64frombits(0x3ff0000000000000)
 			t16 := v0
 			v1 = i32_trunc_sat_f64_s(v0)
 			v0 = f64_canon(float64(t16 - float64(v1)))
 			v2 = f64_canon(float64(float64(v0*math.Float64frombits(0x3fe0000000000000)) + float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*math.Float64frombits(0x3f00bfecdd17e945))+math.Float64frombits(0x3f5e26b67368f239)))+math.Float64frombits(0x3f9b481c7e939961)))+math.Float64frombits(0x3fc2bb9cbee5f2f7)))+math.Float64frombits(0x3fd4d98f4f139f59)))+math.Float64frombits(0x3fcb848b36e20878)))+math.Float64frombits(0xbfb3c467e37db0c8)))/float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*float64(float64(v0*math.Float64frombits(0x3edebaf7a5b38140))+math.Float64frombits(0x3f497ddaca41a95b)))+math.Float64frombits(0x3f9317ea742ed475)))+math.Float64frombits(0x3fc601edccfbdf27)))+math.Float64frombits(0x3fe71a1893d3dcdc)))+math.Float64frombits(0x3ff645a762c4ab74)))+math.Float64frombits(0x3ff0000000000000)))))
-			switch v1 - i32(3) {
+			switch v1 - int32(3) {
 			default:
 				goto l6
 			case 4:
@@ -3816,7 +3816,7 @@ func (m *Module) fn86(v0 float64, v1 int32) float64 {
 		}
 		t18 := m.fn65(v0)
 		v3 = t18
-		if uint32(v6) <= uint32(i32(0x438fffff)) {
+		if uint32(v6) <= uint32(int32(0x438fffff)) {
 			v2 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) / v0))
 			v4 = f64_canon(float64(v2 * v2))
 			v2 = f64_canon(float64(float64(float64(v0+math.Float64frombits(0xbfe0000000000000))*float64(v3+math.Float64frombits(0xbff0000000000000))) + float64(float64(v2*float64(float64(v4*float64(float64(v4*float64(float64(v4*float64(float64(v4*float64(float64(v4*math.Float64frombits(0xbf5ab89d0b9e43e4))+math.Float64frombits(0x3f4b67ba4cdad5d1)))+math.Float64frombits(0xbf4380cb8c0fe741)))+math.Float64frombits(0x3f4a019f98cf38b6)))+math.Float64frombits(0xbf66c16c16b02e5c)))+math.Float64frombits(0x3fb555555555553b)))+math.Float64frombits(0x3fdacfe390c97d69))))
@@ -3826,7 +3826,7 @@ func (m *Module) fn86(v0 float64, v1 int32) float64 {
 	}
 l6:
 	p19 := f64_canon(float64(v5 - v2))
-	if v8 >= i64(0) {
+	if v8 >= int64(0) {
 		p19 = v2
 	}
 	return p19
@@ -3836,37 +3836,37 @@ func (m *Module) fn87(v0 float64, v1 int32) float64 {
 	var v2, v3 int64
 	var v4, v5 int32
 	v2 = int64(math.Float64bits(v0))
-	v4 = int32(int64(uint64(v2)>>52)) & i32(2047)
-	v5 = v4 - i32(1023)
+	v4 = int32(int64(uint64(v2)>>52)) & int32(2047)
+	v5 = v4 - int32(1023)
 	{
-		if uint32(v4) >= uint32(i32(1075)) {
-			store64(mem, uint32(v1), math.Float64bits(v0))
+		if uint32(v4) >= uint32(int32(1075)) {
+			binary.LittleEndian.PutUint64(mem[uint32(v1):], math.Float64bits(v0))
 			var p0 int32
-			if v5 == i32(1024) {
+			if v5 == int32(1024) {
 				p0 = 1
 			}
 			var p1 int32
-			if v2&i64(0xfffffffffffff) != i64(0) {
+			if v2&int64(0xfffffffffffff) != int64(0) {
 				p1 = 1
 			}
 			if p0&p1 != 0 {
 				goto l0
 			}
-			return math.Float64frombits(uint64(v2 & i64(-0x8000000000000000)))
+			return math.Float64frombits(uint64(v2 & int64(-0x8000000000000000)))
 		}
-		if uint32(v4) <= uint32(i32(1022)) {
-			store64(mem, uint32(v1), uint64(v2&i64(-0x8000000000000000)))
+		if uint32(v4) <= uint32(int32(1022)) {
+			binary.LittleEndian.PutUint64(mem[uint32(v1):], uint64(v2&int64(-0x8000000000000000)))
 			return v0
 		}
 		t2 := v2
 		v3 = int64(uint32(v5))
-		if i64_shl(t2, v3)&i64(0xfffffffffffff) == 0 {
-			store64(mem, uint32(v1), math.Float64bits(v0))
-			return math.Float64frombits(uint64(v2 & i64(-0x8000000000000000)))
+		if i64_shl(t2, v3)&int64(0xfffffffffffff) == 0 {
+			binary.LittleEndian.PutUint64(mem[uint32(v1):], math.Float64bits(v0))
+			return math.Float64frombits(uint64(v2 & int64(-0x8000000000000000)))
 		}
 		t3 := v1
-		v2 = i64_shr_s(i64(-0x10000000000000), v3) & v2
-		store64(mem, uint32(t3), uint64(v2))
+		v2 = i64_shr_s(int64(-0x10000000000000), v3) & v2
+		binary.LittleEndian.PutUint64(mem[uint32(t3):], uint64(v2))
 		v0 = f64_canon(float64(v0 - math.Float64frombits(uint64(v2))))
 	}
 l0:
@@ -3878,13 +3878,13 @@ func (m *Module) fn88(v0, v1 float64) float64 {
 	var v12, v13, v14 int64
 	var v15, v16, v17, v18, v19 int32
 	t0 := m.g0
-	v15 = t0 - i32(16)
+	v15 = t0 - int32(16)
 	m.g0 = v15
 	{
 		{
 			v13 = int64(math.Float64bits(v1))
-			v18 = int32(int64(uint64(v13)>>52)) & i32(2047)
-			v19 = v18 - i32(1086)
+			v18 = int32(int64(uint64(v13)>>52)) & int32(2047)
+			v19 = v18 - int32(1086)
 			var p1 int32
 			if uint32(v19) > uint32(i32(-129)) {
 				p1 = 1
@@ -3892,21 +3892,21 @@ func (m *Module) fn88(v0, v1 float64) float64 {
 			v12 = int64(math.Float64bits(v0))
 			v16 = int32(int64(uint64(v12) >> 52))
 			var p2 int32
-			if uint32(v16-i32(2047)) >= uint32(i32(-2046)) {
+			if uint32(v16-int32(2047)) >= uint32(i32(-2046)) {
 				p2 = 1
 			}
 			if p1&p2 != 0 {
 				goto l0
 			}
 			v14 = v13 << 1
-			if uint64(v14-i64(1)) >= uint64(i64(-0x20000000000001)) {
+			if uint64(v14-int64(1)) >= uint64(i64(-0x20000000000001)) {
 				v2 = math.Float64frombits(0x3ff0000000000000)
 				var p3 int32
 				if v14 == 0 {
 					p3 = 1
 				}
 				var p4 int32
-				if v12 == i64(0x3ff0000000000000) {
+				if v12 == int64(0x3ff0000000000000) {
 					p4 = 1
 				}
 				if p3|p4 != 0 {
@@ -3925,16 +3925,16 @@ func (m *Module) fn88(v0, v1 float64) float64 {
 					v2 = f64_canon(float64(v0 + v1))
 					goto l1
 				}
-				if v12 == i64(0x7fe0000000000000) {
+				if v12 == int64(0x7fe0000000000000) {
 					goto l1
 				}
 				t7 := f64_canon(float64(v1 * v1))
 				var p8 int32
-				if v13 < i64(0) {
+				if v13 < int64(0) {
 					p8 = 1
 				}
 				var p9 int32
-				if uint64(v12) < uint64(i64(0x7fe0000000000000)) {
+				if uint64(v12) < uint64(int64(0x7fe0000000000000)) {
 					p9 = 1
 				}
 				p10 := t7
@@ -3944,25 +3944,25 @@ func (m *Module) fn88(v0, v1 float64) float64 {
 				v2 = p10
 				goto l1
 			}
-			if uint64(v12<<1-i64(1)) >= uint64(i64(-0x20000000000001)) {
+			if uint64(v12<<1-int64(1)) >= uint64(i64(-0x20000000000001)) {
 				v2 = f64_canon(float64(v0 * v0))
-				if v12 < i64(0) {
+				if v12 < int64(0) {
 					t11 := fn89(v13)
 					p12 := v2
-					if t11 == i32(1) {
+					if t11 == int32(1) {
 						p12 = f64_neg(v2)
 					}
 					v2 = p12
 				}
-				if v13 >= i64(0) {
+				if v13 >= int64(0) {
 					goto l1
 				}
-				store64(mem, uint64(uint32(v15))+8, math.Float64bits(f64_canon(float64(math.Float64frombits(0x3ff0000000000000)/v2))))
-				t13 := math.Float64frombits(load64(mem, uint64(uint32(v15))+8))
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(v15))+8:], math.Float64bits(f64_canon(float64(math.Float64frombits(0x3ff0000000000000)/v2))))
+				t13 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v15))+8:]))
 				v2 = t13
 				goto l1
 			}
-			if v12 < i64(0) {
+			if v12 < int64(0) {
 				t14 := fn89(v13)
 				v17 = t14
 				if v17 == 0 {
@@ -3970,69 +3970,69 @@ func (m *Module) fn88(v0, v1 float64) float64 {
 					v2 = f64_canon(float64(v0 / v0))
 					goto l1
 				}
-				p15 := i32(0)
-				if v17 == i32(1) {
-					p15 = i32(0x40000)
+				p15 := int32(0)
+				if v17 == int32(1) {
+					p15 = int32(0x40000)
 				}
 				v17 = p15
-				v16 = v16 & i32(2047)
-				v12 = int64(math.Float64bits(v0)) & i64(0x7fffffffffffffff)
+				v16 = v16 & int32(2047)
+				v12 = int64(math.Float64bits(v0)) & int64(0x7fffffffffffffff)
 			}
 			if uint32(v19) <= uint32(i32(-129)) {
 				v2 = math.Float64frombits(0x3ff0000000000000)
-				if v12 == i64(0x3ff0000000000000) {
+				if v12 == int64(0x3ff0000000000000) {
 					goto l1
 				}
-				if uint32(v18) <= uint32(i32(957)) {
+				if uint32(v18) <= uint32(int32(957)) {
 					p16 := f64_neg(v1)
-					if uint64(v12) > uint64(i64(0x3ff0000000000000)) {
+					if uint64(v12) > uint64(int64(0x3ff0000000000000)) {
 						p16 = v1
 					}
 					v2 = f64_canon(float64(p16 + math.Float64frombits(0x3ff0000000000000)))
 					goto l1
 				}
 				var p17 int32
-				if v13 < i64(0) {
+				if v13 < int64(0) {
 					p17 = 1
 				}
 				var p18 int32
-				if uint64(v12) > uint64(i64(0x3ff0000000000000)) {
+				if uint64(v12) > uint64(int64(0x3ff0000000000000)) {
 					p18 = 1
 				}
 				if p17 != p18 {
-					store64(mem, uint64(uint32(v15))+8, uint64(i64(0x7000000000000000)))
-					t19 := math.Float64frombits(load64(mem, uint64(uint32(v15))+8))
+					binary.LittleEndian.PutUint64(mem[uint64(uint32(v15))+8:], uint64(int64(0x7000000000000000)))
+					t19 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v15))+8:]))
 					v2 = f64_canon(float64(t19 * math.Float64frombits(0x7000000000000000)))
 					goto l1
 				}
-				store64(mem, uint64(uint32(v15))+8, uint64(i64(0x1000000000000000)))
-				t20 := math.Float64frombits(load64(mem, uint64(uint32(v15))+8))
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(v15))+8:], uint64(int64(0x1000000000000000)))
+				t20 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v15))+8:]))
 				v2 = f64_canon(float64(t20 * math.Float64frombits(0x1000000000000000)))
 				goto l1
 			}
 			if v16 != 0 {
 				goto l0
 			}
-			v12 = int64(math.Float64bits(f64_canon(float64(v0*math.Float64frombits(0x4330000000000000)))))&i64(0x7fffffffffffffff) - i64(0x340000000000000)
+			v12 = int64(math.Float64bits(f64_canon(float64(v0*math.Float64frombits(0x4330000000000000)))))&int64(0x7fffffffffffffff) - int64(0x340000000000000)
 		}
 	l0:
 		t21 := v12
-		v12 = v12 - i64(0x3fe6955500000000)
-		v14 = t21 - v12&i64(-0x10000000000000)
-		v3 = math.Float64frombits(uint64((v14 + i64(0x80000000)) & i64(-0x100000000)))
+		v12 = v12 - int64(0x3fe6955500000000)
+		v14 = t21 - v12&int64(-0x10000000000000)
+		v3 = math.Float64frombits(uint64((v14 + int64(0x80000000)) & int64(-0x100000000)))
 		t22 := v3
-		v16 = int32(int64(uint64(v12)>>45)) & i32(127) << 5
-		t23 := math.Float64frombits(load64(mem, uint64(uint32(v16))+77304))
+		v16 = int32(int64(uint64(v12)>>45)) & int32(127) << 5
+		t23 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v16))+77304:]))
 		v4 = t23
 		v0 = f64_canon(float64(float64(t22*v4) + math.Float64frombits(0xbff0000000000000)))
 		v2 = f64_canon(float64(v0 * math.Float64frombits(0xbfe0000000000000)))
 		{
-			v6 = math.Float64frombits(uint64(v13 & i64(-0x8000000)))
+			v6 = math.Float64frombits(uint64(v13 & int64(-0x8000000)))
 			t24 := v6
 			v7 = f64_canon(float64(v0 * v2))
 			t25 := v7
 			v8 = float64(v12 >> 52)
-			t26 := math.Float64frombits(load64(mem, uint64(uint32(v16))+77320))
+			t26 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v16))+77320:]))
 			v9 = f64_canon(float64(float64(v8*math.Float64frombits(0x3fe62e42fefa3800)) + t26))
 			t27 := v9
 			t28 := v0
@@ -4045,17 +4045,17 @@ func (m *Module) fn88(v0, v1 float64) float64 {
 			t31 := v0
 			v11 = f64_canon(float64(v0 * math.Float64frombits(0xbfe0000000000000)))
 			v5 = f64_canon(float64(t31 * v11))
-			t32 := math.Float64frombits(load64(mem, uint64(uint32(v16))+77328))
+			t32 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v16))+77328:]))
 			v5 = f64_canon(float64(float64(float64(t30*v5)*float64(float64(v5*float64(float64(v5*float64(float64(v0*math.Float64frombits(0x3ff0002b8b263fc3))+math.Float64frombits(0xbff2495b9b4845e9)))+float64(float64(v0*math.Float64frombits(0xbfe555555529a47a))+math.Float64frombits(0x3fe999999959554e))))+float64(float64(v0*math.Float64frombits(0x3fe0000000000006))+math.Float64frombits(0xbfe5555555555560)))) + float64(float64(v7+float64(v3-v4))+float64(float64(v10*float64(v2+v11))+float64(float64(float64(v8*math.Float64frombits(0x3d2ef35793c76730))+t32)+float64(v0+float64(v9-v3)))))))
 			v2 = f64_canon(float64(t29 + v5))
-			v3 = math.Float64frombits(uint64(int64(math.Float64bits(v2)) & i64(-0x8000000)))
+			v3 = math.Float64frombits(uint64(int64(math.Float64bits(v2)) & int64(-0x8000000)))
 			v0 = f64_canon(float64(t24 * v3))
 			v12 = int64(math.Float64bits(v0))
-			v16 = int32(int64(uint64(v12)>>52)) & i32(2047)
-			if uint32(v16-i32(969)) < uint32(i32(63)) {
+			v16 = int32(int64(uint64(v12)>>52)) & int32(2047)
+			if uint32(v16-int32(969)) < uint32(int32(63)) {
 				goto l2
 			}
-			if uint32(v16) <= uint32(i32(968)) {
+			if uint32(v16) <= uint32(int32(968)) {
 				v0 = f64_canon(float64(v0 + math.Float64frombits(0x3ff0000000000000)))
 				p33 := v0
 				if v17 != 0 {
@@ -4065,21 +4065,21 @@ func (m *Module) fn88(v0, v1 float64) float64 {
 				goto l1
 			}
 			var p34 int32
-			if uint32(v16) < uint32(i32(1033)) {
+			if uint32(v16) < uint32(int32(1033)) {
 				p34 = 1
 			}
-			v16 = i32(0)
+			v16 = int32(0)
 			if p34 != 0 {
 				goto l2
 			}
-			if v12 < i64(0) {
+			if v12 < int64(0) {
 				t36 := v15
 				p35 := math.Float64frombits(0x1000000000000000)
 				if v17 != 0 {
 					p35 = math.Float64frombits(0x9000000000000000)
 				}
-				store64(mem, uint64(uint32(t36))+8, math.Float64bits(p35))
-				t37 := math.Float64frombits(load64(mem, uint64(uint32(v15))+8))
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(t36))+8:], math.Float64bits(p35))
+				t37 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v15))+8:]))
 				v2 = f64_canon(float64(t37 * math.Float64frombits(0x1000000000000000)))
 				goto l1
 			}
@@ -4088,8 +4088,8 @@ func (m *Module) fn88(v0, v1 float64) float64 {
 			if v17 != 0 {
 				p38 = math.Float64frombits(0xf000000000000000)
 			}
-			store64(mem, uint64(uint32(t39))+8, math.Float64bits(p38))
-			t40 := math.Float64frombits(load64(mem, uint64(uint32(v15))+8))
+			binary.LittleEndian.PutUint64(mem[uint64(uint32(t39))+8:], math.Float64bits(p38))
+			t40 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v15))+8:]))
 			v2 = f64_canon(float64(t40 * math.Float64frombits(0x7000000000000000)))
 			goto l1
 		}
@@ -4103,26 +4103,26 @@ func (m *Module) fn88(v0, v1 float64) float64 {
 		t43 := f64_canon(float64(v1 * float64(float64(v0*math.Float64frombits(0x3fc555555555543c))+math.Float64frombits(0x3fdffffffffffdbd))))
 		t44 := v0
 		v13 = int64(math.Float64bits(v2))
-		v18 = int32(v13) << 4 & i32(2032)
-		t45 := math.Float64frombits(load64(mem, uint64(uint32(v18))+65712))
+		v18 = int32(v13) << 4 & int32(2032)
+		t45 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v18))+65712:]))
 		v0 = f64_canon(float64(t42 + float64(t43+float64(t44+t45))))
-		t46 := int64(load64(mem, uint64(uint32(v18))+65720))
+		t46 := int64(binary.LittleEndian.Uint64(mem[uint64(uint32(v18))+65720:]))
 		v12 = t46 + (v13+int64(uint32(v17)))<<45
 		if v16 == 0 {
-			if v13&i64(0x80000000) == 0 {
-				v1 = math.Float64frombits(uint64(v12 - i64(0x3f10000000000000)))
+			if v13&int64(0x80000000) == 0 {
+				v1 = math.Float64frombits(uint64(v12 - int64(0x3f10000000000000)))
 				v2 = f64_canon(float64(float64(float64(v1*v0)+v1) * math.Float64frombits(0x7f00000000000000)))
 				goto l1
 			}
-			v12 = v12 + i64(0x3fe0000000000000)
+			v12 = v12 + int64(0x3fe0000000000000)
 			v1 = math.Float64frombits(uint64(v12))
 			v3 = f64_canon(float64(v1 * v0))
 			v0 = f64_canon(float64(v3 + v1))
 			if f64_abs(v0) < math.Float64frombits(0x3ff0000000000000) {
-				store64(mem, uint64(uint32(v15))+8, uint64(i64(0x10000000000000)))
-				t47 := math.Float64frombits(load64(mem, uint64(uint32(v15))+8))
-				store64(mem, uint64(uint32(v15))+8, math.Float64bits(f64_canon(float64(t47*math.Float64frombits(0x10000000000000)))))
-				t49 := math.Float64frombits(uint64(v12 & i64(-0x8000000000000000)))
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(v15))+8:], uint64(int64(0x10000000000000)))
+				t47 := math.Float64frombits(binary.LittleEndian.Uint64(mem[uint64(uint32(v15))+8:]))
+				binary.LittleEndian.PutUint64(mem[uint64(uint32(v15))+8:], math.Float64bits(f64_canon(float64(t47*math.Float64frombits(0x10000000000000)))))
+				t49 := math.Float64frombits(uint64(v12 & int64(-0x8000000000000000)))
 				t50 := v0
 				p48 := math.Float64frombits(0x3ff0000000000000)
 				if v0 < math.Float64frombits(0x0) {
@@ -4144,7 +4144,7 @@ func (m *Module) fn88(v0, v1 float64) float64 {
 		v2 = f64_canon(float64(float64(v1*v0) + v1))
 	}
 l1:
-	m.g0 = v15 + i32(16)
+	m.g0 = v15 + int32(16)
 	return v2
 }
 func fn89(v0 int64) int32 {
@@ -4152,23 +4152,23 @@ func fn89(v0 int64) int32 {
 	var v2 int64
 	var p0 int32
 	{
-		v1 = int32(int64(uint64(v0)>>52)) & i32(2047)
-		if uint32(v1) < uint32(i32(1023)) {
-			p0 = i32(0)
+		v1 = int32(int64(uint64(v0)>>52)) & int32(2047)
+		if uint32(v1) < uint32(int32(1023)) {
+			p0 = int32(0)
 			goto l0
 		}
-		if uint32(v1) > uint32(i32(1075)) {
-			p0 = i32(2)
+		if uint32(v1) > uint32(int32(1075)) {
+			p0 = int32(2)
 			goto l0
 		}
-		v2 = i64_shl(i64(1), int64(uint32(i32(1075)-v1)))
-		if (v2-i64(1))&v0 != i64(0) {
-			p0 = i32(0)
+		v2 = i64_shl(int64(1), int64(uint32(int32(1075)-v1)))
+		if (v2-int64(1))&v0 != int64(0) {
+			p0 = int32(0)
 			goto l0
 		}
-		p1 := i32(1)
+		p1 := int32(1)
 		if v0&v2 == 0 {
-			p1 = i32(2)
+			p1 = int32(2)
 		}
 		p0 = p1
 	}
@@ -4180,7 +4180,7 @@ func (m *Module) fn90(v0, v1 float64, v2 int32) float64 {
 	var v3, v4, v5, v6 int32
 	var v7, v8, v9, v10, v11 int64
 	var v12 float64
-	store32(mem, uint32(v2), uint32(i32(0)))
+	binary.LittleEndian.PutUint32(mem[uint32(v2):], uint32(int32(0)))
 	{
 		var p0 int32
 		if v1 == math.Float64frombits(0x0) {
@@ -4192,58 +4192,58 @@ func (m *Module) fn90(v0, v1 float64, v2 int32) float64 {
 		}
 		if p0|p1 == 0 {
 			v9 = int64(math.Float64bits(v0))
-			v4 = int32(int64(uint64(v9)>>52)) & i32(2047)
-			if v4 != i32(2047) {
+			v4 = int32(int64(uint64(v9)>>52)) & int32(2047)
+			if v4 != int32(2047) {
 				{
 					if v0 == math.Float64frombits(0x0) {
 						goto l1
 					}
 					v10 = int64(math.Float64bits(v1))
-					v5 = int32(int64(uint64(v10)>>52)) & i32(2047)
+					v5 = int32(int64(uint64(v10)>>52)) & int32(2047)
 					var p2 int64
 					if v4 == 0 {
 						v7 = v9 << 12
 					l2:
-						if v7 >= i64(0) {
-							v3 = v3 + i32(1)
+						if v7 >= int64(0) {
+							v3 = v3 + int32(1)
 							v7 = v7 << 1
 							goto l2
 						}
-						v4 = i32(0) - v3
-						t3 := i64_shl(v9, int64(uint32(v3+i32(1))))
+						v4 = int32(0) - v3
+						t3 := i64_shl(v9, int64(uint32(v3+int32(1))))
 						p2 = t3
 						goto l3
 					}
-					p2 = v9&i64(0xfffffffffffff) | i64(0x10000000000000)
+					p2 = v9&int64(0xfffffffffffff) | int64(0x10000000000000)
 				l3:
 					v7 = p2
 					var p4 int64
 					if v5 == 0 {
 						v8 = v10 << 12
-						v3 = i32(0)
+						v3 = int32(0)
 					l4:
-						if v8 >= i64(0) {
-							v3 = v3 + i32(1)
+						if v8 >= int64(0) {
+							v3 = v3 + int32(1)
 							v8 = v8 << 1
 							goto l4
 						}
-						v5 = i32(0) - v3
-						t5 := i64_shl(v10, int64(uint32(v3+i32(1))))
+						v5 = int32(0) - v3
+						t5 := i64_shl(v10, int64(uint32(v3+int32(1))))
 						p4 = t5
 						goto l5
 					}
-					p4 = v10&i64(0xfffffffffffff) | i64(0x10000000000000)
+					p4 = v10&int64(0xfffffffffffff) | int64(0x10000000000000)
 				l5:
 					v8 = p4
 					var p6 int64
 					{
 						if v4 >= v5 {
-							v3 = i32(0)
+							v3 = int32(0)
 						l6:
 							{
 								v11 = v7 - v8
 								var p7 int32
-								if v11 >= i64(0) {
+								if v11 >= int64(0) {
 									p7 = 1
 								}
 								v6 = p7
@@ -4254,40 +4254,40 @@ func (m *Module) fn90(v0, v1 float64, v2 int32) float64 {
 								v7 = p8
 								v3 = v3 | v6
 								if v4 > v5 {
-									v4 = v4 - i32(1)
+									v4 = v4 - int32(1)
 									v3 = v3 << 1
 									v7 = v7 << 1
 									goto l6
 								}
 							}
 							if v7 == 0 {
-								v4 = i32(-60)
-								v7 = i64(0)
+								v4 = int32(-60)
+								v7 = int64(0)
 								goto l7
 							}
 							v4 = v5
 						l9:
-							if uint64(v7) > uint64(i64(0xfffffffffffff)) {
+							if uint64(v7) > uint64(int64(0xfffffffffffff)) {
 								goto l8
 							}
-							v4 = v4 - i32(1)
+							v4 = v4 - int32(1)
 							v7 = v7 << 1
 							goto l9
 						}
-						v3 = i32(0)
-						if v4+i32(1) != v5 {
+						v3 = int32(0)
+						if v4+int32(1) != v5 {
 							goto l1
 						}
 					l8:
-						if v4 <= i32(0) {
+						if v4 <= int32(0) {
 							goto l7
 						}
-						t9 := v7 - i64(0x10000000000000) | int64(uint32(v4))<<52
+						t9 := v7 - int64(0x10000000000000) | int64(uint32(v4))<<52
 						p6 = t9
 						goto l10
 					}
 				l7:
-					p6 = i64_shr_u(v7, int64(uint32(i32(1)-v4)))
+					p6 = i64_shr_u(v7, int64(uint32(int32(1)-v4)))
 				l10:
 					v12 = f64_abs(v1)
 					v1 = math.Float64frombits(uint64(p6))
@@ -4295,7 +4295,7 @@ func (m *Module) fn90(v0, v1 float64, v2 int32) float64 {
 						if v4 == v5 {
 							goto l11
 						}
-						if v4+i32(1) != v5 {
+						if v4+int32(1) != v5 {
 							goto l12
 						}
 						v0 = f64_canon(float64(v1 + v1))
@@ -4303,7 +4303,7 @@ func (m *Module) fn90(v0, v1 float64, v2 int32) float64 {
 							goto l11
 						}
 						var p10 int32
-						if v3&i32(1) == 0 {
+						if v3&int32(1) == 0 {
 							p10 = 1
 						}
 						var p11 int32
@@ -4315,18 +4315,18 @@ func (m *Module) fn90(v0, v1 float64, v2 int32) float64 {
 						}
 					}
 				l11:
-					v3 = v3 + i32(1)
+					v3 = v3 + int32(1)
 					v1 = f64_canon(float64(v1 - v12))
 				l12:
 					t12 := v2
-					v2 = v3 & i32(0x7fffffff)
+					v2 = v3 & int32(0x7fffffff)
 					p13 := v2
-					if v9^v10 < i64(0) {
-						p13 = i32(0) - v2
+					if v9^v10 < int64(0) {
+						p13 = int32(0) - v2
 					}
-					store32(mem, uint32(t12), uint32(p13))
+					binary.LittleEndian.PutUint32(mem[uint32(t12):], uint32(p13))
 					p14 := v1
-					if v9 < i64(0) {
+					if v9 < int64(0) {
 						p14 = f64_neg(v1)
 					}
 					v0 = p14
@@ -4345,7 +4345,7 @@ func fn91(v0, v1 float64, v2 int32) float64 {
 	var v7, v8 int32
 	v6 = int64(math.Float64bits(v0))
 	var p0 int32
-	if uint64(v6&i64(0x7ffffff800000000)) < uint64(i64(0x3fe5942700000001)) {
+	if uint64(v6&int64(0x7ffffff800000000)) < uint64(int64(0x3fe5942700000001)) {
 		p0 = 1
 	}
 	v7 = p0
@@ -4354,7 +4354,7 @@ func fn91(v0, v1 float64, v2 int32) float64 {
 		t2 := v1
 		t3 := f64_neg(v1)
 		var p4 int32
-		if v6 >= i64(0) {
+		if v6 >= int64(0) {
 			p4 = 1
 		}
 		v8 = p4
@@ -4380,7 +4380,7 @@ func fn91(v0, v1 float64, v2 int32) float64 {
 		t12 := v4
 		t13 := f64_canon(float64(v1 * v1))
 		t14 := v1
-		v1 = float64(i32(1) - v2<<1)
+		v1 = float64(int32(1) - v2<<1)
 		v0 = f64_canon(float64(t11 + float64(t12-float64(t13/float64(t14+v1)))))
 		v0 = f64_canon(float64(v1 - float64(v0+v0)))
 		p15 := f64_neg(v0)
@@ -4391,11 +4391,11 @@ func fn91(v0, v1 float64, v2 int32) float64 {
 	}
 	if v2 != 0 {
 		v5 = f64_canon(float64(math.Float64frombits(0xbff0000000000000) / v1))
-		v3 = math.Float64frombits(uint64(int64(math.Float64bits(v5)) & i64(-0x100000000)))
+		v3 = math.Float64frombits(uint64(int64(math.Float64bits(v5)) & int64(-0x100000000)))
 		t16 := v5
 		t17 := v3
 		t18 := v4
-		v1 = math.Float64frombits(uint64(int64(math.Float64bits(v1)) & i64(-0x100000000)))
+		v1 = math.Float64frombits(uint64(int64(math.Float64bits(v1)) & int64(-0x100000000)))
 		v1 = f64_canon(float64(float64(t16*float64(float64(t17*float64(t18-float64(v1-v0)))+float64(float64(v3*v1)+math.Float64frombits(0x3ff0000000000000)))) + v3))
 	}
 	return v1
@@ -4409,6 +4409,8 @@ func (m *Module) Xmemory() Memory {
 func (m *Module) Xrint_(v0 int64) int64 {
 	return m.Xroundeven_(v0)
 }
+
+func (m *Module) _fma(x, y, z float64) float64 { return f64_canon(math.FMA(x, y, z)) }
 
 //go:nosplit
 func i32(x int32) int32 { return x }

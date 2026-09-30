@@ -151,6 +151,14 @@ func (m *Module) Xtable() *[]any {
 	return &m.t1
 }
 
+func (m *Module) _pgrow() int32 {
+	return int32(memory_grow(&m.memory, 1, m.maxMem))
+}
+
+func (m *Module) _ppeek(addr int32) int32 {
+	return int32(m.memory[uint32(addr)])
+}
+
 //go:nosplit
 func i32(x int32) int32 { return x }
 

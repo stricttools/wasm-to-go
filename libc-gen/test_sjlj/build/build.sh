@@ -37,5 +37,5 @@ trap 'rm -f sjlj sjlj.wasm' EXIT
 	--enable-wide-arithmetic \
 	--strip --strip-producers
 
-go run "$ROOT/libc-gen" -wasm sjlj.wasm -o ../libc.go
-go run "$ROOT" -unsafe -provided ../libc.go -o ../sjlj.go sjlj.wasm
+go run "$ROOT/libc-gen" -pkg sjlj -wasm sjlj.wasm -o ../libc.go
+go run "$ROOT" -pkg sjlj -unsafe -provided ../libc.go -o ../sjlj.go sjlj.wasm

@@ -24,7 +24,9 @@ var (
 	noopt     = flag.Bool("noopt", false, "disable all optimization passes")
 	unsafe    = flag.Bool("unsafe", false, "allow importing unsafe (requires -o: writes output.go and output_generic.go)")
 	dwarfline = flag.Bool("dwarfline", false, "use line numbers from DWARF metadata")
-	version   = flag.Bool("version", false, "print version and exit")
+
+	importPath = flag.String("importpath", "", "import path of the directory of -o; required when the module is written as several packages")
+	version    = flag.Bool("version", false, "print version and exit")
 
 	provided  stringFlags
 	embedFile string
@@ -34,7 +36,7 @@ func main() {
 	log.SetFlags(0)
 	log.SetPrefix("wasm2go: ")
 
-	flag.Var(&provided, "provided", "file containing provided import functions")
+	flag.Var(&provided, "provided", "Go file providing imported functions, as methods of Module; the output holds its declarations, so the file must not be built itself (//go:build ignore)")
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [option]... [input.wasm]\n", filepath.Base(os.Args[0]))
 		flag.PrintDefaults()
@@ -88,7 +90,19 @@ func main() {
 		generic, genericOut = f, f
 	}
 
-	if err := translate(in, out, generic); err != nil {
+	var files *packageFiles
+	var sub func(rel string) (io.Writer, error)
+	if *output != "" {
+		files = newPackageFiles(filepath.Dir(*output))
+		sub = files.create
+	}
+	err := translate(in, out, generic, sub)
+	if files != nil {
+		if cerr := files.close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}
+	if err != nil {
 		log.Fatal(err)
 	}
 	if err := out.Close(); err != nil {
