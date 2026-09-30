@@ -76,10 +76,10 @@ var lowerSizes = map[string]int{
 //
 // The checked helpers of helpers.go access mem[a:] through
 // encoding/binary, which checks the last byte's index first, then accesses
-// the bytes in little-endian order: they panic exactly when a+size >
+// the bytes in little-endian order: they panic if and only if a+size >
 // len(mem), before any byte is accessed. The address is a uint32, or a
 // uint32 plus an offset below 2^32 as a uint64, so in uint64 a+size does
-// not overflow, and the slice panics exactly when a > a+size (never) or
+// not overflow, and the slice panics if and only if a > a+size (never) or
 // a+size > cap(mem) = len(mem): for the same addresses, before
 // any byte is accessed (a store's first byte statement makes the check,
 // and the others repeat it). Converting a slice of length size to a
