@@ -1047,7 +1047,6 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 		case 0xb3: // f32.convert_i32_u
 			fn.convert("uint32", "float32")
 		case 0xb4: // f32.convert_i64_s
-			fn.helpers.add("f32_convert_i64_u") // called by f32_convert_i64_s
 			fn.uniHelper("f32_convert_i64_s")
 		case 0xb5: // f32.convert_i64_u
 			fn.uniHelper("f32_convert_i64_u")

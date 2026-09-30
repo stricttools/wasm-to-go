@@ -135,6 +135,10 @@ There is no option to turn this off.
   which Go's constant evaluator would combine with exact arithmetic.
 - **Conversions.** `f32.convert_i64_s` and `f32.convert_i64_u` round once, in helpers:
   Go's own `float32(int64)` rounds twice on 386, arm, mips, and mipsle.
+  The float-to-integer conversions (`trunc` and `trunc_sat`) check or clamp their
+  operand and then assemble the integer from the float's bits (`trunc_u64`); none
+  is Go's conversion `int32(f)`, whose result outside the range the Go specification
+  defines is the CPU's, so strictgo, which refuses that conversion, accepts them.
 - **C math functions.** [`libc-gen`](libc-gen/README.md)'s `sin`, `exp`, `pow`,
   and the other `math.h` functions that are not compiler builtins are musl's libm,
   compiled into the module with the C code that calls them, so the guarantee covers them.

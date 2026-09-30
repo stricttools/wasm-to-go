@@ -139,6 +139,22 @@ func f64_canon(x float64) float64 {
 	return x
 }
 
+// Returns the truncation of f toward zero as a 64-bit two's complement
+// integer, for every f whose magnitude is below 2^64 (the caller has
+// checked it). The significand, its implicit one restored, is aligned to
+// the top of a uint64, where it stands for the magnitude scaled into
+// [2^63, 2^64), and shifted right by 63 less the exponent; a magnitude below
+// one (zero and the subnormals included) shifts by 64 or more, which Go
+// defines to yield zero. It is how strictgo's reproducible.Trunc computes.
+//
+//go:nosplit
+func trunc_u64(f float64) uint64 {
+	b := math.Float64bits(f)
+	u := (b<<11 | 1<<63) >> (1086 - b>>52&0x7ff)
+	sign := uint64(int64(b) >> 63)
+	return u ^ sign - sign
+}
+
 //go:nosplit
 func i64_trunc_sat_f64_s(f float64) int64 {
 	switch {
@@ -149,7 +165,7 @@ func i64_trunc_sat_f64_s(f float64) int64 {
 	case f != f:
 		return 0
 	}
-	return int64(f)
+	return int64(trunc_u64(f))
 }
 
 // Grows the memory *mem by delta pages, up to max, and returns its old size

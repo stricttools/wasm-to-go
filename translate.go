@@ -1562,6 +1562,27 @@ func (t *translator) resolveHelpers(fset *token.FileSet, filename, src string) e
 	if err != nil {
 		return err
 	}
+	// A helper the output needs brings the helpers it calls.
+	funcs := map[string]*ast.FuncDecl{}
+	for _, decl := range f.Decls {
+		if d, ok := decl.(*ast.FuncDecl); ok {
+			funcs[d.Name.Name] = d
+		}
+	}
+	for queue := slices.Collect(maps.Keys(t.helpers)); len(queue) > 0; {
+		d := funcs[queue[len(queue)-1]]
+		queue = queue[:len(queue)-1]
+		if d == nil {
+			continue
+		}
+		ast.Inspect(d.Body, func(n ast.Node) bool {
+			if id, ok := n.(*ast.Ident); ok && funcs[id.Name] != nil && !t.helpers.has(id.Name) {
+				t.helpers.add(id.Name)
+				queue = append(queue, id.Name)
+			}
+			return true
+		})
+	}
 	for _, decl := range f.Decls {
 		switch d := decl.(type) {
 		case *ast.FuncDecl:

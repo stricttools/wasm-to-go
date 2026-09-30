@@ -224,10 +224,41 @@ func f32_convert_i64_s(x int64) float32 {
 
 // Float to int conversions.
 
+// None converts a float to an integer with Go's conversion, whose result
+// where the Go specification leaves it undefined (NaN, an infinity, a value
+// out of the integer type's range) differs by CPU and by compiler: each
+// checks or clamps its operand and then assembles the integer from the
+// operand's bits (trunc_small for the i32 results, trunc_u64 for the i64
+// ones), which strictgo accepts as it is.
+
 // All i64 conversions use >= because both MaxInt64 and MaxUint64
 // round up when converted to a float64.
 
-// go.dev/issues/76264 can speed these up
+// Returns the truncation of f toward zero as a 64-bit two's complement
+// integer, for every f whose magnitude is below 2^64 (the caller has
+// checked it). The significand, its implicit one restored, is aligned to
+// the top of a uint64, where it stands for the magnitude scaled into
+// [2^63, 2^64), and shifted right by 63 less the exponent; a magnitude below
+// one (zero and the subnormals included) shifts by 64 or more, which Go
+// defines to yield zero. It is how strictgo's reproducible.Trunc computes.
+//
+//go:nosplit
+func trunc_u64(f float64) uint64 {
+	b := math.Float64bits(f)
+	u := (b<<11 | 1<<63) >> (1086 - b>>52&0x7ff)
+	sign := uint64(int64(b) >> 63) // all ones for a negative f
+	return u ^ sign - sign
+}
+
+// Returns x, an integer of magnitude below 2^51 (the caller has checked
+// it), as an int64. Adding 1.5 * 2^52 is exact for such an x, and leaves it
+// in the significand's low bits, offset by the constant's own bits: two
+// instructions beside the addition, fewer than a shift by the exponent.
+//
+//go:nosplit
+func trunc_small(x float64) int64 {
+	return int64(math.Float64bits(x+0x1.8p52)) - 0x4338000000000000
+}
 
 //go:nosplit
 func i32_trunc_f64_s(f float64) int32 {
@@ -238,7 +269,7 @@ func i32_trunc_f64_s(f float64) int32 {
 	case x < math.MinInt32 || x > math.MaxInt32:
 		panic("integer overflow")
 	}
-	return int32(x)
+	return int32(trunc_small(x))
 }
 
 //go:nosplit
@@ -250,7 +281,7 @@ func i32_trunc_f32_s(f float32) int32 {
 	case x < math.MinInt32 || x > math.MaxInt32:
 		panic("integer overflow")
 	}
-	return int32(x)
+	return int32(trunc_small(x))
 }
 
 //go:nosplit
@@ -262,7 +293,7 @@ func i32_trunc_f64_u(f float64) int32 {
 	case x < 0 || x > math.MaxUint32:
 		panic("integer overflow")
 	}
-	return int32(uint32(x))
+	return int32(trunc_small(x))
 }
 
 //go:nosplit
@@ -274,7 +305,7 @@ func i32_trunc_f32_u(f float32) int32 {
 	case x < 0 || x > math.MaxUint32:
 		panic("integer overflow")
 	}
-	return int32(uint32(x))
+	return int32(trunc_small(x))
 }
 
 //go:nosplit
@@ -286,7 +317,7 @@ func i64_trunc_f64_s(f float64) int64 {
 	case x < math.MinInt64 || x >= math.MaxInt64:
 		panic("integer overflow")
 	}
-	return int64(x)
+	return int64(trunc_u64(f))
 }
 
 //go:nosplit
@@ -298,7 +329,7 @@ func i64_trunc_f32_s(f float32) int64 {
 	case x < math.MinInt64 || x >= math.MaxInt64:
 		panic("integer overflow")
 	}
-	return int64(x)
+	return int64(trunc_u64(float64(f)))
 }
 
 //go:nosplit
@@ -310,7 +341,7 @@ func i64_trunc_f64_u(f float64) int64 {
 	case x < 0 || x >= math.MaxUint64:
 		panic("integer overflow")
 	}
-	return int64(uint64(x))
+	return int64(trunc_u64(f))
 }
 
 //go:nosplit
@@ -322,7 +353,7 @@ func i64_trunc_f32_u(f float32) int64 {
 	case x < 0 || x >= math.MaxUint64:
 		panic("integer overflow")
 	}
-	return int64(uint64(x))
+	return int64(trunc_u64(float64(f)))
 }
 
 //go:nosplit
@@ -335,7 +366,7 @@ func i32_trunc_sat_f64_s(f float64) int32 {
 	case f != f:
 		return 0
 	}
-	return int32(f)
+	return int32(trunc_small(math.Trunc(f)))
 }
 
 //go:nosplit
@@ -348,35 +379,29 @@ func i32_trunc_sat_f32_s(f float32) int32 {
 	case f != f:
 		return 0
 	}
-	return int32(f)
+	return int32(trunc_small(math.Trunc(float64(f))))
 }
 
 //go:nosplit
 func i32_trunc_sat_f64_u(f float64) int32 {
-	var i uint32
 	switch {
 	case f <= 0 || f != f:
-		i = 0
+		return 0
 	case f >= math.MaxUint32:
-		i = math.MaxUint32
-	default:
-		i = uint32(f)
+		return -1
 	}
-	return int32(i)
+	return int32(trunc_small(math.Trunc(f)))
 }
 
 //go:nosplit
 func i32_trunc_sat_f32_u(f float32) int32 {
-	var i uint32
 	switch {
 	case f <= 0 || f != f:
-		i = 0
+		return 0
 	case f >= math.MaxUint32:
-		i = math.MaxUint32
-	default:
-		i = uint32(f)
+		return -1
 	}
-	return int32(i)
+	return int32(trunc_small(math.Trunc(float64(f))))
 }
 
 //go:nosplit
@@ -389,7 +414,7 @@ func i64_trunc_sat_f64_s(f float64) int64 {
 	case f != f:
 		return 0
 	}
-	return int64(f)
+	return int64(trunc_u64(f))
 }
 
 //go:nosplit
@@ -402,35 +427,29 @@ func i64_trunc_sat_f32_s(f float32) int64 {
 	case f != f:
 		return 0
 	}
-	return int64(f)
+	return int64(trunc_u64(float64(f)))
 }
 
 //go:nosplit
 func i64_trunc_sat_f64_u(f float64) int64 {
-	var i uint64
 	switch {
 	case f <= 0 || f != f:
-		i = 0
+		return 0
 	case f >= math.MaxUint64:
-		i = math.MaxUint64
-	default:
-		i = uint64(f)
+		return -1
 	}
-	return int64(i)
+	return int64(trunc_u64(f))
 }
 
 //go:nosplit
 func i64_trunc_sat_f32_u(f float32) int64 {
-	var i uint64
 	switch {
 	case f <= 0 || f != f:
-		i = 0
+		return 0
 	case f >= math.MaxUint64:
-		i = math.MaxUint64
-	default:
-		i = uint64(f)
+		return -1
 	}
-	return int64(i)
+	return int64(trunc_u64(float64(f)))
 }
 
 // Wide Arithmetic.
