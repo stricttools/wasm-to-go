@@ -3,14 +3,14 @@
 package wasm2go
 
 import (
-	"github.com/stricttools/wasm-to-go/testdata/packages/recursion/internal/functions1"
-	"github.com/stricttools/wasm-to-go/testdata/packages/recursion/internal/functions2"
-	"github.com/stricttools/wasm-to-go/testdata/packages/recursion/internal/functions3"
-	"github.com/stricttools/wasm-to-go/testdata/packages/recursion/internal/instance"
+	wasm2go_functions1 "github.com/stricttools/wasm-to-go/testdata/packages/recursion/internal/functions1"
+	wasm2go_functions2 "github.com/stricttools/wasm-to-go/testdata/packages/recursion/internal/functions2"
+	wasm2go_functions3 "github.com/stricttools/wasm-to-go/testdata/packages/recursion/internal/functions3"
+	wasm2go_instance "github.com/stricttools/wasm-to-go/testdata/packages/recursion/internal/instance"
 )
 
 type Module struct {
-	instance instance.Module
+	instance wasm2go_instance.Module
 }
 
 func New() *Module {
@@ -18,14 +18,14 @@ func New() *Module {
 	return m
 }
 func (m *Module) Xfactorial(v0 int32) int32 {
-	return functions3.Xfactorial(&m.instance, v0)
+	return wasm2go_functions3.Xfactorial(&m.instance, v0)
 }
 func (m *Module) Xis_even(v0 int32) int32 {
-	return functions1.Xis_even(&m.instance, v0)
+	return wasm2go_functions1.Xis_even(&m.instance, v0)
 }
 func (m *Module) Xis_odd(v0 int32) int32 {
-	return functions2.Xis_odd(&m.instance, v0)
+	return wasm2go_functions2.Xis_odd(&m.instance, v0)
 }
 func init() {
-	instance.Xis_even = functions1.Xis_even
+	wasm2go_instance.Xis_even = wasm2go_functions1.Xis_even
 }

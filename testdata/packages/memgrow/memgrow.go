@@ -3,16 +3,16 @@
 package wasm2go
 
 import (
-	"github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions1"
-	"github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions2"
-	"github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions3"
-	"github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions4"
-	"github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions5"
-	"github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions6"
-	"github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions7"
-	"github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions8"
-	"github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions9"
-	"github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/instance"
+	wasm2go_functions1 "github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions1"
+	wasm2go_functions2 "github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions2"
+	wasm2go_functions3 "github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions3"
+	wasm2go_functions4 "github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions4"
+	wasm2go_functions5 "github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions5"
+	wasm2go_functions6 "github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions6"
+	wasm2go_functions7 "github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions7"
+	wasm2go_functions8 "github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions8"
+	wasm2go_functions9 "github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/functions9"
+	wasm2go_instance "github.com/stricttools/wasm-to-go/testdata/packages/memgrow/internal/instance"
 )
 
 // A Module must be created by New and never copied.
@@ -20,10 +20,10 @@ import (
 // on the receiver, which must be the Module New filled the tables for,
 // and code outside the translated module must not change the tables.
 type Module struct {
-	instance instance.Module
+	instance wasm2go_instance.Module
 }
-type Xenv = instance.Xenv
-type Memory = instance.Memory
+type Xenv = wasm2go_instance.Xenv
+type Memory = wasm2go_instance.Memory
 
 func New(v0 Xenv) *Module {
 	m := new(Module)
@@ -34,10 +34,10 @@ func New(v0 Xenv) *Module {
 	s.MaxMem = 65536
 	s.Memory = make([]byte, 65536)
 	s.Elements = [][]any{{func() int32 {
-		return functions9.Fn3(s)
-	}, functions8.Fn4, func() int32 {
-		return functions7.Fn5(s)
-	}}, {functions8.Fn4}}
+		return wasm2go_functions9.Fn3(s)
+	}, wasm2go_functions8.Fn4, func() int32 {
+		return wasm2go_functions7.Fn5(s)
+	}}, {wasm2go_functions8.Fn4}}
 	table_init(s.T0, s.Elements[0], i32(0), 0, len(s.Elements[0]))
 	s.Elements[0] = nil
 	table_init(s.T1, s.Elements[1], i32(0), 0, len(s.Elements[1]))
@@ -50,28 +50,28 @@ func New(v0 Xenv) *Module {
 	return m
 }
 func (m *Module) Xmemory() Memory {
-	return (*instance.WasmMemory)(&m.instance.Memory)
+	return (*wasm2go_instance.WasmMemory)(&m.instance.Memory)
 }
 func (m *Module) Xtable() *[]any {
 	return &m.instance.T1
 }
 func (m *Module) Xclosed(v0 int32) int32 {
-	return functions5.Xclosed(&m.instance, v0)
+	return wasm2go_functions5.Xclosed(&m.instance, v0)
 }
 func (m *Module) Xdirect() int32 {
-	return functions6.Xdirect(&m.instance)
+	return wasm2go_functions6.Xdirect(&m.instance)
 }
 func (m *Module) Xhost() int32 {
-	return functions3.Xhost(&m.instance)
+	return wasm2go_functions3.Xhost(&m.instance)
 }
 func (m *Module) Xopen() int32 {
-	return functions4.Xopen(&m.instance)
+	return wasm2go_functions4.Xopen(&m.instance)
 }
 func (m *Module) Xpeek(v0 int32) int32 {
-	return functions1.Xpeek(&m.instance, v0)
+	return wasm2go_functions1.Xpeek(&m.instance, v0)
 }
 func (m *Module) Xprovided() int32 {
-	return functions2.Xprovided(&m.instance)
+	return wasm2go_functions2.Xprovided(&m.instance)
 }
 
 //go:nosplit

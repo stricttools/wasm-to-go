@@ -107,12 +107,17 @@ func (t *translator) writePackages(moduleDecl *ast.GenDecl) (*packaging, []pkgFi
 		moduleDecl: moduleDecl,
 	}
 	pubs := set[string]{}
+	original := map[ast.Decl]bool{}
 	for i := range t.functions {
 		fn := &t.functions[i]
 		if fn.decl == nil || fn.decl.Body == nil || fn.provided {
 			continue
 		}
-		f := &codeFunc{decl: fn.decl, name: fn.decl.Name.Name, recv: fn.decl.Recv != nil, size: passes.Size(fn.decl), params: fn.decl.Type.Params}
+		// Each package's declarations are rewritten in their own copy:
+		// the translator's trees share nodes between functions.
+		d := passes.Clone(fn.decl)
+		original[fn.decl] = true
+		f := &codeFunc{decl: d, name: d.Name.Name, recv: d.Recv != nil, size: passes.Size(d), params: d.Type.Params}
 		f.pub = exportName(f.name)
 		if !pubs.add(f.pub) {
 			return nil, nil, fmt.Errorf("two functions are named %s in the packages", f.pub)
@@ -134,6 +139,8 @@ func (t *translator) writePackages(moduleDecl *ast.GenDecl) (*packaging, []pkgFi
 				providedOther = append(providedOther, d)
 				continue
 			}
+			original[fd] = true
+			fd = passes.Clone(fd)
 			f := &codeFunc{decl: fd, name: fd.Name.Name, recv: true, size: passes.Size(fd), params: fd.Type.Params, provided: true}
 			f.pub = exportName(f.name)
 			if !pubs.add(f.pub) {
@@ -165,10 +172,6 @@ func (t *translator) writePackages(moduleDecl *ast.GenDecl) (*packaging, []pkgFi
 	var hostTypes, memTypes, instanceDecls, outDecls []ast.Decl
 	var newDecl *ast.FuncDecl
 	var dataDecl *ast.GenDecl
-	code := map[*ast.FuncDecl]bool{}
-	for _, f := range p.funcs {
-		code[f.decl] = true
-	}
 	fromProvided := map[ast.Decl]bool{}
 	for _, d := range providedOther {
 		fromProvided[d] = true
@@ -180,13 +183,13 @@ func (t *translator) writePackages(moduleDecl *ast.GenDecl) (*packaging, []pkgFi
 		switch d := d.(type) {
 		case *ast.FuncDecl:
 			switch {
-			case code[d] || helpers.decls[d]:
+			case original[d] || helpers.decls[d]:
 			case d.Name.Name == "New" && d.Recv == nil:
-				newDecl = d
+				newDecl = passes.Clone(d)
 			case d.Recv != nil && recvType(d) == "wasmMemory":
-				memTypes = append(memTypes, d)
+				memTypes = append(memTypes, passes.Clone(d))
 			default:
-				outDecls = append(outDecls, d)
+				outDecls = append(outDecls, passes.Clone(d))
 			}
 		case *ast.GenDecl:
 			switch {
@@ -194,11 +197,11 @@ func (t *translator) writePackages(moduleDecl *ast.GenDecl) (*packaging, []pkgFi
 			case d.Tok == token.CONST || (d.Tok == token.VAR && *embed && declares(d, "data")):
 				dataDecl = d
 			case d.Tok == token.TYPE && (declares(d, "Memory") || declares(d, "wasmMemory")):
-				memTypes = append(memTypes, d)
+				memTypes = append(memTypes, passes.Clone(d))
 			case d.Tok == token.TYPE:
-				hostTypes = append(hostTypes, d)
+				hostTypes = append(hostTypes, passes.Clone(d))
 			default:
-				outDecls = append(outDecls, d)
+				outDecls = append(outDecls, passes.Clone(d))
 			}
 		}
 	}
@@ -326,6 +329,7 @@ func (t *translator) writePackages(moduleDecl *ast.GenDecl) (*packaging, []pkgFi
 		out = append(out, &ast.FuncDecl{Name: ast.NewIdent("init"), Type: &ast.FuncType{Params: &ast.FieldList{}},
 			Body: &ast.BlockStmt{List: wiring}})
 	}
+	aliasPackages(out)
 	files = append(files, p.file(t.out.Name.Name, "", out, helpers, moduleDecl.Doc != nil))
 	return p, files, nil
 }
@@ -453,7 +457,31 @@ func (p *packaging) withHelpers(decls []ast.Decl) []ast.Decl {
 	return append(slices.Clone(decls), p.helpers.closure(decls)...)
 }
 
-// The packages of the translation decls use.
+// The prefix of the names under which the output package imports the
+// packages of the translation: the output package holds the user's code
+// too (-provided files, and a consumer's own files), whose package-level
+// names an import name must not collide with.
+const aliasPrefix = "wasm2go_"
+
+// Qualifies the references of decls, the output package's, to the packages
+// of the translation by their import names there.
+func aliasPackages(decls []ast.Decl) {
+	for _, d := range decls {
+		astutil.Apply(d, nil, func(c *astutil.Cursor) bool {
+			sel, ok := c.Node().(*ast.SelectorExpr)
+			if !ok {
+				return true
+			}
+			if id, ok := sel.X.(*ast.Ident); ok && (id.Name == instancePkg || strings.HasPrefix(id.Name, functionsPkg)) {
+				c.Replace(&ast.SelectorExpr{X: ast.NewIdent(aliasPrefix + id.Name), Sel: sel.Sel})
+			}
+			return true
+		})
+	}
+}
+
+// The packages of the translation decls use, each as its path, or as
+// "name path" when decls use an alias (aliasPackages).
 func (p *packaging) imports(decls []ast.Decl) []string {
 	paths := set[string]{}
 	for _, d := range decls {
@@ -466,10 +494,18 @@ func (p *packaging) imports(decls []ast.Decl) []string {
 			if !ok {
 				return true
 			}
-			if id.Name == instancePkg {
-				paths.add(path.Join(p.importPath, internalDir, instancePkg))
-			} else if i, err := strconv.Atoi(strings.TrimPrefix(id.Name, functionsPkg)); err == nil && strings.HasPrefix(id.Name, functionsPkg) && i >= 1 && i <= p.n {
-				paths.add(p.pkgPath(i))
+			name, alias := strings.CutPrefix(id.Name, aliasPrefix)
+			spec := ""
+			if name == instancePkg {
+				spec = path.Join(p.importPath, internalDir, instancePkg)
+			} else if i, err := strconv.Atoi(strings.TrimPrefix(name, functionsPkg)); err == nil && strings.HasPrefix(name, functionsPkg) && i >= 1 && i <= p.n {
+				spec = p.pkgPath(i)
+			}
+			if spec != "" {
+				if alias {
+					spec = id.Name + " " + spec
+				}
+				paths.add(spec)
 			}
 			return true
 		})

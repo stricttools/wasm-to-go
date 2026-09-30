@@ -439,9 +439,9 @@ func (t *translator) lowered(decls []ast.Decl) []ast.Decl {
 }
 
 // Prints the Go file of package name holding decls, under the build
-// constraint tags if any, importing what they use (and the paths more
-// returns); doc says decls have doc comments without positions, which
-// gofmt places.
+// constraint tags if any, importing what they use (and the imports more
+// returns, each a path or "name path"); doc says decls have doc comments
+// without positions, which gofmt places.
 func (t *translator) printDecls(w io.Writer, fset *token.FileSet, name string, decls []ast.Decl, tags string, doc bool, more func([]ast.Decl) []string) error {
 	paths := t.fileImports(decls)
 	if more != nil {
@@ -452,8 +452,15 @@ func (t *translator) printDecls(w io.Writer, fset *token.FileSet, name string, d
 	if len(paths) > 0 {
 		var specs []ast.Spec
 		for _, path := range paths {
+			name, path, renamed := strings.Cut(path, " ")
+			if !renamed {
+				path = name
+			}
 			spec := &ast.ImportSpec{Path: &ast.BasicLit{Kind: token.STRING, Value: strconv.Quote(path)}}
-			if path == "embed" {
+			switch {
+			case renamed:
+				spec.Name = ast.NewIdent(name)
+			case path == "embed":
 				spec.Name = ast.NewIdent("_")
 			}
 			specs = append(specs, spec)

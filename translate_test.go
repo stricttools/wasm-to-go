@@ -70,6 +70,7 @@ func Test_translate_packages(t *testing.T) {
 		{name: "dispatch", wasm: "testdata/regression/dispatch/dispatch.wasm"},
 		{name: "memgrow", wasm: "testdata/regression/memgrow/memgrow.wasm", provided: "testdata/regression/memgrow/provided.go"},
 		{name: "recursion", wasm: "testdata/recursion/recursion.wasm"},
+		{name: "loops", wasm: "testdata/loops/loops.wasm"},
 		{name: "bce", wasm: "testdata/regression/bce/bce.wasm", unsafe: true},
 	}
 	for _, tt := range tests {

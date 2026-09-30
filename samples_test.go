@@ -164,8 +164,16 @@ func Test_trig(t *testing.T) {
 
 func Test_loops(t *testing.T) {
 	env := new(loopsEnv)
-	m := loops_test.New(env)
+	testLoops(t, loops_test.New(env), env)
+}
 
+type loopsModule interface {
+	Xadd_all(start, count int32) int32
+	Xrand_multiple_of_10() int32
+	Xfirst_power_over_limit(base, limit int32) int32
+}
+
+func testLoops(t *testing.T, m loopsModule, env *loopsEnv) {
 	var want int
 	const count = 50
 	const start = 128
@@ -207,7 +215,12 @@ type loopsEnv struct {
 	mem [65536]byte
 }
 
-func (e *loopsEnv) Xbuffer() loops_test.Memory { return e }
+func (e *loopsEnv) Xbuffer() interface {
+	Slice() *[]byte
+	Grow(delta, max int64) int64
+} {
+	return e
+}
 
 func (e *loopsEnv) Xlog_i32(v0 int32) {}
 

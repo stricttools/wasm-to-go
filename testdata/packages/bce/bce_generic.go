@@ -5,19 +5,19 @@
 package wasm2go
 
 import (
-	"github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/functions1"
-	"github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/functions2"
-	"github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/functions3"
-	"github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/functions4"
-	"github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/functions5"
-	"github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/functions6"
-	"github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/instance"
+	wasm2go_functions1 "github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/functions1"
+	wasm2go_functions2 "github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/functions2"
+	wasm2go_functions3 "github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/functions3"
+	wasm2go_functions4 "github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/functions4"
+	wasm2go_functions5 "github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/functions5"
+	wasm2go_functions6 "github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/functions6"
+	wasm2go_instance "github.com/stricttools/wasm-to-go/testdata/packages/bce/internal/instance"
 )
 
 type Module struct {
-	instance instance.Module
+	instance wasm2go_instance.Module
 }
-type Memory = instance.Memory
+type Memory = wasm2go_instance.Memory
 
 func New() *Module {
 	m := new(Module)
@@ -27,23 +27,23 @@ func New() *Module {
 	return m
 }
 func (m *Module) Xmemory() Memory {
-	return (*instance.WasmMemory)(&m.instance.Memory)
+	return (*wasm2go_instance.WasmMemory)(&m.instance.Memory)
 }
 func (m *Module) Xbranch(v0, v1 int32) int32 {
-	return functions2.Xbranch(&m.instance, v0, v1)
+	return wasm2go_functions2.Xbranch(&m.instance, v0, v1)
 }
 func (m *Module) Xcopy(v0 int32) int32 {
-	return functions1.Xcopy(&m.instance, v0)
+	return wasm2go_functions1.Xcopy(&m.instance, v0)
 }
 func (m *Module) Xinc(v0 int32) {
-	functions5.Xinc(&m.instance, v0)
+	wasm2go_functions5.Xinc(&m.instance, v0)
 }
 func (m *Module) Xsum(v0 int32) int32 {
-	return functions6.Xsum(&m.instance, v0)
+	return wasm2go_functions6.Xsum(&m.instance, v0)
 }
 func (m *Module) Xwalk(v0, v1 int32) int32 {
-	return functions3.Xwalk(&m.instance, v0, v1)
+	return wasm2go_functions3.Xwalk(&m.instance, v0, v1)
 }
 func (m *Module) Xwiden(v0 int32) int64 {
-	return functions4.Xwiden(&m.instance, v0)
+	return wasm2go_functions4.Xwiden(&m.instance, v0)
 }

@@ -3,80 +3,80 @@
 package wasm2go
 
 import (
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions1"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions10"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions11"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions12"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions13"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions14"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions15"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions16"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions17"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions18"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions19"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions2"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions20"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions21"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions22"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions23"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions24"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions25"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions26"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions27"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions28"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions29"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions3"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions30"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions31"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions32"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions33"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions34"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions35"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions36"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions37"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions38"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions39"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions4"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions40"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions41"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions42"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions43"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions44"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions45"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions46"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions47"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions48"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions49"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions5"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions50"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions51"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions52"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions53"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions54"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions55"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions56"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions57"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions58"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions59"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions6"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions60"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions61"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions62"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions63"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions64"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions65"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions66"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions67"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions68"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions69"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions7"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions8"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions9"
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
+	wasm2go_functions1 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions1"
+	wasm2go_functions10 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions10"
+	wasm2go_functions11 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions11"
+	wasm2go_functions12 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions12"
+	wasm2go_functions13 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions13"
+	wasm2go_functions14 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions14"
+	wasm2go_functions15 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions15"
+	wasm2go_functions16 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions16"
+	wasm2go_functions17 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions17"
+	wasm2go_functions18 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions18"
+	wasm2go_functions19 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions19"
+	wasm2go_functions2 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions2"
+	wasm2go_functions20 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions20"
+	wasm2go_functions21 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions21"
+	wasm2go_functions22 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions22"
+	wasm2go_functions23 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions23"
+	wasm2go_functions24 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions24"
+	wasm2go_functions25 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions25"
+	wasm2go_functions26 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions26"
+	wasm2go_functions27 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions27"
+	wasm2go_functions28 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions28"
+	wasm2go_functions29 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions29"
+	wasm2go_functions3 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions3"
+	wasm2go_functions30 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions30"
+	wasm2go_functions31 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions31"
+	wasm2go_functions32 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions32"
+	wasm2go_functions33 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions33"
+	wasm2go_functions34 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions34"
+	wasm2go_functions35 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions35"
+	wasm2go_functions36 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions36"
+	wasm2go_functions37 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions37"
+	wasm2go_functions38 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions38"
+	wasm2go_functions39 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions39"
+	wasm2go_functions4 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions4"
+	wasm2go_functions40 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions40"
+	wasm2go_functions41 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions41"
+	wasm2go_functions42 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions42"
+	wasm2go_functions43 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions43"
+	wasm2go_functions44 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions44"
+	wasm2go_functions45 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions45"
+	wasm2go_functions46 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions46"
+	wasm2go_functions47 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions47"
+	wasm2go_functions48 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions48"
+	wasm2go_functions49 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions49"
+	wasm2go_functions5 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions5"
+	wasm2go_functions50 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions50"
+	wasm2go_functions51 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions51"
+	wasm2go_functions52 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions52"
+	wasm2go_functions53 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions53"
+	wasm2go_functions54 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions54"
+	wasm2go_functions55 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions55"
+	wasm2go_functions56 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions56"
+	wasm2go_functions57 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions57"
+	wasm2go_functions58 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions58"
+	wasm2go_functions59 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions59"
+	wasm2go_functions6 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions6"
+	wasm2go_functions60 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions60"
+	wasm2go_functions61 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions61"
+	wasm2go_functions62 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions62"
+	wasm2go_functions63 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions63"
+	wasm2go_functions64 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions64"
+	wasm2go_functions65 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions65"
+	wasm2go_functions66 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions66"
+	wasm2go_functions67 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions67"
+	wasm2go_functions68 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions68"
+	wasm2go_functions69 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions69"
+	wasm2go_functions7 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions7"
+	wasm2go_functions8 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions8"
+	wasm2go_functions9 "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/functions9"
+	wasm2go_instance "github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
 )
 
 type Module struct {
-	instance instance.Module
+	instance wasm2go_instance.Module
 }
 
 func New() *Module {
@@ -84,209 +84,209 @@ func New() *Module {
 	return m
 }
 func (m *Module) Xop0(v0, v1 int64) int64 {
-	return functions69.Xop0(&m.instance, v0, v1)
+	return wasm2go_functions69.Xop0(&m.instance, v0, v1)
 }
 func (m *Module) Xop1(v0, v1 int64) int64 {
-	return functions68.Xop1(&m.instance, v0, v1)
+	return wasm2go_functions68.Xop1(&m.instance, v0, v1)
 }
 func (m *Module) Xop10(v0, v1 int64) int64 {
-	return functions59.Xop10(&m.instance, v0, v1)
+	return wasm2go_functions59.Xop10(&m.instance, v0, v1)
 }
 func (m *Module) Xop11(v0, v1 int64) int64 {
-	return functions58.Xop11(&m.instance, v0, v1)
+	return wasm2go_functions58.Xop11(&m.instance, v0, v1)
 }
 func (m *Module) Xop12(v0, v1 int64) int64 {
-	return functions57.Xop12(&m.instance, v0, v1)
+	return wasm2go_functions57.Xop12(&m.instance, v0, v1)
 }
 func (m *Module) Xop13(v0, v1 int64) int64 {
-	return functions56.Xop13(&m.instance, v0, v1)
+	return wasm2go_functions56.Xop13(&m.instance, v0, v1)
 }
 func (m *Module) Xop14(v0, v1 int64) int64 {
-	return functions55.Xop14(&m.instance, v0, v1)
+	return wasm2go_functions55.Xop14(&m.instance, v0, v1)
 }
 func (m *Module) Xop15(v0, v1 int64) int64 {
-	return functions54.Xop15(&m.instance, v0, v1)
+	return wasm2go_functions54.Xop15(&m.instance, v0, v1)
 }
 func (m *Module) Xop16(v0, v1 int64) int64 {
-	return functions53.Xop16(&m.instance, v0, v1)
+	return wasm2go_functions53.Xop16(&m.instance, v0, v1)
 }
 func (m *Module) Xop17(v0, v1 int64) int64 {
-	return functions52.Xop17(&m.instance, v0, v1)
+	return wasm2go_functions52.Xop17(&m.instance, v0, v1)
 }
 func (m *Module) Xop18(v0, v1 int64) int64 {
-	return functions51.Xop18(&m.instance, v0, v1)
+	return wasm2go_functions51.Xop18(&m.instance, v0, v1)
 }
 func (m *Module) Xop19(v0, v1 int64) int64 {
-	return functions50.Xop19(&m.instance, v0, v1)
+	return wasm2go_functions50.Xop19(&m.instance, v0, v1)
 }
 func (m *Module) Xop2(v0, v1 int64) int64 {
-	return functions67.Xop2(&m.instance, v0, v1)
+	return wasm2go_functions67.Xop2(&m.instance, v0, v1)
 }
 func (m *Module) Xop20(v0, v1 int64) int64 {
-	return functions49.Xop20(&m.instance, v0, v1)
+	return wasm2go_functions49.Xop20(&m.instance, v0, v1)
 }
 func (m *Module) Xop21(v0, v1 int64) int64 {
-	return functions48.Xop21(&m.instance, v0, v1)
+	return wasm2go_functions48.Xop21(&m.instance, v0, v1)
 }
 func (m *Module) Xop22(v0, v1 int64) int64 {
-	return functions47.Xop22(&m.instance, v0, v1)
+	return wasm2go_functions47.Xop22(&m.instance, v0, v1)
 }
 func (m *Module) Xop23(v0, v1 int64) int64 {
-	return functions46.Xop23(&m.instance, v0, v1)
+	return wasm2go_functions46.Xop23(&m.instance, v0, v1)
 }
 func (m *Module) Xop24(v0, v1 int64) int64 {
-	return functions45.Xop24(&m.instance, v0, v1)
+	return wasm2go_functions45.Xop24(&m.instance, v0, v1)
 }
 func (m *Module) Xop25(v0, v1 int64) int64 {
-	return functions44.Xop25(&m.instance, v0, v1)
+	return wasm2go_functions44.Xop25(&m.instance, v0, v1)
 }
 func (m *Module) Xop26(v0, v1 int64) int64 {
-	return functions43.Xop26(&m.instance, v0, v1)
+	return wasm2go_functions43.Xop26(&m.instance, v0, v1)
 }
 func (m *Module) Xop27(v0, v1 int64) int64 {
-	return functions42.Xop27(&m.instance, v0, v1)
+	return wasm2go_functions42.Xop27(&m.instance, v0, v1)
 }
 func (m *Module) Xop28(v0, v1 int64) int64 {
-	return functions41.Xop28(&m.instance, v0, v1)
+	return wasm2go_functions41.Xop28(&m.instance, v0, v1)
 }
 func (m *Module) Xop29(v0, v1 int64) int64 {
-	return functions40.Xop29(&m.instance, v0, v1)
+	return wasm2go_functions40.Xop29(&m.instance, v0, v1)
 }
 func (m *Module) Xop3(v0, v1 int64) int64 {
-	return functions66.Xop3(&m.instance, v0, v1)
+	return wasm2go_functions66.Xop3(&m.instance, v0, v1)
 }
 func (m *Module) Xop30(v0, v1 int64) int64 {
-	return functions39.Xop30(&m.instance, v0, v1)
+	return wasm2go_functions39.Xop30(&m.instance, v0, v1)
 }
 func (m *Module) Xop31(v0, v1 int64) int64 {
-	return functions38.Xop31(&m.instance, v0, v1)
+	return wasm2go_functions38.Xop31(&m.instance, v0, v1)
 }
 func (m *Module) Xop32(v0, v1 int64) int64 {
-	return functions37.Xop32(&m.instance, v0, v1)
+	return wasm2go_functions37.Xop32(&m.instance, v0, v1)
 }
 func (m *Module) Xop33(v0, v1 int64) int64 {
-	return functions36.Xop33(&m.instance, v0, v1)
+	return wasm2go_functions36.Xop33(&m.instance, v0, v1)
 }
 func (m *Module) Xop34(v0, v1 int64) int64 {
-	return functions35.Xop34(&m.instance, v0, v1)
+	return wasm2go_functions35.Xop34(&m.instance, v0, v1)
 }
 func (m *Module) Xop35(v0, v1 int64) int64 {
-	return functions34.Xop35(&m.instance, v0, v1)
+	return wasm2go_functions34.Xop35(&m.instance, v0, v1)
 }
 func (m *Module) Xop36(v0, v1 int64) int64 {
-	return functions33.Xop36(&m.instance, v0, v1)
+	return wasm2go_functions33.Xop36(&m.instance, v0, v1)
 }
 func (m *Module) Xop37(v0, v1 int64) int64 {
-	return functions32.Xop37(&m.instance, v0, v1)
+	return wasm2go_functions32.Xop37(&m.instance, v0, v1)
 }
 func (m *Module) Xop38(v0, v1 int64) int64 {
-	return functions31.Xop38(&m.instance, v0, v1)
+	return wasm2go_functions31.Xop38(&m.instance, v0, v1)
 }
 func (m *Module) Xop39(v0, v1 int64) int64 {
-	return functions30.Xop39(&m.instance, v0, v1)
+	return wasm2go_functions30.Xop39(&m.instance, v0, v1)
 }
 func (m *Module) Xop4(v0, v1 int64) int64 {
-	return functions65.Xop4(&m.instance, v0, v1)
+	return wasm2go_functions65.Xop4(&m.instance, v0, v1)
 }
 func (m *Module) Xop40(v0, v1 int64) int64 {
-	return functions29.Xop40(&m.instance, v0, v1)
+	return wasm2go_functions29.Xop40(&m.instance, v0, v1)
 }
 func (m *Module) Xop41(v0, v1 int64) int64 {
-	return functions28.Xop41(&m.instance, v0, v1)
+	return wasm2go_functions28.Xop41(&m.instance, v0, v1)
 }
 func (m *Module) Xop42(v0, v1 int64) int64 {
-	return functions27.Xop42(&m.instance, v0, v1)
+	return wasm2go_functions27.Xop42(&m.instance, v0, v1)
 }
 func (m *Module) Xop43(v0, v1 int64) int64 {
-	return functions26.Xop43(&m.instance, v0, v1)
+	return wasm2go_functions26.Xop43(&m.instance, v0, v1)
 }
 func (m *Module) Xop44(v0, v1 int64) int64 {
-	return functions25.Xop44(&m.instance, v0, v1)
+	return wasm2go_functions25.Xop44(&m.instance, v0, v1)
 }
 func (m *Module) Xop45(v0, v1 int64) int64 {
-	return functions24.Xop45(&m.instance, v0, v1)
+	return wasm2go_functions24.Xop45(&m.instance, v0, v1)
 }
 func (m *Module) Xop46(v0, v1 int64) int64 {
-	return functions23.Xop46(&m.instance, v0, v1)
+	return wasm2go_functions23.Xop46(&m.instance, v0, v1)
 }
 func (m *Module) Xop47(v0, v1 int64) int64 {
-	return functions22.Xop47(&m.instance, v0, v1)
+	return wasm2go_functions22.Xop47(&m.instance, v0, v1)
 }
 func (m *Module) Xop48(v0, v1 int64) int64 {
-	return functions21.Xop48(&m.instance, v0, v1)
+	return wasm2go_functions21.Xop48(&m.instance, v0, v1)
 }
 func (m *Module) Xop49(v0, v1 int64) int64 {
-	return functions20.Xop49(&m.instance, v0, v1)
+	return wasm2go_functions20.Xop49(&m.instance, v0, v1)
 }
 func (m *Module) Xop5(v0, v1 int64) int64 {
-	return functions64.Xop5(&m.instance, v0, v1)
+	return wasm2go_functions64.Xop5(&m.instance, v0, v1)
 }
 func (m *Module) Xop50(v0, v1 int64) int64 {
-	return functions19.Xop50(&m.instance, v0, v1)
+	return wasm2go_functions19.Xop50(&m.instance, v0, v1)
 }
 func (m *Module) Xop51(v0, v1 int64) int64 {
-	return functions18.Xop51(&m.instance, v0, v1)
+	return wasm2go_functions18.Xop51(&m.instance, v0, v1)
 }
 func (m *Module) Xop52(v0, v1 int64) int64 {
-	return functions17.Xop52(&m.instance, v0, v1)
+	return wasm2go_functions17.Xop52(&m.instance, v0, v1)
 }
 func (m *Module) Xop53(v0, v1 int64) int64 {
-	return functions16.Xop53(&m.instance, v0, v1)
+	return wasm2go_functions16.Xop53(&m.instance, v0, v1)
 }
 func (m *Module) Xop54(v0, v1 int64) int64 {
-	return functions15.Xop54(&m.instance, v0, v1)
+	return wasm2go_functions15.Xop54(&m.instance, v0, v1)
 }
 func (m *Module) Xop55(v0, v1 int64) int64 {
-	return functions14.Xop55(&m.instance, v0, v1)
+	return wasm2go_functions14.Xop55(&m.instance, v0, v1)
 }
 func (m *Module) Xop56(v0, v1 int64) int64 {
-	return functions13.Xop56(&m.instance, v0, v1)
+	return wasm2go_functions13.Xop56(&m.instance, v0, v1)
 }
 func (m *Module) Xop57(v0, v1 int64) int64 {
-	return functions12.Xop57(&m.instance, v0, v1)
+	return wasm2go_functions12.Xop57(&m.instance, v0, v1)
 }
 func (m *Module) Xop58(v0, v1 int64) int64 {
-	return functions11.Xop58(&m.instance, v0, v1)
+	return wasm2go_functions11.Xop58(&m.instance, v0, v1)
 }
 func (m *Module) Xop59(v0, v1 int64) int64 {
-	return functions10.Xop59(&m.instance, v0, v1)
+	return wasm2go_functions10.Xop59(&m.instance, v0, v1)
 }
 func (m *Module) Xop6(v0, v1 int64) int64 {
-	return functions63.Xop6(&m.instance, v0, v1)
+	return wasm2go_functions63.Xop6(&m.instance, v0, v1)
 }
 func (m *Module) Xop60(v0, v1 int64) int64 {
-	return functions9.Xop60(&m.instance, v0, v1)
+	return wasm2go_functions9.Xop60(&m.instance, v0, v1)
 }
 func (m *Module) Xop61(v0, v1 int64) int64 {
-	return functions8.Xop61(&m.instance, v0, v1)
+	return wasm2go_functions8.Xop61(&m.instance, v0, v1)
 }
 func (m *Module) Xop62(v0, v1 int64) int64 {
-	return functions7.Xop62(&m.instance, v0, v1)
+	return wasm2go_functions7.Xop62(&m.instance, v0, v1)
 }
 func (m *Module) Xop63(v0, v1 int64) int64 {
-	return functions6.Xop63(&m.instance, v0, v1)
+	return wasm2go_functions6.Xop63(&m.instance, v0, v1)
 }
 func (m *Module) Xop64(v0, v1 int64) int64 {
-	return functions5.Xop64(&m.instance, v0, v1)
+	return wasm2go_functions5.Xop64(&m.instance, v0, v1)
 }
 func (m *Module) Xop65(v0, v1 int64) int64 {
-	return functions4.Xop65(&m.instance, v0, v1)
+	return wasm2go_functions4.Xop65(&m.instance, v0, v1)
 }
 func (m *Module) Xop66(v0, v1 int64) int64 {
-	return functions3.Xop66(&m.instance, v0, v1)
+	return wasm2go_functions3.Xop66(&m.instance, v0, v1)
 }
 func (m *Module) Xop67(v0, v1 int64) int64 {
-	return functions2.Xop67(&m.instance, v0, v1)
+	return wasm2go_functions2.Xop67(&m.instance, v0, v1)
 }
 func (m *Module) Xop68(v0, v1 int64) int64 {
-	return functions1.Xop68(&m.instance, v0, v1)
+	return wasm2go_functions1.Xop68(&m.instance, v0, v1)
 }
 func (m *Module) Xop7(v0, v1 int64) int64 {
-	return functions62.Xop7(&m.instance, v0, v1)
+	return wasm2go_functions62.Xop7(&m.instance, v0, v1)
 }
 func (m *Module) Xop8(v0, v1 int64) int64 {
-	return functions61.Xop8(&m.instance, v0, v1)
+	return wasm2go_functions61.Xop8(&m.instance, v0, v1)
 }
 func (m *Module) Xop9(v0, v1 int64) int64 {
-	return functions60.Xop9(&m.instance, v0, v1)
+	return wasm2go_functions60.Xop9(&m.instance, v0, v1)
 }

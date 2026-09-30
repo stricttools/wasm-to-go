@@ -1,6 +1,9 @@
 package passes
 
-import "testing"
+import (
+	"go/ast"
+	"testing"
+)
 
 func TestLower(t *testing.T) {
 	src := `func (m *Module) f(v0 int32) int64 {
@@ -91,5 +94,25 @@ func TestClone(t *testing.T) {
 	Lower(c, true)
 	if got, want := formatFunc(t, fn), normalizeFunc(t, src); got != want {
 		t.Errorf("the original changed:\n%s", got)
+	}
+}
+
+// Clone copies a node reachable twice twice: rewriting it through one
+// parent leaves the other alone, as rewriting translated code for one
+// package must leave the code of another alone.
+func TestCloneUnshares(t *testing.T) {
+	fn := parseFunc(t, `func (m *Module) f() {
+		a := x
+		b := x
+	}`)
+	shared := fn.Body.List[0].(*ast.AssignStmt).Rhs[0]
+	fn.Body.List[1].(*ast.AssignStmt).Rhs[0] = shared
+	c := Clone(fn)
+	c.Body.List[0].(*ast.AssignStmt).Rhs[0].(*ast.Ident).Name = "y"
+	if got := c.Body.List[1].(*ast.AssignStmt).Rhs[0].(*ast.Ident).Name; got != "x" {
+		t.Errorf("the second use changed with the first: %s", got)
+	}
+	if shared.(*ast.Ident).Name != "x" {
+		t.Errorf("the original changed")
 	}
 }

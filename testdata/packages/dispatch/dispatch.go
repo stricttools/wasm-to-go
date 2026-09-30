@@ -3,15 +3,15 @@
 package wasm2go
 
 import (
-	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions1"
-	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions2"
-	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions3"
-	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions4"
-	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions5"
-	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions6"
-	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions7"
-	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions8"
-	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/instance"
+	wasm2go_functions1 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions1"
+	wasm2go_functions2 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions2"
+	wasm2go_functions3 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions3"
+	wasm2go_functions4 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions4"
+	wasm2go_functions5 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions5"
+	wasm2go_functions6 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions6"
+	wasm2go_functions7 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions7"
+	wasm2go_functions8 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions8"
+	wasm2go_instance "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/instance"
 )
 
 // A Module must be created by New and never copied.
@@ -19,7 +19,7 @@ import (
 // on the receiver, which must be the Module New filled the tables for,
 // and code outside the translated module must not change the tables.
 type Module struct {
-	instance instance.Module
+	instance wasm2go_instance.Module
 }
 
 func New() *Module {
@@ -28,7 +28,7 @@ func New() *Module {
 	s.T0 = make([]any, 8)
 	s.T1 = make([]any, 4)
 	s.T2 = make([]any, 4)
-	s.Elements = [][]any{{functions8.Fn0, functions7.Fn1, functions6.Fn2, functions8.Fn0}, {functions8.Fn0}, {functions8.Fn0}}
+	s.Elements = [][]any{{wasm2go_functions8.Fn0, wasm2go_functions7.Fn1, wasm2go_functions6.Fn2, wasm2go_functions8.Fn0}, {wasm2go_functions8.Fn0}, {wasm2go_functions8.Fn0}}
 	table_init(s.T0, s.Elements[0], i32(1), 0, len(s.Elements[0]))
 	s.Elements[0] = nil
 	table_init(s.T1, s.Elements[1], i32(1), 0, len(s.Elements[1]))
@@ -41,19 +41,19 @@ func (m *Module) Xexported() *[]any {
 	return &m.instance.T1
 }
 func (m *Module) Xcall(v0, v1 int32) int32 {
-	return functions5.Xcall(&m.instance, v0, v1)
+	return wasm2go_functions5.Xcall(&m.instance, v0, v1)
 }
 func (m *Module) Xcall0(v0 int32) int32 {
-	return functions4.Xcall0(&m.instance, v0)
+	return wasm2go_functions4.Xcall0(&m.instance, v0)
 }
 func (m *Module) XcallExported(v0, v1 int32) int32 {
-	return functions3.XcallExported(&m.instance, v0, v1)
+	return wasm2go_functions3.XcallExported(&m.instance, v0, v1)
 }
 func (m *Module) XcallMutated(v0, v1 int32) int32 {
-	return functions2.XcallMutated(&m.instance, v0, v1)
+	return wasm2go_functions2.XcallMutated(&m.instance, v0, v1)
 }
 func (m *Module) XsetMutated(v0 int32) {
-	functions1.XsetMutated(&m.instance, v0)
+	wasm2go_functions1.XsetMutated(&m.instance, v0)
 }
 
 //go:nosplit

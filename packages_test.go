@@ -13,6 +13,7 @@ import (
 	packages_bce "github.com/stricttools/wasm-to-go/testdata/packages/bce"
 	packages_determinism "github.com/stricttools/wasm-to-go/testdata/packages/determinism"
 	packages_dispatch "github.com/stricttools/wasm-to-go/testdata/packages/dispatch"
+	packages_loops "github.com/stricttools/wasm-to-go/testdata/packages/loops"
 	packages_memgrow "github.com/stricttools/wasm-to-go/testdata/packages/memgrow"
 	packages_recursion "github.com/stricttools/wasm-to-go/testdata/packages/recursion"
 )
@@ -44,6 +45,14 @@ func Test_packages_layout(t *testing.T) {
 func Test_regression_packages_recursion(t *testing.T) {
 	testFactorial(t, &packages_recursion.Module{})
 	testEvenOdd(t, &packages_recursion.Module{})
+}
+
+// loops imports its memory, which the functions' packages and the output
+// package's New use; the output package also holds user.go, whose names
+// are those of the translation's packages.
+func Test_regression_packages_loops(t *testing.T) {
+	env := new(loopsEnv)
+	testLoops(t, packages_loops.New(env), env)
 }
 
 func Test_regression_packages_dispatch(t *testing.T) {
