@@ -105,15 +105,16 @@ func (k *moduleFacts) summarizeCall(call *ast.CallExpr, sum *callSummary) {
 
 // Reports whether fun is a call that cannot reach module code, nor change
 // the memory's slice header: a builtin, a conversion, a helper other than
-// the grow helpers, or a function of a standard library package generated
-// code imports (or of a package in imports).
+// the grow helpers, an operation of the SIMD form, or a function of a
+// standard library package generated code imports (or of a package in
+// imports).
 func (k *moduleFacts) leafCall(fun ast.Expr, imports set[string]) bool {
 	switch f := fun.(type) {
 	case *ast.Ident:
 		if growHelpers.has(f.Name) {
 			return false
 		}
-		return predeclared.has(f.Name) || k.t.helperNames.has(f.Name)
+		return predeclared.has(f.Name) || k.t.helperNames.has(f.Name) || passes.IsSIMDOp(f.Name)
 	case *ast.SelectorExpr:
 		x := f.X
 		if sel, ok := x.(*ast.SelectorExpr); ok {

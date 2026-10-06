@@ -53,7 +53,11 @@ if [ -n "$all" ]; then
 else
 	pkgs=()
 	for d in conversions const f32 f32_bitwise f32_cmp f64 f64_bitwise f64_cmp \
-		float_exprs float_literals float_memory float_misc memory64/float_memory64; do
+		float_exprs float_literals float_memory float_misc memory64/float_memory64 \
+		simd/simd_conversions simd/simd_f32x4 simd/simd_f32x4_arith simd/simd_f32x4_cmp \
+		simd/simd_f32x4_pmin_pmax simd/simd_f32x4_rounding simd/simd_f64x2 simd/simd_f64x2_arith \
+		simd/simd_f64x2_cmp simd/simd_f64x2_pmin_pmax simd/simd_f64x2_rounding \
+		simd/simd_i32x4_trunc_sat_f32x4 simd/simd_i32x4_trunc_sat_f64x2; do
 		pkgs+=("./internal/spectest/$d/...")
 	done
 fi

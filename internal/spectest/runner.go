@@ -55,6 +55,15 @@ var beyondStackBound = map[string]bool{
 	"return_call_indirect.0.wasm:293": true, // odd(300_003)
 }
 
+// negatedCanonicalNaN lists the assertions, as module file and line, whose
+// nan:canonical lanes are the negation of the canonical NaN: the spec's
+// nan:canonical admits either sign, and neg computes the operand with its
+// sign flipped, a deterministic result the profile's canonical NaN, which
+// is positive, does not describe.
+var negatedCanonicalNaN = map[string]bool{
+	"simd_f64x2_arith.1.wasm:5297": true, // f64x2.neg of the canonical NaN
+}
+
 func runAssertions(t *testing.T, mod reflect.Value, spec *specTest, name string) {
 	var file string
 	for _, cmd := range spec.Commands {
@@ -104,6 +113,12 @@ func runAssertions(t *testing.T, mod reflect.Value, spec *specTest, name string)
 							t.Fatal(err)
 						}
 						args[i] = reflect.ValueOf(math.Float64frombits(uint64(v)))
+					case "v128":
+						v, err := v128Bytes(arg)
+						if err != nil {
+							t.Fatal(err)
+						}
+						args[i] = reflect.ValueOf(v)
 					case "funcref", "externref":
 						if arg.Value == "null" {
 							var ptr *any
@@ -157,6 +172,8 @@ func runAssertions(t *testing.T, mod reflect.Value, spec *specTest, name string)
 									t.Errorf("got %d, want %d", v, uint32(i))
 								}
 							}
+						case "v128":
+							checkV128(t, res[i].Interface().([16]byte), exp, negatedCanonicalNaN[fmt.Sprintf("%s:%d", name, cmd.Line)])
 						case "f64":
 							f := res[i].Interface().(float64)
 							v := math.Float64bits(f)
@@ -226,4 +243,76 @@ func parseInt[T int32 | int64](s string) (T, error) {
 		return T(u), nil
 	}
 	return 0, err
+}
+
+// The width in bytes of a v128's lanes of lane type lt.
+func laneBytes(lt string) int {
+	switch lt {
+	case "i8":
+		return 1
+	case "i16":
+		return 2
+	case "i32", "f32":
+		return 4
+	}
+	return 8
+}
+
+// The bytes of the v128 a.
+func v128Bytes(a specArg) ([16]byte, error) {
+	var b [16]byte
+	n := laneBytes(a.LaneType)
+	if len(a.Lanes) != 16/n {
+		return b, fmt.Errorf("a v128 of %s lanes has %d lanes", a.LaneType, len(a.Lanes))
+	}
+	for i, s := range a.Lanes {
+		v, err := parseInt[int64](s)
+		if err != nil {
+			return b, err
+		}
+		for j := range n {
+			b[i*n+j] = byte(uint64(v) >> (8 * j))
+		}
+	}
+	return b, nil
+}
+
+// Checks the v128 got against exp, lane by lane: a NaN the spec allows
+// (canonical or arithmetic) must be the positive canonical NaN, as the
+// deterministic profile requires, or the negative one if negated.
+func checkV128(t *testing.T, got [16]byte, exp specArg, negated bool) {
+	t.Helper()
+	n := laneBytes(exp.LaneType)
+	if len(exp.Lanes) != 16/n {
+		t.Fatalf("a v128 of %s lanes has %d lanes", exp.LaneType, len(exp.Lanes))
+	}
+	for i, s := range exp.Lanes {
+		var lane uint64
+		for j := range n {
+			lane |= uint64(got[i*n+j]) << (8 * j)
+		}
+		var want uint64
+		switch s {
+		case "nan:canonical", "nan:arithmetic":
+			want = 0x7fc00000
+			if n == 8 {
+				want = 0x7ff8000000000000
+			}
+			if negated {
+				want |= 1 << (8*n - 1)
+			}
+		default:
+			v, err := parseInt[int64](s)
+			if err != nil {
+				t.Fatal(err)
+			}
+			want = uint64(v)
+			if n < 8 {
+				want &= 1<<(8*n) - 1
+			}
+		}
+		if lane != want {
+			t.Errorf("lane %d of %s: got %#x, want %#x (%s); got %x", i, exp.LaneType, lane, want, s, got)
+		}
+	}
 }

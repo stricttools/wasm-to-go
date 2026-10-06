@@ -3,6 +3,10 @@ package main
 import (
 	"fmt"
 	"go/ast"
+	"go/token"
+	"strings"
+
+	"github.com/stricttools/wasm-to-go/internal/passes"
 )
 
 type wasmType byte
@@ -12,6 +16,7 @@ const (
 	i64
 	f32
 	f64
+	v128
 	funcref   wasmType = 0x70
 	externref wasmType = 0x6f
 )
@@ -22,7 +27,7 @@ func (t wasmType) ref() bool {
 
 func (t wasmType) check() error {
 	switch t {
-	case i32, i64, f32, f64, funcref, externref:
+	case i32, i64, f32, f64, v128, funcref, externref:
 		return nil
 	default:
 		return fmt.Errorf("unsupported type: 0x%02X", byte(t))
@@ -39,10 +44,44 @@ func (t wasmType) ident() *ast.Ident {
 		return newID("float32")
 	case f64:
 		return newID("float64")
+	case v128:
+		return newID(passes.SIMDType)
 	case funcref, externref:
 		return newID("any")
 	}
 	panic(fmt.Sprintf("unsupported type: 0x%02X", byte(t)))
+}
+
+// The Go type of t where the Module meets its host: a v128 is its 16
+// bytes in memory order, [16]byte, in the signatures of exports and
+// imports and in globals, since the type of the translated code's
+// vectors depends on the build (passes.LowerSIMD).
+func (t wasmType) apiType() ast.Expr {
+	if t == v128 {
+		return &ast.ArrayType{Len: &ast.BasicLit{Kind: token.INT, Value: "16"}, Elt: newID("byte")}
+	}
+	return t.ident()
+}
+
+// Reports whether t has a v128 parameter or result.
+func (t funcType) hasV128() bool {
+	return strings.IndexByte(t.params, byte(v128)) >= 0 || strings.IndexByte(t.results, byte(v128)) >= 0
+}
+
+// The function type of t where the Module meets its host (apiType).
+func (t funcType) toAPI(names bool) *ast.FuncType {
+	ft := t.toAST(names)
+	for _, fl := range []*ast.FieldList{ft.Params, ft.Results} {
+		if fl == nil {
+			continue
+		}
+		for _, f := range fl.List {
+			if id, ok := f.Type.(*ast.Ident); ok && id.Name == passes.SIMDType {
+				f.Type = v128.apiType()
+			}
+		}
+	}
+	return ft
 }
 
 type funcType struct {

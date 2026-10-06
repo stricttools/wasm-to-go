@@ -601,9 +601,15 @@ func (t *translator) readCodeForFunction(fn *funcCompiler, raw []byte, at uint64
 			fn.pushPure(id) // Pure because assigning locals flushes.
 
 		case 0x23: // global.get
-			e, mut, err := t.globalGet()
+			e, mut, typ, err := t.globalGet()
 			if err != nil {
 				return err
+			}
+			if typ == v128 {
+				// A v128 global holds its bytes (wasmType.apiType).
+				t.addSIMDHelpers()
+				fn.push(fn.simdCall("v128.from_bytes", e))
+				break
 			}
 			fn.pushPureIf(!mut, e)
 
@@ -617,9 +623,16 @@ func (t *translator) readCodeForFunction(fn *funcCompiler, raw []byte, at uint64
 			if t.globals[i].imported {
 				lhs = &ast.StarExpr{X: lhs}
 			}
+			var rhs ast.Expr
+			if t.globals[i].typ == v128 {
+				fn.flush()
+				rhs = fn.simdCall("v128.bytes", fn.pop())
+			} else {
+				rhs = fn.pop()
+			}
 			fn.emit(&ast.AssignStmt{
 				Lhs: []ast.Expr{lhs},
-				Rhs: []ast.Expr{fn.pop()},
+				Rhs: []ast.Expr{rhs},
 				Tok: token.ASSIGN})
 
 		case 0x25: // table.get
@@ -1150,11 +1163,9 @@ func (t *translator) readCodeForFunction(fn *funcCompiler, raw []byte, at uint64
 			}
 
 		case 0xfd: // SIMD
-			code, err := readLEB128(t.in)
-			if err != nil {
+			if err := t.readOpcodeSIMD(fn); err != nil {
 				return err
 			}
-			return fmt.Errorf("unsupported opcode (SIMD): 0xFD 0x%02X", code)
 
 		case 0xfe: // Atomics
 			err := t.readOpcodeAtomic(fn)

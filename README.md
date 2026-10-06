@@ -56,7 +56,8 @@ including the following features:
 - [extended constant expressions];
 - [tail calls] [^1];
 - [threads and atomics];
-- [wide arithmetic].
+- [wide arithmetic];
+- [fixed-width SIMD] (see [SIMD](#simd); relaxed SIMD is refused).
 
 [bulk memory instructions]: https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-mbulk-memory
 [reference types]: https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-mreference-types
@@ -67,6 +68,7 @@ including the following features:
 [tail calls]: https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-mtail-call
 [threads and atomics]: https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-matomics
 [wide arithmetic]: https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-mwide-arithmetic
+[fixed-width SIMD]: https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-msimd128
 
 [^1]: `wasm2go` does **not** guarantee tail behavior;
 judge for yourself if using tail calls generates better code.
@@ -208,6 +210,30 @@ where `math.FMA` takes 2.3 ns, and 14.1 ns with `math.FMA` in software
 QuickJS built with wasi-sdk is not affected: it links wasi-libc, whose libm is musl's
 compiled into the module, and imports no math functions.
 
+## SIMD
+
+A module built with `-msimd128` has its `v128` values in Go variables of the
+type `vec128`, an alias of a struct of four `uint32` lanes, and its SIMD
+instructions written inline, as scalar code over the lanes, in a file of its
+own beside the output file (`output_simd.go`, so the output needs `-o`; with
+`-unsafe`, an expanded and a generic file, as the other code is): each
+function that uses `v128` values is in that file, and the module's other code
+in the output file. The code is written operation by operation, never as calls
+of helper functions taking vectors, which the Go compiler would not inline
+(measured 3.4 times as slow as the module built without SIMD).
+
+`v128` values cross the `Module`'s exports and imports, and live in its
+globals, as their 16 bytes in memory order, `[16]byte`.
+
+Float lanes follow the [deterministic profile](#determinism), canonicalized
+without branches (a NaN lane's bits are masked). Vector variables are
+deferred like float ones (`DeferCanon` in [internal/passes](internal/passes)):
+a vector of raw `f32x4` (or `f64x2`) results is canonicalized where a use reads
+its lanes in another way. Relaxed SIMD is refused.
+
+The SIMD spec tests run in `internal/spectest/simd`, and the determinism tests
+include the float SIMD operations and vector locals.
+
 ## Traps
 
 A trap is a Go panic raised in the translated code:
@@ -314,7 +340,7 @@ each adds its charge when it starts, subtracts it when it returns,
 and panics with `call stack exhausted` when the count exceeds
 `maxStack` (192 MiB, in [stackbound.go](stackbound.go)).
 A function's charge is an estimate of its Go frame,
-8 bytes for each of its parameters, results, and variables plus 64
+8 bytes for each of its parameters, results, and variables (16 for a `v128`) plus 64
 (an upper estimate: the Go compiler shares slots between variables),
 and at least `maxStack / maxFrames` (`maxFrames` is 200,000),
 so no more than 200,000 of these frames are live at once.

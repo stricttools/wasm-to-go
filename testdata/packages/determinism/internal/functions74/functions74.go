@@ -7,8 +7,17 @@ import (
 	"math"
 )
 
-func Xop19(m *instance.Module, v0, v1 int64) int64 {
-	return int64(math.Float64bits(f64_canon(float64(math.Float64frombits(uint64(v0)) / math.Float64frombits(uint64(v1))))))
+func Xop82(m *instance.Module, v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = math.Sqrt(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	return int64(math.Float64bits(f64_neg(f64_canon(v2))))
+}
+
+//go:nosplit
+func f64_neg(x float64) float64 {
+	return math.Float64frombits(math.Float64bits(x) ^ 1<<63)
 }
 
 //go:nosplit

@@ -7,14 +7,30 @@ import (
 	"math"
 )
 
-func Xop21(m *instance.Module, v0, v1 int64) int64 {
-	return int64(math.Float64bits(f64_max(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)))))
+func Xop84(m *instance.Module, v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var v6 int32
+	v2 = math.Float64frombits(uint64(v0))
+	v6 = int32(3)
+l0:
+	v2 = f64_canon(float64(v2 + math.Float64frombits(uint64(v1))))
+	v6 = v6 - int32(1)
+	if v6 != 0 {
+		goto l0
+	}
+	return int64(math.Float64bits(f64_neg(v2)))
 }
 
 //go:nosplit
-func f64_max(x, y float64) float64 {
-	if m := max(x, y); m == m {
-		return m
+func f64_neg(x float64) float64 {
+	return math.Float64frombits(math.Float64bits(x) ^ 1<<63)
+}
+
+//go:nosplit
+func f64_canon(x float64) float64 {
+	if x != x {
+		return math.Float64frombits(0x7ff8000000000000)
 	}
-	return math.Float64frombits(0x7ff8000000000000)
+	return x
 }

@@ -5,13 +5,25 @@ import (
 	"go/token"
 	"math"
 	"strconv"
+	"strings"
 )
 
-// The canonicalizing helpers, by the float type they take and return.
-var canonHelpers = map[string]string{"f32_canon": "float32", "f64_canon": "float64"}
+// The canonicalizing helpers, by the domain they canonicalize: a float
+// type, or the lane shape of a vector (SIMDType) whose lanes they
+// canonicalize.
+var canonHelpers = map[string]string{
+	"f32_canon": "float32", "f64_canon": "float64",
+	SIMDPrefix + "f32x4_canon": "f32x4", SIMDPrefix + "f64x2_canon": "f64x2",
+}
 
 // CanonHelper is the canonicalizing helper of each float type.
 var CanonHelper = map[string]string{"float32": "f32_canon", "float64": "f64_canon"}
+
+// The canonicalizing helper of each domain.
+var canonOfDomain = map[string]string{
+	"float32": "f32_canon", "float64": "f64_canon",
+	"f32x4": SIMDPrefix + "f32x4_canon", "f64x2": SIMDPrefix + "f64x2_canon",
+}
 
 // NaNBlind reports whether helper's result is the same for every NaN
 // operand: min and max, which return the canonical NaN for any NaN, and
@@ -45,48 +57,56 @@ var nanPropagatingMath = set[string]{"Sqrt": {}, "Floor": {}, "Ceil": {}, "Trunc
 // and returns the number of variables it deferred.
 //
 // The translator canonicalizes each float operation's result where it is
-// computed, f32_canon(float32(x + y)). A variable assigned such a result
-// can hold the raw result instead, x + y, when every value assigned to it
-// is a canonicalized result, a constant that is not a NaN other than the
-// canonical one, a min or max (canonical already), an integer converted
-// to a float (never a NaN), the zero of its declaration, or another such
-// variable. Its uses then take it raw where the NaN they see cannot change
-// their result, and canonicalized everywhere else:
+// computed, f32_canon(float32(x + y)), and each float lane of a vector
+// operation's, simd_f32x4_canon(simd_f32x4_add(x, y)). A variable
+// assigned such a result can hold the raw result instead, x + y, when
+// every value assigned to it is a canonicalized result (of its float type,
+// or for a vector of one lane shape), a constant that is not a NaN other
+// than the canonical one (in each lane), a min or max (canonical already),
+// an integer converted to a float (never a NaN), the zero of its
+// declaration, or another such variable. Its uses then take it raw where
+// the NaN they see cannot change their result, and canonicalized
+// everywhere else:
 //
-//   - raw: the operands of arithmetic (+, -, *, /, and the
-//     NaN-propagating math functions and conversions between float
-//     types) whose own result is taken raw or canonicalized; operands of
-//     comparisons; operands of the canonicalizing, min and max, and
-//     conversion-to-integer helpers; values assigned to another such
-//     variable or discarded (_ = x);
+//   - raw: the operands of arithmetic (+, -, *, /, the NaN-propagating
+//     math functions, conversions between float types, and the vector
+//     operations of the lane shape that canonicalize their result) whose
+//     own result is taken raw or canonicalized; operands of comparisons;
+//     operands of the canonicalizing, min and max, and conversion-to-integer
+//     helpers and vector operations of the lane shape; values assigned to
+//     another such variable or discarded (_ = x);
 //   - canonicalized: everything else, among them stores, reinterpretations
-//     (math.Float32bits), calls, returns, globals, neg, abs, and copysign.
+//     (math.Float32bits), calls, returns, globals, neg, abs, copysign, and
+//     the vector operations that move lanes or bits (shuffles, bitwise
+//     operations, extract_lane, replace_lane, pmin and pmax).
 //
 // A variable is deferred only if some raw result reaches it: one holding
 // only constants and helper results gains nothing.
 //
 // Why: in a loop body, a float computed into a local and used by the next
 // operation was canonicalized at every step (a compare and a branch per
-// operation); deferred, a chain of operations through locals
-// canonicalizes once, where its value leaves the chain. basic-pitch's
-// onnxruntime build, with the locals split (see the translator's
-// splitLocals), went from 1,098 ms to 781 ms per inference on linux/amd64
-// (medians of interleaved runs).
+// operation, a compare and a blend per vector operation); deferred, a chain
+// of operations through locals canonicalizes once, where its value leaves
+// the chain. basic-pitch's onnxruntime build, with the locals split (see
+// the translator's splitLocals), went from 1,098 ms to 781 ms per
+// inference on linux/amd64 (medians of interleaved runs).
 //
 // # Why this preserves behavior
 //
 // Every value assigned to a deferred variable, raw, canonicalizes to the
 // value the variable held before: a canonicalized result's raw form does
 // by definition, and the other values are their own canonical form. So
-// the variable's raw value is a NaN exactly when its value was, and
-// otherwise the same bits. A raw use is one whose result is the same for
-// every NaN and for equal non-NaN values: arithmetic gives a NaN for a NaN
-// operand, which the canonicalization above it (on every path the use
-// reaches) makes the canonical NaN; a comparison is false (or true for !=)
-// for every NaN; min and max return the canonical NaN, and the
-// conversions to integer trap or saturate the same way for every NaN; an
-// assignment to another deferred variable keeps the invariant. Every
-// other use canonicalizes first, and gets the bits the variable held.
+// the variable's raw value (each lane of it) is a NaN exactly when its
+// value was, and otherwise the same bits. A raw use is one whose result is
+// the same for every NaN and for equal non-NaN values: arithmetic gives a
+// NaN for a NaN operand, which the canonicalization above it (on every
+// path the use reaches) makes the canonical NaN; a comparison is false (or
+// true for !=) for every NaN; min and max return the canonical NaN, and
+// the conversions to integer trap or saturate the same way for every NaN;
+// an assignment to another deferred variable keeps the invariant. A vector
+// is raw only where its lanes are read in the lane shape it was deferred
+// in. Every other use canonicalizes first, and gets the bits the variable
+// held.
 //
 // The pass works on the function's own variables, never shadowed in
 // generated code, and leaves a function alone when one of its float
@@ -120,12 +140,13 @@ func DeferCanon(fn *ast.FuncDecl) int {
 }
 
 type deferrer struct {
-	types    map[string]string      // the Go type of each variable whose type the pass knows
-	defs     map[string][]ast.Expr  // the values assigned to each variable; nil for a declaration's zero
-	unsafe   set[string]            // variables assigned something the pass cannot follow
-	params   set[string]            // parameters, whose values come from the caller
-	inLit    set[string]            // variables appearing in function literals
-	deferred map[string]string      // the deferred variables and their float types
+	types    map[string]string     // the Go type of each variable whose type the pass knows
+	defs     map[string][]ast.Expr // the values assigned to each variable; nil for a declaration's zero
+	unsafe   set[string]           // variables assigned something the pass cannot follow
+	params   set[string]           // parameters, whose values come from the caller
+	inLit    set[string]           // variables appearing in function literals
+	domain   map[string]string     // each candidate's domain: its float type, or a vector's lane shape
+	deferred map[string]string     // the deferred variables and their domains
 }
 
 // collect records every variable's type and assigned values, and reports
@@ -203,7 +224,8 @@ func (d *deferrer) collect(body *ast.BlockStmt) bool {
 }
 
 // The Go type of e, where the pass can tell it: a known variable's, a
-// conversion's, and the float helpers' and math functions' results.
+// conversion's, the float helpers' and math functions' results, and a
+// vector operation's vector.
 func (d *deferrer) exprType(e ast.Expr) string {
 	switch e := e.(type) {
 	case *ast.ParenExpr:
@@ -211,12 +233,15 @@ func (d *deferrer) exprType(e ast.Expr) string {
 	case *ast.Ident:
 		return d.types[e.Name]
 	case *ast.CallExpr:
+		if SIMDVector(e) {
+			return SIMDType
+		}
 		switch f := e.Fun.(type) {
 		case *ast.Ident:
 			if _, ok := intRanges[f.Name]; ok || f.Name == "float32" || f.Name == "float64" {
 				return f.Name
 			}
-			if t, ok := canonHelpers[f.Name]; ok {
+			if t, ok := canonHelpers[f.Name]; ok && isFloat(t) {
 				return t
 			}
 			switch f.Name {
@@ -265,21 +290,91 @@ func isInt(t string) bool {
 	return ok
 }
 
+// The domain of a canonicalization call e (its helper's), or "".
+func canonCall(e ast.Expr) string {
+	if c, ok := unparen(e).(*ast.CallExpr); ok && len(c.Args) == 1 {
+		if id, ok := c.Fun.(*ast.Ident); ok {
+			return canonHelpers[id.Name]
+		}
+	}
+	return ""
+}
+
+// The name of the vector operation e calls (after SIMDPrefix), or "".
+func simdOpName(e ast.Expr) string {
+	if c, ok := unparen(e).(*ast.CallExpr); ok {
+		if id, ok := c.Fun.(*ast.Ident); ok && IsSIMDOp(id.Name) {
+			return id.Name[len(SIMDPrefix):]
+		}
+	}
+	return ""
+}
+
+// The vector operations whose result is a vector of shape with no NaN lane
+// other than the canonical NaN: min and max, and conversions from integers.
+var simdCanonResults = map[string]string{
+	"f32x4_min": "f32x4", "f32x4_max": "f32x4", "f64x2_min": "f64x2", "f64x2_max": "f64x2",
+	"f32x4_convert_i32x4_s": "f32x4", "f32x4_convert_i32x4_u": "f32x4",
+	"f64x2_convert_low_i32x4_s": "f64x2", "f64x2_convert_low_i32x4_u": "f64x2",
+}
+
 // solve finds the deferred variables: the float variables whose every
 // value is safe (see DeferCanon), assuming the others deferred, as the
 // largest such set; then those some raw value reaches.
 func (d *deferrer) solve() {
 	safe := set[string]{}
+	d.domain = map[string]string{}
 	for v, t := range d.types {
-		if isFloat(t) && !d.params.has(v) && !d.unsafe.has(v) && !d.inLit.has(v) && len(d.defs[v]) > 0 {
+		if (isFloat(t) || t == SIMDType) && !d.params.has(v) && !d.unsafe.has(v) && !d.inLit.has(v) && len(d.defs[v]) > 0 {
 			safe.add(v)
+			if isFloat(t) {
+				d.domain[v] = t
+			}
+		}
+	}
+	// A vector's domain is the lane shape of its canonicalized values and
+	// of the vectors assigned to it; a vector of two shapes is not safe.
+	for changed := true; changed; {
+		changed = false
+		for v := range safe {
+			if d.types[v] != SIMDType {
+				continue
+			}
+			shapes := set[string]{}
+			if s := d.domain[v]; s != "" {
+				shapes.add(s)
+			}
+			for _, e := range d.defs[v] {
+				if c := canonCall(e); c != "" {
+					shapes.add(c)
+				} else if id, ok := unparen(e).(*ast.Ident); ok && safe.has(id.Name) && d.domain[id.Name] != "" {
+					shapes.add(d.domain[id.Name])
+				} else if s := simdCanonResults[simdOpName(e)]; s != "" {
+					shapes.add(s)
+				}
+			}
+			switch {
+			case len(shapes) > 1:
+				delete(safe, v)
+				changed = true
+			case len(shapes) == 1 && d.domain[v] == "":
+				for s := range shapes {
+					d.domain[v] = s
+				}
+				changed = true
+			}
+		}
+	}
+	for v := range safe {
+		if d.domain[v] == "" {
+			delete(safe, v)
 		}
 	}
 	for changed := true; changed; {
 		changed = false
 		for v := range safe {
 			for _, e := range d.defs[v] {
-				if !d.safeValue(e, d.types[v], safe) {
+				if !d.safeValue(e, d.domain[v], safe) {
 					delete(safe, v)
 					changed = true
 					break
@@ -295,7 +390,7 @@ func (d *deferrer) solve() {
 				continue
 			}
 			for _, e := range d.defs[v] {
-				if isCanonCall(e) != "" {
+				if canonCall(e) != "" {
 					raw.add(v)
 				} else if id, ok := unparen(e).(*ast.Ident); ok && raw.has(id.Name) {
 					raw.add(v)
@@ -309,7 +404,7 @@ func (d *deferrer) solve() {
 	}
 	d.deferred = map[string]string{}
 	for v := range raw {
-		d.deferred[v] = d.types[v]
+		d.deferred[v] = d.domain[v]
 	}
 }
 
@@ -323,30 +418,56 @@ func unparen(e ast.Expr) ast.Expr {
 	}
 }
 
-// The float type of a call of a canonicalizing helper, or "".
-func isCanonCall(e ast.Expr) string {
-	if c, ok := unparen(e).(*ast.CallExpr); ok && len(c.Args) == 1 {
-		if id, ok := c.Fun.(*ast.Ident); ok {
-			return canonHelpers[id.Name]
-		}
-	}
-	return ""
-}
-
-// Reports whether e, assigned to a variable of type typ, is a value whose
-// canonical form is itself or, raw, canonicalizes to the variable's value:
-// see DeferCanon.
-func (d *deferrer) safeValue(e ast.Expr, typ string, safe set[string]) bool {
+// Reports whether e, assigned to a variable of domain dom, is a value
+// whose canonical form is itself or, raw, canonicalizes to the variable's
+// value: see DeferCanon.
+func (d *deferrer) safeValue(e ast.Expr, dom string, safe set[string]) bool {
 	if e == nil {
 		return true
 	}
 	e = unparen(e)
-	if t := isCanonCall(e); t != "" {
-		return t == typ
+	if c := canonCall(e); c != "" {
+		return c == dom
 	}
+	if id, ok := e.(*ast.Ident); ok {
+		return safe.has(id.Name) && d.domain[id.Name] == dom
+	}
+	if !isFloat(dom) {
+		op := simdOpName(e)
+		if simdCanonResults[op] == dom {
+			return true
+		}
+		if op == "v128_const" {
+			for i, a := range e.(*ast.CallExpr).Args {
+				v, err := strconv.ParseUint(exprString(a), 0, 32)
+				if err != nil {
+					return false
+				}
+				switch dom {
+				case "f32x4":
+					f := math.Float32frombits(uint32(v))
+					if f != f && v != 0x7fc00000 {
+						return false
+					}
+				case "f64x2":
+					if i%2 == 1 {
+						lo, err := strconv.ParseUint(exprString(e.(*ast.CallExpr).Args[i-1]), 0, 32)
+						if err != nil {
+							return false
+						}
+						b := v<<32 | lo
+						if f := math.Float64frombits(b); f != f && b != 0x7ff8000000000000 {
+							return false
+						}
+					}
+				}
+			}
+			return true
+		}
+		return false
+	}
+	typ := dom
 	switch e := e.(type) {
-	case *ast.Ident:
-		return safe.has(e.Name) && d.types[e.Name] == typ
 	case *ast.CallExpr:
 		switch f := e.Fun.(type) {
 		case *ast.Ident:
@@ -382,6 +503,21 @@ func (d *deferrer) safeValue(e ast.Expr, typ string, safe set[string]) bool {
 	return false
 }
 
+// The blindness of a position: where a value is raw (see DeferCanon).
+// "scalar" makes deferred float variables raw, a lane shape deferred
+// vectors of that shape, "all" every deferred variable, and "" none.
+func rawIn(dom, blind string) bool {
+	return blind == "all" || blind == dom || blind == "scalar" && isFloat(dom)
+}
+
+// The blindness of an assignment to a deferred variable of domain dom.
+func assignBlind(dom string) string {
+	if isFloat(dom) {
+		return "scalar"
+	}
+	return dom
+}
+
 func (d *deferrer) stmts(list []ast.Stmt) {
 	for _, s := range list {
 		d.stmt(s)
@@ -393,16 +529,16 @@ func (d *deferrer) stmt(s ast.Stmt) {
 	case *ast.AssignStmt:
 		paired := len(s.Lhs) == len(s.Rhs)
 		for i := range s.Rhs {
-			blind := false
+			blind := ""
 			if paired {
 				if id, ok := s.Lhs[i].(*ast.Ident); ok {
-					if _, deferred := d.deferred[id.Name]; deferred {
-						blind = true
-						if isCanonCall(s.Rhs[i]) != "" {
+					if dom, deferred := d.deferred[id.Name]; deferred {
+						blind = assignBlind(dom)
+						if canonCall(s.Rhs[i]) == dom {
 							s.Rhs[i] = unparen(s.Rhs[i]).(*ast.CallExpr).Args[0]
 						}
 					} else if id.Name == "_" {
-						blind = true
+						blind = "all"
 					}
 				}
 			}
@@ -410,14 +546,14 @@ func (d *deferrer) stmt(s ast.Stmt) {
 		}
 		for i, l := range s.Lhs {
 			if _, ok := l.(*ast.Ident); !ok {
-				s.Lhs[i] = d.expr(l, false)
+				s.Lhs[i] = d.expr(l, "")
 			}
 		}
 	case *ast.ExprStmt:
-		s.X = d.expr(s.X, false)
+		s.X = d.expr(s.X, "")
 	case *ast.ReturnStmt:
 		for i := range s.Results {
-			s.Results[i] = d.expr(s.Results[i], false)
+			s.Results[i] = d.expr(s.Results[i], "")
 		}
 	case *ast.BlockStmt:
 		d.stmts(s.List)
@@ -427,7 +563,7 @@ func (d *deferrer) stmt(s ast.Stmt) {
 		if s.Init != nil {
 			d.stmt(s.Init)
 		}
-		s.Cond = d.expr(s.Cond, false)
+		s.Cond = d.expr(s.Cond, "")
 		d.stmts(s.Body.List)
 		if s.Else != nil {
 			d.stmt(s.Else)
@@ -437,12 +573,12 @@ func (d *deferrer) stmt(s ast.Stmt) {
 			d.stmt(s.Init)
 		}
 		if s.Tag != nil {
-			s.Tag = d.expr(s.Tag, false)
+			s.Tag = d.expr(s.Tag, "")
 		}
 		for _, c := range s.Body.List {
 			cc := c.(*ast.CaseClause)
 			for i := range cc.List {
-				cc.List[i] = d.expr(cc.List[i], false)
+				cc.List[i] = d.expr(cc.List[i], "")
 			}
 			d.stmts(cc.Body)
 		}
@@ -451,7 +587,7 @@ func (d *deferrer) stmt(s ast.Stmt) {
 			d.stmt(s.Init)
 		}
 		if s.Cond != nil {
-			s.Cond = d.expr(s.Cond, false)
+			s.Cond = d.expr(s.Cond, "")
 		}
 		if s.Post != nil {
 			d.stmt(s.Post)
@@ -462,11 +598,11 @@ func (d *deferrer) stmt(s ast.Stmt) {
 		for _, sp := range gd.Specs {
 			if vs, ok := sp.(*ast.ValueSpec); ok {
 				for i := range vs.Values {
-					blind := false
+					blind := ""
 					if len(vs.Values) == len(vs.Names) {
-						if _, deferred := d.deferred[vs.Names[i].Name]; deferred {
-							blind = true
-							if isCanonCall(vs.Values[i]) != "" {
+						if dom, deferred := d.deferred[vs.Names[i].Name]; deferred {
+							blind = assignBlind(dom)
+							if canonCall(vs.Values[i]) == dom {
 								vs.Values[i] = unparen(vs.Values[i]).(*ast.CallExpr).Args[0]
 							}
 						}
@@ -476,82 +612,123 @@ func (d *deferrer) stmt(s ast.Stmt) {
 			}
 		}
 	case *ast.IncDecStmt:
-		s.X = d.expr(s.X, false)
+		s.X = d.expr(s.X, "")
 	}
 	// BranchStmt and EmptyStmt hold no expressions; collect refused the
 	// statements this switch does not list.
 }
 
+// The blindness of the operands of the vector operation op in a position
+// of blindness blind.
+func simdOperandBlind(op, blind string) string {
+	shape, name, _ := strings.Cut(op, "_")
+	switch name {
+	case "canon":
+		return shape
+	case "eq", "ne", "lt", "gt", "le", "ge", "min", "max":
+		if shape[0] == 'f' {
+			return shape
+		}
+	case "add", "sub", "mul", "div", "sqrt", "ceil", "floor", "trunc", "nearest":
+		if shape[0] == 'f' && blind == shape {
+			return shape
+		}
+	case "demote_f64x2_zero":
+		if blind == shape {
+			return "f64x2"
+		}
+	case "promote_low_f32x4":
+		if blind == shape {
+			return "f32x4"
+		}
+	case "trunc_sat_f32x4_s", "trunc_sat_f32x4_u":
+		return "f32x4"
+	case "trunc_sat_f64x2_s_zero", "trunc_sat_f64x2_u_zero":
+		return "f64x2"
+	}
+	return ""
+}
+
 // e with each use of a deferred variable canonicalized unless e's value
-// is taken where the NaN it is cannot be told apart (blind).
-func (d *deferrer) expr(e ast.Expr, blind bool) ast.Expr {
+// is taken where the NaN it is cannot be told apart (blind: see rawIn).
+func (d *deferrer) expr(e ast.Expr, blind string) ast.Expr {
 	switch x := e.(type) {
 	case *ast.Ident:
-		if t, ok := d.deferred[x.Name]; ok && !blind {
-			return &ast.CallExpr{Fun: ast.NewIdent(CanonHelper[t]), Args: []ast.Expr{x}}
+		if dom, ok := d.deferred[x.Name]; ok && !rawIn(dom, blind) {
+			return &ast.CallExpr{Fun: ast.NewIdent(canonOfDomain[dom]), Args: []ast.Expr{x}}
 		}
 	case *ast.ParenExpr:
 		x.X = d.expr(x.X, blind)
 	case *ast.BinaryExpr:
-		opBlind := false
+		opBlind := ""
 		switch x.Op {
 		case token.ADD, token.SUB, token.MUL, token.QUO:
-			opBlind = blind && isFloat(d.exprType(x))
+			if blind == "scalar" && isFloat(d.exprType(x)) {
+				opBlind = "scalar"
+			}
 		case token.EQL, token.NEQ, token.LSS, token.LEQ, token.GTR, token.GEQ:
-			opBlind = isFloat(d.exprType(x.X)) || isFloat(d.exprType(x.Y))
+			if isFloat(d.exprType(x.X)) || isFloat(d.exprType(x.Y)) {
+				opBlind = "scalar"
+			}
 		}
 		x.X = d.expr(x.X, opBlind)
 		x.Y = d.expr(x.Y, opBlind)
 	case *ast.CallExpr:
-		argBlind := false
+		argBlind := ""
 		switch f := x.Fun.(type) {
 		case *ast.Ident:
 			switch {
-			case canonHelpers[f.Name] != "", nanBlindHelpers.has(f.Name):
-				argBlind = true
+			case IsSIMDOp(f.Name):
+				argBlind = simdOperandBlind(f.Name[len(SIMDPrefix):], blind)
+			case isFloat(canonHelpers[f.Name]), nanBlindHelpers.has(f.Name):
+				argBlind = "scalar"
 			case (f.Name == "float32" || f.Name == "float64") && len(x.Args) == 1 && isFloat(d.exprType(x.Args[0])):
-				argBlind = blind
+				if blind == "scalar" {
+					argBlind = "scalar"
+				}
 			}
 		case *ast.SelectorExpr:
 			if pkg, ok := f.X.(*ast.Ident); ok && pkg.Name == "math" && nanPropagatingMath.has(f.Sel.Name) {
-				argBlind = blind
+				if blind == "scalar" {
+					argBlind = "scalar"
+				}
 			} else {
-				x.Fun = d.expr(x.Fun, false)
+				x.Fun = d.expr(x.Fun, "")
 			}
 		default:
-			x.Fun = d.expr(x.Fun, false)
+			x.Fun = d.expr(x.Fun, "")
 		}
 		for i := range x.Args {
 			x.Args[i] = d.expr(x.Args[i], argBlind)
 		}
 	case *ast.IndexExpr:
-		x.X = d.expr(x.X, false)
-		x.Index = d.expr(x.Index, false)
+		x.X = d.expr(x.X, "")
+		x.Index = d.expr(x.Index, "")
 	case *ast.SliceExpr:
-		x.X = d.expr(x.X, false)
+		x.X = d.expr(x.X, "")
 		if x.Low != nil {
-			x.Low = d.expr(x.Low, false)
+			x.Low = d.expr(x.Low, "")
 		}
 		if x.High != nil {
-			x.High = d.expr(x.High, false)
+			x.High = d.expr(x.High, "")
 		}
 		if x.Max != nil {
-			x.Max = d.expr(x.Max, false)
+			x.Max = d.expr(x.Max, "")
 		}
 	case *ast.UnaryExpr:
-		x.X = d.expr(x.X, false)
+		x.X = d.expr(x.X, "")
 	case *ast.StarExpr:
-		x.X = d.expr(x.X, false)
+		x.X = d.expr(x.X, "")
 	case *ast.TypeAssertExpr:
-		x.X = d.expr(x.X, false)
+		x.X = d.expr(x.X, "")
 	case *ast.SelectorExpr:
-		x.X = d.expr(x.X, false)
+		x.X = d.expr(x.X, "")
 	case *ast.CompositeLit:
 		for i := range x.Elts {
-			x.Elts[i] = d.expr(x.Elts[i], false)
+			x.Elts[i] = d.expr(x.Elts[i], "")
 		}
 	case *ast.KeyValueExpr:
-		x.Value = d.expr(x.Value, false)
+		x.Value = d.expr(x.Value, "")
 	}
 	return e
 }

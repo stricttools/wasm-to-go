@@ -52,15 +52,16 @@ var pureHelpers = set[string]{
 
 // Standard library packages used by generated code.
 var stdlib = map[string]string{
-	"list":    "container/list",
-	"binary":  "encoding/binary",
-	"math":    "math",
-	"bits":    "math/bits",
-	"runtime": "runtime",
-	"sync":    "sync",
-	"atomic":  "sync/atomic",
-	"time":    "time",
-	"unsafe":  "unsafe",
+	"list":     "container/list",
+	"binary":   "encoding/binary",
+	"math":     "math",
+	"bits":     "math/bits",
+	"archsimd": "simd/archsimd",
+	"runtime":  "runtime",
+	"sync":     "sync",
+	"atomic":   "sync/atomic",
+	"time":     "time",
+	"unsafe":   "unsafe",
 }
 
 type translator struct {
@@ -112,7 +113,11 @@ type translator struct {
 // A module whose code is larger than maxPackageSize is written as several
 // packages: the output package to w (and generic), the others to files
 // sub creates, at paths relative to the output file's directory.
-func translate(r io.Reader, w, generic io.Writer, sub func(rel string) (io.Writer, error)) error {
+//
+// A module with SIMD instructions has its SIMD code in files of their own
+// (simdFiles), which sub creates beside the output file, named after
+// outName, the output file's name.
+func translate(r io.Reader, w, generic io.Writer, sub func(rel string) (io.Writer, error), outName string) error {
 	var t translator
 
 	t.in = offset.NewReader(r)
@@ -253,7 +258,11 @@ func translate(r io.Reader, w, generic io.Writer, sub func(rel string) (io.Write
 		t.out.Name = newID("wasm2go")
 	}
 
-	t.out.Decls = append(t.out.Decls, t.createExportMethods()...)
+	exportDecls, err := t.createExportMethods()
+	if err != nil {
+		return err
+	}
+	t.out.Decls = append(t.out.Decls, exportDecls...)
 	t.out.Decls = append(t.out.Decls, t.providedCode()...)
 
 	// Add helpers.
@@ -320,13 +329,19 @@ func translate(r io.Reader, w, generic io.Writer, sub func(rel string) (io.Write
 		if err != nil {
 			return err
 		}
-		return p.print(files, w, generic, sub, fset)
+		return p.print(files, w, generic, sub, fset, outName)
 	}
 
 	name, doc := t.out.Name.Name, moduleDecl.Doc != nil
+	decls, simd := splitSIMD(t.out.Decls)
+	if len(simd) > 0 {
+		if err := t.printSIMDFiles(sub, "", outName, name, simd, fset, doc, nil, nil); err != nil {
+			return err
+		}
+	}
 	if generic == nil {
-		t.lower(t.code)
-		return t.printDecls(w, fset, name, t.out.Decls, *tags, doc, nil)
+		t.lower(t.codeFuncs(decls))
+		return t.printDecls(w, fset, name, decls, *tags, doc, nil)
 	}
 
 	// Two files: the generic file, for every platform, and the expanded
@@ -338,11 +353,11 @@ func translate(r io.Reader, w, generic io.Writer, sub func(rel string) (io.Write
 	if err != nil {
 		return err
 	}
-	if err := t.printDecls(generic, fset, name, t.lowered(t.out.Decls), others, doc, nil); err != nil {
+	if err := t.printDecls(generic, fset, name, t.lowered(decls), others, doc, nil); err != nil {
 		return err
 	}
-	t.expand(t.code)
-	return t.printDecls(w, fset, name, t.out.Decls, expanded, doc, nil)
+	t.expand(t.codeFuncs(decls))
+	return t.printDecls(w, fset, name, decls, expanded, doc, nil)
 }
 
 // The build constraints of the expanded file and of the generic file.
@@ -756,8 +771,11 @@ func (t *translator) readImportSection() error {
 			})
 
 			args := make([]ast.Expr, len(typ.params))
-			for i := range typ.params {
+			for i, p := range []byte(typ.params) {
 				args[i] = localVar(i)
+				if wasmType(p) == v128 {
+					args[i] = simdConversion("v128.bytes", args[i])
+				}
 			}
 
 			call := &ast.CallExpr{
@@ -767,11 +785,23 @@ func (t *translator) readImportSection() error {
 				Args: args,
 			}
 
-			var stmt ast.Stmt
-			if len(typ.results) == 0 {
-				stmt = &ast.ExprStmt{X: call}
-			} else {
-				stmt = &ast.ReturnStmt{Results: []ast.Expr{call}}
+			var stmts []ast.Stmt
+			switch {
+			case len(typ.results) == 0:
+				stmts = []ast.Stmt{&ast.ExprStmt{X: call}}
+			case typ.results == string([]byte{byte(v128)}):
+				// The result to a variable first: the conversion reads it
+				// at each byte.
+				stmts = []ast.Stmt{
+					&ast.AssignStmt{Lhs: []ast.Expr{newID("r")}, Tok: token.DEFINE, Rhs: []ast.Expr{call}},
+					&ast.ReturnStmt{Results: []ast.Expr{simdConversion("v128.from_bytes", newID("r"))}}}
+			case strings.IndexByte(typ.results, byte(v128)) >= 0:
+				return fmt.Errorf("import %s.%s returns several values, among them a v128, which the translator does not support", mod, name)
+			default:
+				stmts = []ast.Stmt{&ast.ReturnStmt{Results: []ast.Expr{call}}}
+			}
+			if typ.hasV128() {
+				t.addSIMDHelpers()
 			}
 
 			id := &ast.Ident{}
@@ -783,7 +813,7 @@ func (t *translator) readImportSection() error {
 					Name: id,
 					Recv: modRecvList,
 					Type: typ.toAST(true),
-					Body: &ast.BlockStmt{List: []ast.Stmt{stmt}}}}
+					Body: &ast.BlockStmt{List: stmts}}}
 			t.functions = append(t.functions, fn)
 			t.out.Decls = append(t.out.Decls, fn.decl)
 
@@ -1139,9 +1169,11 @@ func (t *translator) readExportSection() error {
 
 		switch externKind(kind) {
 		case externFunction:
-			if !t.functions[index].provided {
-				decl := t.functions[index].decl
-				decl.Name.Name = mangle.Name(name, mangle.Exported)
+			// A function with a v128 parameter or result is exported
+			// through a method converting its vectors to their bytes
+			// (wasmType.apiType).
+			if fn := &t.functions[index]; !fn.provided && !fn.typ.hasV128() {
+				fn.decl.Name.Name = mangle.Name(name, mangle.Exported)
 			}
 		}
 	}
@@ -1193,7 +1225,7 @@ func (t *translator) readConstExpr() (ast.Expr, error) {
 			}
 			stack.append(expr)
 		case 0x23: // global.get
-			expr, _, err := t.globalGet()
+			expr, _, _, err := t.globalGet()
 			if err != nil {
 				return nil, err
 			}
@@ -1218,6 +1250,24 @@ func (t *translator) readConstExpr() (ast.Expr, error) {
 		case 0x6c, 0x7e: // i32.mul, i64.mul
 			stack.append(&ast.BinaryExpr{Y: stack.pop(), X: stack.pop(), Op: token.MUL})
 
+		case 0xfd: // v128.const, the bytes of a v128 global (wasmType.apiType)
+			code, err := readLEB128(t.in)
+			if err != nil {
+				return nil, err
+			}
+			if code != 0x0c {
+				return nil, fmt.Errorf("unsupported opcode in constant expression: 0xFD 0x%02X", code)
+			}
+			lit := &ast.CompositeLit{Type: v128.apiType()}
+			for range 16 {
+				b, err := t.in.ReadByte()
+				if err != nil {
+					return nil, err
+				}
+				lit.Elts = append(lit.Elts, &ast.BasicLit{Kind: token.INT, Value: strconv.Itoa(int(b))})
+			}
+			stack.append(lit)
+
 		case 0x0b: // end
 			return stack[0], nil
 
@@ -1235,7 +1285,7 @@ func (t *translator) readBlockType() (typ funcType, err error) {
 	switch {
 	case i >= 0:
 		return t.types[i], nil
-	case i >= -4 || i == -16 || i == -17:
+	case i >= -5 || i == -16 || i == -17:
 		typ.results = string([]wasmType{wasmType(i + 128)})
 	case i != -64:
 		err = fmt.Errorf("unsupported block type: %d", i)

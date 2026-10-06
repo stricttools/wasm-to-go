@@ -45,7 +45,7 @@ func Test_stack_weight_module(t *testing.T) {
 func Test_translate(t *testing.T) {
 	tests := []string{
 		"determinism", "fib", "loops", "memory", "primes", "recursion", "stack", "table", "trig",
-		"regression/bulk_bounds", "regression/bulk_bounds_imported", "regression/constfold", "regression/dispatch", "regression/f32convert", "regression/nancanon", "regression/oob_trap", "regression/oob_trap_imported", "regression/select_effect", "regression/split_locals", "regression/stack_bound", "regression/stack_weight", "regression/store_grow", "regression/tee_self_loop", "regression/use_memory",
+		"regression/bulk_bounds", "regression/bulk_bounds_imported", "regression/constfold", "regression/dispatch", "regression/f32convert", "regression/nancanon", "regression/oob_trap", "regression/oob_trap_imported", "regression/select_effect", "regression/simd_api", "regression/split_locals", "regression/stack_bound", "regression/stack_weight", "regression/store_grow", "regression/tee_self_loop", "regression/use_memory",
 	}
 	for _, name := range tests {
 		t.Run(name, func(t *testing.T) {
@@ -75,6 +75,13 @@ func Test_translate_unsafe(t *testing.T) {
 			}
 		})
 	}
+	// A module with SIMD, into testdata/unsafe: its SIMD code's portable
+	// file is written expanded and generic, as its other code is.
+	t.Run("simd_api", func(t *testing.T) {
+		if err := translateFile("testdata/regression/simd_api/simd_api.wasm", "testdata/unsafe/simd_api/simd_api"); err != nil {
+			t.Fatal(err)
+		}
+	})
 }
 
 // Translates modules as several packages, into testdata/packages: with
@@ -99,6 +106,7 @@ func Test_translate_packages(t *testing.T) {
 		{name: "loops", wasm: "testdata/loops/loops.wasm"},
 		{name: "provided_helper", wasm: "testdata/regression/provided_helper/provided_helper.wasm", provided: "testdata/regression/provided_helper/provided.go"},
 		{name: "bce", wasm: "testdata/regression/bce/bce.wasm", unsafe: true},
+		{name: "simd_api", wasm: "testdata/regression/simd_api/simd_api.wasm"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -130,6 +138,7 @@ func Test_translate_bytes(t *testing.T) {
 		{name: "oob_trap", wasm: "testdata/regression/oob_trap/oob_trap.wasm"},
 		{name: "oob_trap_imported", wasm: "testdata/regression/oob_trap_imported/oob_trap_imported.wasm"},
 		{name: "bce", wasm: "testdata/regression/bce/bce.wasm", unsafe: true},
+		{name: "simd_api", wasm: "testdata/regression/simd_api/simd_api.wasm"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -219,7 +228,7 @@ func translateFile(file, base string) error {
 		return err
 	}
 	files := newPackageFiles(filepath.Dir(base))
-	err = translate(in, &out, generic, files.create)
+	err = translate(in, &out, generic, files.create, filepath.Base(base)+".go")
 	if cerr := files.close(); err == nil {
 		err = cerr
 	}
@@ -320,6 +329,7 @@ var skipModules = []string{
 	"elem/elem.29",
 
 	// these need custom linking
+	"simd/simd_linking/simd_linking.1",
 	"elem/elem.59",
 	"elem/elem.60",
 	"elem/elem.61",
@@ -510,7 +520,7 @@ func Test_translate_tags(t *testing.T) {
 	}
 	defer in.Close()
 	var out, gen bytes.Buffer
-	if err := translate(in, &out, &gen, nil); err != nil {
+	if err := translate(in, &out, &gen, nil, ""); err != nil {
 		t.Fatal(err)
 	}
 

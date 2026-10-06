@@ -7,14 +7,18 @@ import (
 	"math"
 )
 
-func Xop17(m *instance.Module, v0, v1 int64) int64 {
-	return int64(math.Float64bits(f64_canon(float64(math.Float64frombits(uint64(v0)) - math.Float64frombits(uint64(v1))))))
+func Xop80(m *instance.Module, v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
+	return int64(math.Float64bits(f64_min(v2, math.Float64frombits(0x0))))
 }
 
 //go:nosplit
-func f64_canon(x float64) float64 {
-	if x != x {
-		return math.Float64frombits(0x7ff8000000000000)
+func f64_min(x, y float64) float64 {
+	if m := min(x, y); m == m {
+		return m
 	}
-	return x
+	return math.Float64frombits(0x7ff8000000000000)
 }

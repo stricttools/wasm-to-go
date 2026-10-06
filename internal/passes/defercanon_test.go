@@ -128,3 +128,34 @@ func TestDeferCanon(t *testing.T) {
 		})
 	}
 }
+
+// A vector of float lanes is deferred in its lane shape: the operations of
+// that shape take it raw, every other use (a store, a shuffle, an
+// operation of another shape) canonicalizes it.
+func TestDeferCanonVectors(t *testing.T) {
+	src := `func (m *Module) f(v0 vec128) vec128 {
+		t0 := simd_f32x4_canon(simd_f32x4_add(v0, v0))
+		t1 := simd_f32x4_canon(simd_f32x4_mul(t0, v0))
+		t2 := simd_f32x4_max(t1, v0)
+		t3 := simd_f64x2_canon(simd_f64x2_add(t1, v0))
+		simd_v128_store(m.memory, 0, t1)
+		t4 := simd_i8x16_shuffle(t1, t0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+		return simd_f32x4_canon(simd_f32x4_sub(t2, t3))
+	}`
+	want := `func (m *Module) f(v0 vec128) vec128 {
+		t0 := simd_f32x4_add(v0, v0)
+		t1 := simd_f32x4_mul(t0, v0)
+		t2 := simd_f32x4_max(t1, v0)
+		t3 := simd_f64x2_add(simd_f32x4_canon(t1), v0)
+		simd_v128_store(m.memory, 0, simd_f32x4_canon(t1))
+		t4 := simd_i8x16_shuffle(simd_f32x4_canon(t1), simd_f32x4_canon(t0), 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+		return simd_f32x4_canon(simd_f32x4_sub(t2, simd_f64x2_canon(t3)))
+	}`
+	fn := parseFunc(t, src)
+	if got := DeferCanon(fn); got != 3 {
+		t.Errorf("DeferCanon = %d, want 3", got)
+	}
+	if got, want := formatFunc(t, fn), normalizeFunc(t, want); got != want {
+		t.Errorf("got:\n%s\n\nwant:\n%s", got, want)
+	}
+}

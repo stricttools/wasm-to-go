@@ -41,7 +41,7 @@ func Test_dwarfline(t *testing.T) {
 	defer in.Close()
 
 	var out bytes.Buffer
-	if err := translate(in, &out, nil, nil); err != nil {
+	if err := translate(in, &out, nil, nil, ""); err != nil {
 		t.Fatal(err)
 	}
 

@@ -7,8 +7,8 @@ import (
 	"math"
 )
 
-func Xop3(m *instance.Module, v0, v1 int64) int64 {
-	return int64(math.Float64bits(f64_canon(math.Trunc(math.Float64frombits(uint64(v0))))))
+func Xop68(m *instance.Module, v0, v1 int64) int64 {
+	return int64(math.Float64bits(f64_canon(float64(float64(float32(math.Float32frombits(uint32(int32(v0)))*math.Float32frombits(uint32(int32(v1))))) + math.Float64frombits(0xbff0000000000000)))))
 }
 
 //go:nosplit

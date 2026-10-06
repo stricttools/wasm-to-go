@@ -3,13 +3,24 @@
 package functions69
 
 import (
+	"encoding/binary"
 	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
 	"math"
 )
 
-func Xop24(m *instance.Module, v0, v1 int64) int64 {
-	return int64(uint32(int32(math.Float32bits(f32_canon(float32(math.Float32frombits(uint32(int32(v0))) - math.Float32frombits(uint32(int32(v1)))))))))
+func Xop87(m *instance.Module, v0, v1 int64) int64 {
+	mem := m.Memory
+	var _, _ float64
+	var v4, _ float32
+	var _ int32
+	v4 = float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1))))
+	binary.LittleEndian.PutUint32((*[4]byte)(mem[uint64(uint32(i32(16))) : uint64(uint32(i32(16)))+4])[:], math.Float32bits(f32_canon(v4)))
+	t0 := int64(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(i32(16))) : uint64(uint32(i32(16)))+4])[:]))
+	return t0
 }
+
+//go:nosplit
+func i32(x int32) int32 { return x }
 
 //go:nosplit
 func f32_canon(x float32) float32 {

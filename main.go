@@ -96,7 +96,7 @@ func main() {
 		files = newPackageFiles(filepath.Dir(*output))
 		sub = files.create
 	}
-	err := translate(in, out, generic, sub)
+	err := translate(in, out, generic, sub, filepath.Base(*output))
 	if files != nil {
 		if cerr := files.close(); cerr != nil && err == nil {
 			err = cerr

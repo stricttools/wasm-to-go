@@ -1003,7 +1003,7 @@ func parserParse(fset *token.FileSet, src string) (*ast.File, error) {
 
 // Prints the packages' files: each to sub(rel), the output package's to w;
 // with -unsafe (generic set), each twice, like the single file.
-func (p *packaging) print(files []pkgFile, w, generic io.Writer, sub func(rel string) (io.Writer, error), fset *token.FileSet) error {
+func (p *packaging) print(files []pkgFile, w, generic io.Writer, sub func(rel string) (io.Writer, error), fset *token.FileSet, outName string) error {
 	if sub == nil {
 		return errors.New("a module written as several packages needs -o")
 	}
@@ -1036,6 +1036,33 @@ func (p *packaging) print(files []pkgFile, w, generic io.Writer, sub func(rel st
 		for _, fd := range fds {
 			fd.Body = nil
 		}
+	}
+	// A file's functions that use SIMD go to its SIMD files, with the
+	// helpers they use that its other declarations do not.
+	for i := range files {
+		pf := &files[i]
+		base, simd := splitSIMD(pf.decls)
+		if len(simd) == 0 {
+			continue
+		}
+		have := map[ast.Decl]bool{}
+		for _, d := range p.helpers.closure(base) {
+			have[d] = true
+		}
+		extra := func(decls []ast.Decl) []ast.Decl {
+			var out []ast.Decl
+			for _, d := range p.helpers.closure(decls) {
+				if !have[d] {
+					out = append(out, d)
+				}
+			}
+			return out
+		}
+		if err := p.t.printSIMDFiles(sub, pf.rel, outName, pf.name, simd, fset, pf.doc, p.imports, extra); err != nil {
+			return err
+		}
+		release(codeOf(simd))
+		pf.decls = base
 	}
 	if generic == nil {
 		for _, pf := range files {
@@ -1122,6 +1149,31 @@ func (pf *packageFiles) close() error {
 	}
 	if err != nil {
 		return err
+	}
+	// The output package's SIMD files (simdFileName) an earlier
+	// translation wrote and this one did not: base_simd.go and
+	// base_simd_x.go beside base.go.
+	top, err := os.ReadDir(pf.dir)
+	if err != nil {
+		return err
+	}
+	for _, f := range top {
+		name := f.Name()
+		base, _, ok := strings.Cut(strings.TrimSuffix(name, ".go"), "_simd")
+		if f.IsDir() || pf.written.has(name) || !ok || !strings.HasSuffix(name, ".go") {
+			continue
+		}
+		if _, err := os.Stat(filepath.Join(pf.dir, base+".go")); err != nil {
+			continue
+		}
+		file := filepath.Join(pf.dir, name)
+		if head, err := readHead(file, len(generatedLine)); err != nil {
+			return err
+		} else if head == generatedLine {
+			if err := os.Remove(file); err != nil {
+				return err
+			}
+		}
 	}
 	internal := filepath.Join(pf.dir, internalDir)
 	entries, rerr := os.ReadDir(internal)

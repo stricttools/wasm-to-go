@@ -2,19 +2,8 @@
 
 package functions89
 
-import (
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
-	"math"
-)
+import "math"
 
-func Xop4(m *instance.Module, v0, v1 int64) int64 {
-	return int64(math.Float64bits(f64_canon(math.Sqrt(math.Float64frombits(uint64(v0))))))
-}
-
-//go:nosplit
-func f64_canon(x float64) float64 {
-	if x != x {
-		return math.Float64frombits(0x7ff8000000000000)
-	}
-	return x
+func Fn69(v0 float64) int64 {
+	return int64(math.Float64bits(v0))
 }

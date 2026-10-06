@@ -10,6 +10,7 @@ import (
 	"math"
 	"slices"
 	"strconv"
+	"strings"
 
 	"github.com/stricttools/wasm-to-go/internal/mangle"
 )
@@ -65,7 +66,7 @@ func (t *translator) createModuleStruct(k *moduleFacts) *ast.GenDecl {
 	}
 	// Globals: owned/immutable are type; imported *type.
 	for _, g := range t.globals {
-		var typ ast.Expr = g.typ.ident()
+		typ := g.typ.apiType()
 		if g.imported && g.mutable {
 			typ = &ast.StarExpr{X: typ}
 		}
@@ -388,11 +389,11 @@ func (t *translator) createHostInterfaces() []ast.Decl {
 		var typ ast.Expr
 		switch imp.kind {
 		case externFunction:
-			typ = imp.fnType.toAST(true)
+			typ = imp.fnType.toAPI(true)
 		case externTable: // *[]any
 			typ = &ast.FuncType{Results: &ast.FieldList{List: []*ast.Field{{Type: &ast.StarExpr{X: &ast.ArrayType{Elt: newID("any")}}}}}}
 		case externGlobal: // *type
-			typ = &ast.FuncType{Results: &ast.FieldList{List: []*ast.Field{{Type: &ast.StarExpr{X: imp.typ.ident()}}}}}
+			typ = &ast.FuncType{Results: &ast.FieldList{List: []*ast.Field{{Type: &ast.StarExpr{X: imp.typ.apiType()}}}}}
 		case externMemory: // Memory
 			typ = &ast.FuncType{Results: &ast.FieldList{List: []*ast.Field{{Type: newID("Memory")}}}}
 		}
@@ -578,7 +579,7 @@ func (m *wasmMemory) Grow(delta, max int64) int64 {
 	return f.Decls
 }
 
-func (t *translator) createExportMethods() []ast.Decl {
+func (t *translator) createExportMethods() ([]ast.Decl, error) {
 	var decls []ast.Decl
 
 	names := make([]string, 0, len(t.exports))
@@ -604,17 +605,30 @@ func (t *translator) createExportMethods() []ast.Decl {
 				continue
 			}
 
-			decl.Type = fn.typ.toAST(true)
+			decl.Type = fn.typ.toAPI(true)
 			call := &ast.CallExpr{Fun: fn.call}
-			for i := range fn.typ.params {
-				call.Args = append(call.Args, localVar(i))
+			for i, p := range []byte(fn.typ.params) {
+				var arg ast.Expr = localVar(i)
+				if wasmType(p) == v128 {
+					arg = simdConversion("v128.from_bytes", arg)
+				}
+				call.Args = append(call.Args, arg)
 			}
 			if t.stackEntries.has(exp.index) {
 				decl.Body.List = append(decl.Body.List, restoreStackUsed())
 			}
-			if len(fn.typ.results) == 0 {
+			switch {
+			case len(fn.typ.results) == 0:
 				decl.Body.List = append(decl.Body.List, &ast.ExprStmt{X: call})
-			} else {
+			case fn.typ.results == string([]byte{byte(v128)}):
+				// The result to a variable first: the conversion reads it
+				// at each byte.
+				decl.Body.List = append(decl.Body.List,
+					&ast.AssignStmt{Lhs: []ast.Expr{newID("r")}, Tok: token.DEFINE, Rhs: []ast.Expr{call}},
+					&ast.ReturnStmt{Results: []ast.Expr{simdConversion("v128.bytes", newID("r"))}})
+			case strings.IndexByte(fn.typ.results, byte(v128)) >= 0:
+				return nil, fmt.Errorf("export %s returns several values, among them a v128, which the translator does not support", name)
+			default:
 				decl.Body.List = append(decl.Body.List, &ast.ReturnStmt{Results: []ast.Expr{call}})
 			}
 		case externTable:
@@ -627,7 +641,7 @@ func (t *translator) createExportMethods() []ast.Decl {
 			decl.Body.List = []ast.Stmt{&ast.ReturnStmt{Results: []ast.Expr{ret}}}
 		case externGlobal:
 			g := t.globals[exp.index]
-			decl.Type.Results = &ast.FieldList{List: []*ast.Field{{Type: &ast.StarExpr{X: g.typ.ident()}}}}
+			decl.Type.Results = &ast.FieldList{List: []*ast.Field{{Type: &ast.StarExpr{X: g.typ.apiType()}}}}
 			var ret ast.Expr = &ast.SelectorExpr{X: newID("m"), Sel: g.id}
 			if !(g.imported && g.mutable) {
 				ret = &ast.UnaryExpr{Op: token.AND, X: ret}
@@ -651,7 +665,7 @@ func (t *translator) createExportMethods() []ast.Decl {
 
 		decls = append(decls, decl)
 	}
-	return decls
+	return decls, nil
 }
 
 func (t *translator) createDylinkConstants() ast.Decl {

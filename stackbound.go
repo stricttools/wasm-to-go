@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/stricttools/wasm-to-go/internal/callgraph"
 	"github.com/stricttools/wasm-to-go/internal/mangle"
+	"github.com/stricttools/wasm-to-go/internal/passes"
 	"go/ast"
 	"go/token"
 	"slices"
@@ -41,8 +42,8 @@ const (
 
 // frameEstimate estimates the Go stack frame of fn in bytes: 8 bytes for
 // each parameter, result, and local variable, and 64 for the return
-// address, frame pointer, and spill space. Every translated value is at
-// most 8 bytes; the Go compiler can share slots between variables, so this
+// address, frame pointer, and spill space; a v128 takes 16. The Go
+// compiler can share slots between variables, so this
 // is an upper estimate of what the variables take, not a measurement. The
 // variables of a local's webs past its first (isWebVar) are not counted:
 // they hold the values of the one local, which the estimate counts, so the
@@ -50,12 +51,18 @@ const (
 // the module's locals set them.
 func frameEstimate(fn *ast.FuncDecl) int64 {
 	n := int64(0)
+	slots := func(typ ast.Expr) int64 { // a vector's two
+		if id, ok := typ.(*ast.Ident); ok && id.Name == passes.SIMDType {
+			return 2
+		}
+		return 1
+	}
 	count := func(fl *ast.FieldList) {
 		if fl == nil {
 			return
 		}
 		for _, f := range fl.List {
-			n += int64(max(len(f.Names), 1))
+			n += int64(max(len(f.Names), 1)) * slots(f.Type)
 		}
 	}
 	count(fn.Type.Params)
@@ -65,12 +72,17 @@ func frameEstimate(fn *ast.FuncDecl) int64 {
 		case *ast.ValueSpec:
 			for _, id := range s.Names {
 				if !isWebVar(id.Name) {
-					n++
+					n += slots(s.Type)
 				}
 			}
 		case *ast.AssignStmt:
 			if s.Tok == token.DEFINE {
-				n += int64(len(s.Lhs))
+				for i := range s.Lhs {
+					n++
+					if len(s.Rhs) == len(s.Lhs) && passes.SIMDVector(s.Rhs[i]) {
+						n++
+					}
+				}
 			}
 		}
 		return true

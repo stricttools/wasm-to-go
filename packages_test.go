@@ -168,7 +168,7 @@ func translateRecursion(t *testing.T, dir string) error {
 	defer in.Close()
 	files := newPackageFiles(dir)
 	var out bytes.Buffer
-	err = translate(in, &out, nil, files.create)
+	err = translate(in, &out, nil, files.create, "")
 	if cerr := files.close(); err == nil {
 		err = cerr
 	}

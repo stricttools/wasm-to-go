@@ -3,7 +3,6 @@ package passes
 import (
 	"go/ast"
 	"go/format"
-	"go/parser"
 	"go/token"
 	"strconv"
 	"strings"
@@ -283,14 +282,6 @@ func TestTrapFree(t *testing.T) {
 			t.Errorf("TrapFree(%s) = %v, want %v", src, got, want)
 		}
 	}
-}
-
-func mustParseExpr(src string) ast.Expr {
-	e, err := parser.ParseExpr(src)
-	if err != nil {
-		panic(err)
-	}
-	return e
 }
 
 func formatExpr(e ast.Expr) string {

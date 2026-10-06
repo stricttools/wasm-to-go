@@ -663,3 +663,134 @@ func atomic_fence() {
 	var b atomic.Bool
 	b.Swap(true)
 }
+
+// The lanes of SIMD operations written lane by lane (the passes package's
+// portable SIMD code): a comparison's mask, a test's result, saturation,
+// canonicalization of a float lane's bits, pseudo-minimum and -maximum,
+// and a byte of a vector's words by a dynamic index.
+
+// Prevents constant folding, as i32 does.
+//
+//go:nosplit
+func lane_u32(x uint32) uint32 { return x }
+
+//go:nosplit
+func lane_mask8(c bool) uint8 {
+	if c {
+		return 0xff
+	}
+	return 0
+}
+
+//go:nosplit
+func lane_mask16(c bool) uint16 {
+	if c {
+		return 0xffff
+	}
+	return 0
+}
+
+//go:nosplit
+func lane_mask32(c bool) uint32 {
+	if c {
+		return 0xffffffff
+	}
+	return 0
+}
+
+//go:nosplit
+func lane_mask64(c bool) uint64 {
+	if c {
+		return 0xffffffffffffffff
+	}
+	return 0
+}
+
+//go:nosplit
+func lane_bool(c bool) int32 {
+	if c {
+		return 1
+	}
+	return 0
+}
+
+//go:nosplit
+func lane_sat_s8(v int64) uint8 { return uint8(int8(min(max(v, -128), 127))) }
+
+//go:nosplit
+func lane_sat_u8(v int64) uint8 { return uint8(min(max(v, 0), 255)) }
+
+//go:nosplit
+func lane_sat_s16(v int64) uint16 { return uint16(int16(min(max(v, -32768), 32767))) }
+
+//go:nosplit
+func lane_sat_u16(v int64) uint16 { return uint16(min(max(v, 0), 65535)) }
+
+// The bits of a float32 lane, with a NaN made the positive canonical NaN,
+// without a branch: the mask is all ones exactly when the magnitude is
+// above the infinity's.
+//
+//go:nosplit
+func lane_canon32(b uint32) uint32 {
+	return b ^ (b^0x7fc00000)&-(((b&0x7fffffff)+0x7fffff)>>31)
+}
+
+//go:nosplit
+func lane_canon64(b uint64) uint64 {
+	return b ^ (b^0x7ff8000000000000)&-(((b&0x7fffffffffffffff)+0xfffffffffffff)>>63)
+}
+
+// pmin and pmax return one of their operands, bit for bit:
+// b < a ? b : a, and a < b ? b : a.
+//
+//go:nosplit
+func lane_pmin32(a, b uint32) uint32 {
+	if math.Float32frombits(b) < math.Float32frombits(a) {
+		return b
+	}
+	return a
+}
+
+//go:nosplit
+func lane_pmax32(a, b uint32) uint32 {
+	if math.Float32frombits(a) < math.Float32frombits(b) {
+		return b
+	}
+	return a
+}
+
+//go:nosplit
+func lane_pmin64(a, b uint64) uint64 {
+	if math.Float64frombits(b) < math.Float64frombits(a) {
+		return b
+	}
+	return a
+}
+
+//go:nosplit
+func lane_pmax64(a, b uint64) uint64 {
+	if math.Float64frombits(a) < math.Float64frombits(b) {
+		return b
+	}
+	return a
+}
+
+// The byte i of the vector of words w0 to w3, or 0 if i is 16 or more
+// (i8x16.swizzle).
+//
+//go:nosplit
+func lane_byte(w0, w1, w2, w3 uint32, i uint8) uint8 {
+	w := w0
+	switch i >> 2 {
+	case 0:
+	case 1:
+		w = w1
+	case 2:
+		w = w2
+	case 3:
+		w = w3
+	default:
+		return 0
+	}
+	return uint8(w >> (8 * (i & 3)))
+}

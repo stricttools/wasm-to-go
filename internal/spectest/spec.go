@@ -22,8 +22,29 @@ type specCommand struct {
 }
 
 type specArg struct {
-	Type  string `json:"type"`
-	Value string `json:"value"`
+	Type     string   `json:"type"`
+	LaneType string   `json:"lane_type"`
+	Value    string   `json:"-"`
+	Lanes    []string `json:"-"` // a v128's lanes, in lane_type
+}
+
+func (a *specArg) UnmarshalJSON(b []byte) error {
+	var raw struct {
+		Type     string          `json:"type"`
+		LaneType string          `json:"lane_type"`
+		Value    json.RawMessage `json:"value"`
+	}
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+	a.Type, a.LaneType = raw.Type, raw.LaneType
+	if raw.Value == nil {
+		return nil
+	}
+	if a.Type == "v128" {
+		return json.Unmarshal(raw.Value, &a.Lanes)
+	}
+	return json.Unmarshal(raw.Value, &a.Value)
 }
 
 func parseSpec(file string) (*specTest, error) {
