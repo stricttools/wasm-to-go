@@ -60,8 +60,7 @@ func (m *Module) Xsin(v0 float64) float64 {
 	var v1, v2 float64
 	var v3 int32
 	var v4 int64
-	var v0_1 float64
-	var v0_2 float64
+	var v0_1, v0_2 float64
 	if v0 == math.Float64frombits(0x0) {
 		return v0
 	}

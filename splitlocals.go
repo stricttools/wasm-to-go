@@ -46,6 +46,8 @@ func (fn *funcCompiler) splitLocals(code []byte, types []byte) ([]ast.Stmt, erro
 		}
 	}
 	more := make([]int, len(types))
+	// One declaration of each type's variables.
+	byType := map[byte]*ast.ValueSpec{}
 	var decls []ast.Stmt
 	for w, l := range split.Local {
 		if names[w] != nil {
@@ -58,11 +60,13 @@ func (fn *funcCompiler) splitLocals(code []byte, types []byte) ([]ast.Stmt, erro
 		}
 		more[l]++
 		names[w] = newID("v" + strconv.Itoa(l) + "_" + strconv.Itoa(more[l]))
-		decls = append(decls, &ast.DeclStmt{Decl: &ast.GenDecl{
-			Tok: token.VAR,
-			Specs: []ast.Spec{&ast.ValueSpec{
-				Names: []*ast.Ident{names[w]},
-				Type:  wasmType(types[l]).ident()}}}})
+		spec := byType[types[l]]
+		if spec == nil {
+			spec = &ast.ValueSpec{Type: wasmType(types[l]).ident()}
+			byType[types[l]] = spec
+			decls = append(decls, &ast.DeclStmt{Decl: &ast.GenDecl{Tok: token.VAR, Specs: []ast.Spec{spec}}})
+		}
+		spec.Names = append(spec.Names, names[w])
 	}
 	fn.localRefs = make([]*ast.Ident, len(split.Web))
 	for i, w := range split.Web {

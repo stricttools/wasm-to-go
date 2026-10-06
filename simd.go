@@ -49,12 +49,13 @@ type simdOp struct {
 var simdOps = map[uint64]simdOp{}
 
 func init() {
-	add := func(code uint64, name string, form simdForm) *simdOp {
-		simdOps[code] = simdOp{name: name, form: form}
-		op := simdOps[code]
-		return &op
+	add := func(code uint64, name string, form simdForm) { simdOps[code] = simdOp{name: name, form: form} }
+	withScalar := func(code uint64, name string, form simdForm, t wasmType) {
+		simdOps[code] = simdOp{name: name, form: form, scalar: t}
 	}
-	set := func(code uint64, op *simdOp) { simdOps[code] = *op }
+	canon := func(code uint64, name string, form simdForm, shape string) {
+		simdOps[code] = simdOp{name: name, form: form, canon: shape}
+	}
 
 	for code, name := range []string{"v128.load", "v128.load8x8_s", "v128.load8x8_u", "v128.load16x4_s", "v128.load16x4_u",
 		"v128.load32x2_s", "v128.load32x2_u", "v128.load8_splat", "v128.load16_splat", "v128.load32_splat", "v128.load64_splat"} {
@@ -68,15 +69,13 @@ func init() {
 		shape string
 		t     wasmType
 	}{{"i8x16", i32}, {"i16x8", i32}, {"i32x4", i32}, {"i64x2", i64}, {"f32x4", f32}, {"f64x2", f64}} {
-		op := add(uint64(0x0f+i), s.shape+".splat", simdSplat)
-		op.scalar = s.t
-		set(uint64(0x0f+i), op)
+		withScalar(uint64(0x0f+i), s.shape+".splat", simdSplat, s.t)
 	}
 	lanes := []struct {
-		code      uint64
-		name      string
-		form      simdForm
-		scalar    wasmType
+		code   uint64
+		name   string
+		form   simdForm
+		scalar wasmType
 	}{
 		{0x15, "i8x16.extract_lane_s", simdExtract, i32}, {0x16, "i8x16.extract_lane_u", simdExtract, i32}, {0x17, "i8x16.replace_lane", simdReplace, i32},
 		{0x18, "i16x8.extract_lane_s", simdExtract, i32}, {0x19, "i16x8.extract_lane_u", simdExtract, i32}, {0x1a, "i16x8.replace_lane", simdReplace, i32},
@@ -86,9 +85,7 @@ func init() {
 		{0x21, "f64x2.extract_lane", simdExtract, f64}, {0x22, "f64x2.replace_lane", simdReplace, f64},
 	}
 	for _, l := range lanes {
-		op := add(l.code, l.name, l.form)
-		op.scalar = l.scalar
-		set(l.code, op)
+		withScalar(l.code, l.name, l.form, l.scalar)
 	}
 	code := uint64(0x23)
 	for _, shape := range []string{"i8x16", "i16x8", "i32x4"} {
@@ -116,11 +113,6 @@ func init() {
 	}
 	add(0x5c, "v128.load32_zero", simdLoad)
 	add(0x5d, "v128.load64_zero", simdLoad)
-	canon := func(code uint64, name string, form simdForm, shape string) {
-		op := add(code, name, form)
-		op.canon = shape
-		set(code, op)
-	}
 	canon(0x5e, "f32x4.demote_f64x2_zero", simdUnary, "f32x4")
 	canon(0x5f, "f64x2.promote_low_f32x4", simdUnary, "f64x2")
 	for code, name := range map[uint64]string{

@@ -37,6 +37,7 @@ func (t *translator) readCodeSection() error {
 		err = t.readCodeForFunction(&t.functions[i], body, at)
 		read := t.in.Offset() - at
 		t.in = outer
+		t.functions[i].localRefs = nil // translated: nothing reads them again
 		if err != nil {
 			return err
 		}

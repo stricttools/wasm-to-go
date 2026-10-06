@@ -13,8 +13,7 @@ func New() *Module {
 }
 func (m *Module) XtwoSums(v0, v1 int32) int32 {
 	var v2 int32
-	var v0_1 int32
-	var v2_1 int32
+	var v0_1, v2_1 int32
 	v2 = v0 + int32(1)
 	v0_1 = v2 * int32(3)
 	v2_1 = v1 + int32(2)

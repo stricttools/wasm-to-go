@@ -10,12 +10,12 @@ import (
 
 	bce_test "github.com/stricttools/wasm-to-go/testdata/regression/bce"
 	dispatch_test "github.com/stricttools/wasm-to-go/testdata/regression/dispatch"
-	split_locals_test "github.com/stricttools/wasm-to-go/testdata/regression/split_locals"
 	memgrow_test "github.com/stricttools/wasm-to-go/testdata/regression/memgrow"
 	oob_trap_test "github.com/stricttools/wasm-to-go/testdata/regression/oob_trap"
 	oob_trap_imported_test "github.com/stricttools/wasm-to-go/testdata/regression/oob_trap_imported"
 	provided_helper_test "github.com/stricttools/wasm-to-go/testdata/regression/provided_helper"
 	select_test "github.com/stricttools/wasm-to-go/testdata/regression/select_effect"
+	split_locals_test "github.com/stricttools/wasm-to-go/testdata/regression/split_locals"
 	store_grow_test "github.com/stricttools/wasm-to-go/testdata/regression/store_grow"
 )
 
@@ -399,14 +399,14 @@ func Test_regression_split_locals(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !*noopt {
-		for _, tt := range []struct{ fn, decls string }{
-			{"XtwoSums", "var v2_1 int32"},
-			{"XtwoSums", "var v0_1 int32"},
-			{"Xloop", "var v2_1 int32"},
-			{"Xbranch", "var v2_1 float64"},
+		for _, tt := range []struct{ fn, name, typ string }{
+			{"XtwoSums", "v2_1", "int32"},
+			{"XtwoSums", "v0_1", "int32"},
+			{"Xloop", "v2_1", "int32"},
+			{"Xbranch", "v2_1", "float64"},
 		} {
-			if body := funcBody(src, tt.fn); !strings.Contains(body, tt.decls) {
-				t.Errorf("%s does not declare %s:\n%s", tt.fn, tt.decls, body)
+			if body := funcBody(src, tt.fn); !declaresVar(body, tt.name, tt.typ) {
+				t.Errorf("%s does not declare %s %s:\n%s", tt.fn, tt.name, tt.typ, body)
 			}
 		}
 		if body := funcBody(src, "Xloop"); strings.Contains(body, "v1_1") || strings.Contains(body, "v0_1") {
@@ -430,6 +430,24 @@ func Test_regression_split_locals(t *testing.T) {
 	if got := m.Xbranch(0, 2.5); got != 2.5 {
 		t.Errorf("branch(0, 2.5) = %v, want 2.5", got)
 	}
+}
+
+// declaresVar reports whether body declares the variable name of type typ, in a
+// declaration of one or more variables: var a, name, b typ.
+func declaresVar(body, name, typ string) bool {
+	for line := range strings.Lines(body) {
+		line = strings.TrimSpace(line)
+		names, t, ok := strings.Cut(strings.TrimPrefix(line, "var "), " "+typ)
+		if !strings.HasPrefix(line, "var ") || !ok || t != "" {
+			continue
+		}
+		for n := range strings.SplitSeq(names, ", ") {
+			if n == name {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // The body of the translated function name in src.

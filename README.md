@@ -772,10 +772,11 @@ Translating onnxruntime's basic-pitch build (a module of 1.6 MB) peaked at
 [closed tables](#closed-tables-and-indirect-calls)), and peaks at 430 to
 460 MB with them, less than the largest compile of its translation then
 takes (650 MB); its translation went from 84 MB of Go to 22 MB.
-Translating QuickJS-ng went from 454 to 239 MB.
+Translating QuickJS-ng went from 454 to about 240 MB.
 `Test_translate_memory` (in `translatemem_test.go`) runs the translator on
-QuickJS-ng and fails if it peaks above `translateMemoryBound`, just above
-the 223 to 239 MiB measured.
+QuickJS-ng three times and fails if the least of the peaks is above
+`translateMemoryBound`, just above the 225 to 244 MiB measured
+(the collector's timing moves a single run's peak by up to a seventh).
 
 ## Usage
 

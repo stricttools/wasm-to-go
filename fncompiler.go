@@ -387,7 +387,6 @@ func (fn *funcCompiler) pushCanon(typ string, expr ast.Expr) {
 	fn.pushPure(&ast.CallExpr{Fun: newID(name), Args: []ast.Expr{expr}})
 }
 
-
 // Pops the operand of an operation whose result does not depend on which
 // NaN an operand is: an operation that canonicalizes its own result, a
 // comparison, or a conversion to integer. A canonicalized result still
