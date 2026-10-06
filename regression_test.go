@@ -154,7 +154,8 @@ func testProvidedHelper(t *testing.T, m interface{ Xtest() int64 }) {
 
 // Indirect calls through a closed table become direct calls (dispatch);
 // every slot the dispatch does not list still panics as before, and calls
-// through tables that are exported or mutated are left alone.
+// through tables that are exported or mutated, or that can reach more
+// functions than maxDispatchTargets, are left alone.
 func Test_regression_dispatch(t *testing.T) {
 	src, err := os.ReadFile("testdata/regression/dispatch/dispatch.go")
 	if err != nil {
@@ -162,7 +163,7 @@ func Test_regression_dispatch(t *testing.T) {
 	}
 	if !*noopt {
 		if got := strings.Count(string(src), "switch "); got != 2 {
-			t.Errorf("found %d dispatch switches, want 2 (the calls through the closed table)", got)
+			t.Errorf("found %d dispatch switches, want 2 (the calls through the closed table of few functions)", got)
 		}
 	}
 
@@ -176,6 +177,7 @@ type dispatchModule interface {
 	Xexported() *[]any
 	XcallMutated(slot, v int32) int32
 	XsetMutated(slot int32)
+	XcallMany(slot, v int32) int64
 }
 
 func testDispatch(t *testing.T, m dispatchModule) {
@@ -203,6 +205,15 @@ func testDispatch(t *testing.T, m dispatchModule) {
 	mustPanic("slot of another type, other signature", func() { m.Xcall0(1) })
 	mustPanic("slot past the end", func() { m.Xcall(8, 5) })
 	mustPanic("negative slot", func() { m.Xcall(-1, 5) })
+
+	// A closed table of more functions than the pass dispatches.
+	for slot := int32(0); slot < 17; slot++ {
+		if got, want := m.XcallMany(slot, 5), int64(5+100*slot); got != want {
+			t.Errorf("callMany(%d, 5) = %d, want %d", slot, got, want)
+		}
+	}
+	mustPanic("null slot of the table of many", func() { m.XcallMany(17, 5) })
+	mustPanic("slot past the end of the table of many", func() { m.XcallMany(18, 5) })
 
 	// An exported table can be changed by the host.
 	if got := m.XcallExported(1, 5); got != 10 {

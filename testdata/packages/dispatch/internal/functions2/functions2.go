@@ -5,6 +5,6 @@ package functions2
 import "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/instance"
 
 func XcallMutated(m *instance.Module, v0, v1 int32) int32 {
-	t0 := m.T2[uint(v0)].(func(int32) int32)(v1)
+	t0 := m.T3[uint(v0)].(func(int32) int32)(v1)
 	return t0
 }

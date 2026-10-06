@@ -4,13 +4,31 @@ package wasm2go
 
 import (
 	wasm2go_functions1 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions1"
+	wasm2go_functions10 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions10"
+	wasm2go_functions11 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions11"
+	wasm2go_functions12 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions12"
+	wasm2go_functions13 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions13"
+	wasm2go_functions14 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions14"
+	wasm2go_functions15 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions15"
+	wasm2go_functions16 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions16"
+	wasm2go_functions17 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions17"
+	wasm2go_functions18 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions18"
+	wasm2go_functions19 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions19"
 	wasm2go_functions2 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions2"
+	wasm2go_functions20 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions20"
+	wasm2go_functions21 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions21"
+	wasm2go_functions22 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions22"
+	wasm2go_functions23 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions23"
+	wasm2go_functions24 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions24"
+	wasm2go_functions25 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions25"
+	wasm2go_functions26 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions26"
 	wasm2go_functions3 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions3"
 	wasm2go_functions4 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions4"
 	wasm2go_functions5 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions5"
 	wasm2go_functions6 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions6"
 	wasm2go_functions7 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions7"
 	wasm2go_functions8 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions8"
+	wasm2go_functions9 "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions9"
 	wasm2go_instance "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/instance"
 )
 
@@ -26,19 +44,22 @@ func New() *Module {
 	m := new(Module)
 	s := &m.instance
 	s.T0 = make([]any, 8)
-	s.T1 = make([]any, 4)
+	s.T1 = make([]any, 18)
 	s.T2 = make([]any, 4)
-	s.Elements = [][]any{{wasm2go_functions8.Fn0, wasm2go_functions7.Fn1, wasm2go_functions6.Fn2, wasm2go_functions8.Fn0}, {wasm2go_functions8.Fn0}, {wasm2go_functions8.Fn0}}
+	s.T3 = make([]any, 4)
+	s.Elements = [][]any{{wasm2go_functions26.Fn0, wasm2go_functions25.Fn1, wasm2go_functions24.Fn2, wasm2go_functions26.Fn0}, {wasm2go_functions23.Fn3, wasm2go_functions22.Fn4, wasm2go_functions21.Fn5, wasm2go_functions20.Fn6, wasm2go_functions19.Fn7, wasm2go_functions18.Fn8, wasm2go_functions17.Fn9, wasm2go_functions16.Fn10, wasm2go_functions15.Fn11, wasm2go_functions14.Fn12, wasm2go_functions13.Fn13, wasm2go_functions12.Fn14, wasm2go_functions11.Fn15, wasm2go_functions10.Fn16, wasm2go_functions9.Fn17, wasm2go_functions8.Fn18, wasm2go_functions7.Fn19}, {wasm2go_functions26.Fn0}, {wasm2go_functions26.Fn0}}
 	table_init(s.T0, s.Elements[0], i32(1), 0, len(s.Elements[0]))
 	s.Elements[0] = nil
-	table_init(s.T1, s.Elements[1], i32(1), 0, len(s.Elements[1]))
+	table_init(s.T1, s.Elements[1], i32(0), 0, len(s.Elements[1]))
 	s.Elements[1] = nil
 	table_init(s.T2, s.Elements[2], i32(1), 0, len(s.Elements[2]))
 	s.Elements[2] = nil
+	table_init(s.T3, s.Elements[3], i32(1), 0, len(s.Elements[3]))
+	s.Elements[3] = nil
 	return m
 }
 func (m *Module) Xexported() *[]any {
-	return &m.instance.T1
+	return &m.instance.T2
 }
 func (m *Module) Xcall(v0, v1 int32) int32 {
 	return wasm2go_functions5.Xcall(&m.instance, v0, v1)
@@ -48,6 +69,9 @@ func (m *Module) Xcall0(v0 int32) int32 {
 }
 func (m *Module) XcallExported(v0, v1 int32) int32 {
 	return wasm2go_functions3.XcallExported(&m.instance, v0, v1)
+}
+func (m *Module) XcallMany(v0, v1 int32) int64 {
+	return wasm2go_functions6.XcallMany(&m.instance, v0, v1)
 }
 func (m *Module) XcallMutated(v0, v1 int32) int32 {
 	return wasm2go_functions2.XcallMutated(&m.instance, v0, v1)

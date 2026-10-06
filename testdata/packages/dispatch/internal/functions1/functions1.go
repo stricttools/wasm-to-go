@@ -3,11 +3,11 @@
 package functions1
 
 import (
-	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions7"
+	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions25"
 	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/instance"
 )
 
 func XsetMutated(m *instance.Module, v0 int32) {
-	t0 := functions7.Fn1
-	m.T2[v0] = t0
+	t0 := functions25.Fn1
+	m.T3[v0] = t0
 }

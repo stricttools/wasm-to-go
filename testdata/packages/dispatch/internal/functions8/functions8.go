@@ -2,6 +2,6 @@
 
 package functions8
 
-func Fn0(v0 int32) int32 {
-	return v0 + v0
+func Fn18(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(1500)
 }

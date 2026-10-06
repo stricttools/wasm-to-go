@@ -2,6 +2,6 @@
 
 package functions7
 
-func Fn1(v0 int32) int32 {
-	return v0 * int32(3)
+func Fn19(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(1600)
 }

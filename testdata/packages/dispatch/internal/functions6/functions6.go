@@ -2,6 +2,9 @@
 
 package functions6
 
-func Fn2() int32 {
-	return int32(42)
+import "github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/instance"
+
+func XcallMany(m *instance.Module, v0, v1 int32) int64 {
+	t0 := m.T1[uint(v0)].(func(int32) int64)(v1)
+	return t0
 }

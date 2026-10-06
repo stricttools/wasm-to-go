@@ -3,7 +3,7 @@
 package functions4
 
 import (
-	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions6"
+	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/functions24"
 	"github.com/stricttools/wasm-to-go/testdata/packages/dispatch/internal/instance"
 )
 
@@ -11,7 +11,7 @@ func Xcall0(m *instance.Module, v0 int32) int32 {
 	var t0 int32
 	switch t1 := uint(v0); t1 {
 	case 3:
-		t0 = functions6.Fn2()
+		t0 = functions24.Fn2()
 	default:
 		t0 = m.T0[t1].(func() int32)()
 	}

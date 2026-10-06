@@ -10,21 +10,25 @@ type Module struct {
 	t0       []any
 	t1       []any
 	t2       []any
+	t3       []any
 	elements [][]any
 }
 
 func New() *Module {
 	m := new(Module)
 	m.t0 = make([]any, 8)
-	m.t1 = make([]any, 4)
+	m.t1 = make([]any, 18)
 	m.t2 = make([]any, 4)
-	m.elements = [][]any{{fn0, fn1, fn2, fn0}, {fn0}, {fn0}}
+	m.t3 = make([]any, 4)
+	m.elements = [][]any{{fn0, fn1, fn2, fn0}, {fn3, fn4, fn5, fn6, fn7, fn8, fn9, fn10, fn11, fn12, fn13, fn14, fn15, fn16, fn17, fn18, fn19}, {fn0}, {fn0}}
 	table_init(m.t0, m.elements[0], i32(1), 0, len(m.elements[0]))
 	m.elements[0] = nil
-	table_init(m.t1, m.elements[1], i32(1), 0, len(m.elements[1]))
+	table_init(m.t1, m.elements[1], i32(0), 0, len(m.elements[1]))
 	m.elements[1] = nil
 	table_init(m.t2, m.elements[2], i32(1), 0, len(m.elements[2]))
 	m.elements[2] = nil
+	table_init(m.t3, m.elements[3], i32(1), 0, len(m.elements[3]))
+	m.elements[3] = nil
 	return m
 }
 func fn0(v0 int32) int32 {
@@ -35,6 +39,61 @@ func fn1(v0 int32) int32 {
 }
 func fn2() int32 {
 	return int32(42)
+}
+func fn3(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(0)
+}
+func fn4(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(100)
+}
+func fn5(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(200)
+}
+func fn6(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(300)
+}
+func fn7(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(400)
+}
+func fn8(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(500)
+}
+func fn9(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(600)
+}
+func fn10(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(700)
+}
+func fn11(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(800)
+}
+func fn12(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(900)
+}
+func fn13(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(1000)
+}
+func fn14(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(1100)
+}
+func fn15(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(1200)
+}
+func fn16(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(1300)
+}
+func fn17(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(1400)
+}
+func fn18(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(1500)
+}
+func fn19(v0 int32) int64 {
+	return int64(uint32(v0)) + int64(1600)
+}
+func (m *Module) XcallMany(v0, v1 int32) int64 {
+	t0 := m.t1[uint(v0)].(func(int32) int64)(v1)
+	return t0
 }
 func (m *Module) Xcall(v0, v1 int32) int32 {
 	var t0 int32
@@ -59,23 +118,26 @@ func (m *Module) Xcall0(v0 int32) int32 {
 	return t0
 }
 func (m *Module) XcallExported(v0, v1 int32) int32 {
-	t0 := m.t1[uint(v0)].(func(int32) int32)(v1)
+	t0 := m.t2[uint(v0)].(func(int32) int32)(v1)
 	return t0
 }
 func (m *Module) XcallMutated(v0, v1 int32) int32 {
-	t0 := m.t2[uint(v0)].(func(int32) int32)(v1)
+	t0 := m.t3[uint(v0)].(func(int32) int32)(v1)
 	return t0
 }
 func (m *Module) XsetMutated(v0 int32) {
 	t0 := fn1
-	m.t2[v0] = t0
+	m.t3[v0] = t0
 }
 func (m *Module) Xexported() *[]any {
-	return &m.t1
+	return &m.t2
 }
 
 //go:nosplit
 func i32(x int32) int32 { return x }
+
+//go:nosplit
+func i64(x int64) int64 { return x }
 
 func table_init[T1, T2, T3 int | int32 | int64](tab, elems []any, dest T1, src T2, n T3) {
 	x := uint64(dest)

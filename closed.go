@@ -151,6 +151,22 @@ func (k *moduleFacts) indirectTargets(ind indirectCall) (map[int][]uint64, bool)
 	return targets, true
 }
 
+// maxDispatchTargets is the most functions an indirect call may reach for
+// the dispatch pass to rewrite it: a call through a closed table that can
+// reach more stays an indirect call.
+//
+// Why: the switch is written at every call site, a case per function, so
+// its code grows with the call sites times the functions. onnxruntime's
+// basic-pitch build has 2,538 calls through its closed table, most of them
+// C++ virtual calls of a signature that 106 to 331 functions share: 642,209
+// cases, in a translation of 2.25 million lines. Dispatch changed neither
+// QuickJS-ng's game workload nor basic-pitch's inference measurably,
+// whatever the bound, from none to all (medians of interleaved runs on
+// linux/amd64: the game took 1,523 to 1,550 ms, inference 1,124 to
+// 1,143 ms), so the bound keeps only the small switches, where the
+// compiler can still inline a small callee into its case.
+const maxDispatchTargets = 16
+
 // dispatchSite returns the direct calls an indirect call can make,
 // if it goes through a closed table.
 func (k *moduleFacts) dispatchSite(call *ast.CallExpr) *passes.DispatchSite {
@@ -163,7 +179,8 @@ func (k *moduleFacts) dispatchSite(call *ast.CallExpr) *passes.DispatchSite {
 		return site
 	}
 	targets, ok := k.indirectTargets(ind)
-	if !ok {
+	if !ok || len(targets) > maxDispatchTargets {
+		k.sites[key] = nil
 		return nil
 	}
 
