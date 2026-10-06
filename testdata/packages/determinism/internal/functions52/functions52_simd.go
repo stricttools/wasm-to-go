@@ -12,18 +12,24 @@ import (
 type vec128 = struct {
 	L0, L1, L2, L3 uint32
 }
+type vec128f32 = struct {
+	F0, F1, F2, F3 float32
+}
+type vec128f64 = struct {
+	D0, D1 float64
+}
 
 func Xop104(m *instance.Module, v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(lane_mask32(math.Float32frombits(t3.L0) >= math.Float32frombits(t7.L0))), uint32(lane_mask32(math.Float32frombits(t3.L1) >= math.Float32frombits(t7.L1))), uint32(lane_mask32(math.Float32frombits(t3.L2) >= math.Float32frombits(t7.L2))), uint32(lane_mask32(math.Float32frombits(t3.L3) >= math.Float32frombits(t7.L3)))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128{lane_mask32(t3.F0 >= t7.F0), lane_mask32(t3.F1 >= t7.F1), lane_mask32(t3.F2 >= t7.F2), lane_mask32(t3.F3 >= t7.F3)}
 	v2 = t8
 	t9 := v2
 	t10 := int32(t9.L0)

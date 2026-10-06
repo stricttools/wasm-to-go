@@ -12,14 +12,20 @@ import (
 type vec128 = struct {
 	L0, L1, L2, L3 uint32
 }
+type vec128f32 = struct {
+	F0, F1, F2, F3 float32
+}
+type vec128f64 = struct {
+	D0, D1 float64
+}
 
 func Xop139(m *instance.Module, v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(i32_trunc_sat_f32_s(math.Float32frombits(t3.L0))), uint32(i32_trunc_sat_f32_s(math.Float32frombits(t3.L1))), uint32(i32_trunc_sat_f32_s(math.Float32frombits(t3.L2))), uint32(i32_trunc_sat_f32_s(math.Float32frombits(t3.L3)))}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
+	t4 := vec128{uint32(i32_trunc_sat_f32_s(t3.F0)), uint32(i32_trunc_sat_f32_s(t3.F1)), uint32(i32_trunc_sat_f32_s(t3.F2)), uint32(i32_trunc_sat_f32_s(t3.F3))}
 	v2 = t4
 	t5 := v2
 	t6 := int32(t5.L0)

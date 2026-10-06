@@ -12,19 +12,26 @@ import (
 type vec128 = struct {
 	L0, L1, L2, L3 uint32
 }
+type vec128f32 = struct {
+	F0, F1, F2, F3 float32
+}
+type vec128f64 = struct {
+	D0, D1 float64
+}
 
 func Xop136(m *instance.Module, v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := int32(v0)
 	t1 := vec128{uint32((t0)), uint32((t0)), uint32((t0)), uint32((t0))}
 	t2 := int32(v1)
 	t3 := vec128{t1.L0, uint32((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(math.Float32bits(float32(t3.L0))), uint32(math.Float32bits(float32(t3.L1))), uint32(math.Float32bits(float32(t3.L2))), uint32(math.Float32bits(float32(t3.L3)))}
+	t4 := vec128f32{float32(t3.L0), float32(t3.L1), float32(t3.L2), float32(t3.L3)}
 	v2 = t4
 	t5 := v2
-	t6 := int32(t5.L0)
+	t6 := int32(math.Float32bits(t5.F0))
 	t7 := int64(uint32(t6))
 	t8 := v2
-	t9 := int32(t8.L1)
+	t9 := int32(math.Float32bits(t8.F1))
 	return t7 | int64(uint32(t9))<<32
 }

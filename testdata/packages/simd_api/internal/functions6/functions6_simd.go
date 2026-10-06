@@ -12,6 +12,12 @@ import (
 type vec128 = struct {
 	L0, L1, L2, L3 uint32
 }
+type vec128f32 = struct {
+	F0, F1, F2, F3 float32
+}
+type vec128f64 = struct {
+	D0, D1 float64
+}
 
 func Fn3(m *instance.Module, v0 vec128) vec128 {
 	t0 := vec128{(uint32((m.G1)[0])<<0 | uint32((m.G1)[1])<<8 | uint32((m.G1)[2])<<16 | uint32((m.G1)[3])<<24), (uint32((m.G1)[4])<<0 | uint32((m.G1)[5])<<8 | uint32((m.G1)[6])<<16 | uint32((m.G1)[7])<<24), (uint32((m.G1)[8])<<0 | uint32((m.G1)[9])<<8 | uint32((m.G1)[10])<<16 | uint32((m.G1)[11])<<24), (uint32((m.G1)[12])<<0 | uint32((m.G1)[13])<<8 | uint32((m.G1)[14])<<16 | uint32((m.G1)[15])<<24)}

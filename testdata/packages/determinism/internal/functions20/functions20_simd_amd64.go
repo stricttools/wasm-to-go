@@ -18,7 +18,7 @@ func Xop136(m *instance.Module, v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(uint32((t0)))
 	t2 := int32(v1)
 	t3 := t1.SetElem(1, uint32((t2)))
-	t4 := vec128{}.SetElem(0, uint32(math.Float32bits(float32(t3.GetElem(0))))).SetElem(1, uint32(math.Float32bits(float32(t3.GetElem(1))))).SetElem(2, uint32(math.Float32bits(float32(t3.GetElem(2))))).SetElem(3, uint32(math.Float32bits(float32(t3.GetElem(3)))))
+	t4 := vec128{}.SetElem(0, math.Float32bits(float32(t3.GetElem(0)))).SetElem(1, math.Float32bits(float32(t3.GetElem(1)))).SetElem(2, math.Float32bits(float32(t3.GetElem(2)))).SetElem(3, math.Float32bits(float32(t3.GetElem(3))))
 	v2 = t4
 	t5 := v2
 	t6 := int32(t5.GetElem(0))

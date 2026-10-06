@@ -775,6 +775,40 @@ func lane_pmax64(a, b uint64) uint64 {
 	return a
 }
 
+// The same, of lanes held as floats: moves keep their bits.
+//
+//go:nosplit
+func lane_pminf32(a, b float32) float32 {
+	if b < a {
+		return b
+	}
+	return a
+}
+
+//go:nosplit
+func lane_pmaxf32(a, b float32) float32 {
+	if a < b {
+		return b
+	}
+	return a
+}
+
+//go:nosplit
+func lane_pminf64(a, b float64) float64 {
+	if b < a {
+		return b
+	}
+	return a
+}
+
+//go:nosplit
+func lane_pmaxf64(a, b float64) float64 {
+	if a < b {
+		return b
+	}
+	return a
+}
+
 // The byte i of the vector of words w0 to w3, or 0 if i is 16 or more
 // (i8x16.swizzle).
 //

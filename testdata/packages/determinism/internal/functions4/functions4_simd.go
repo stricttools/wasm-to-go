@@ -13,27 +13,35 @@ import (
 type vec128 = struct {
 	L0, L1, L2, L3 uint32
 }
+type vec128f32 = struct {
+	F0, F1, F2, F3 float32
+}
+type vec128f64 = struct {
+	D0, D1 float64
+}
 
 func Xop152(m *instance.Module, v0, v1 int64) int64 {
-	var v2, v3, _ vec128
+	var v2 vec128f64
+	var v3 vec128f32
+	var _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) + math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) + math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) + math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) + math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
 	v3 = t8
 	t9 := v3
-	t10 := vec128{uint32(math.Float64bits(float64(math.Float32frombits(t9.L0)))), uint32((math.Float64bits(float64(math.Float32frombits(t9.L0)))) >> 32), uint32(math.Float64bits(float64(math.Float32frombits(t9.L1)))), uint32((math.Float64bits(float64(math.Float32frombits(t9.L1)))) >> 32)}
-	t11 := vec128{uint32(uint64((uint64((uint32(uint64(lane_canon64((uint64(t10.L0) | uint64(t10.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t10.L0) | uint64(t10.L1)<<32))))>>32)))<<32) ^ (1 << 63))), uint32((uint64((uint64((uint32(uint64(lane_canon64((uint64(t10.L0) | uint64(t10.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t10.L0) | uint64(t10.L1)<<32))))>>32)))<<32) ^ (1 << 63))) >> 32), uint32(uint64((uint64((uint32(uint64(lane_canon64((uint64(t10.L2) | uint64(t10.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t10.L2) | uint64(t10.L3)<<32))))>>32)))<<32) ^ (1 << 63))), uint32((uint64((uint64((uint32(uint64(lane_canon64((uint64(t10.L2) | uint64(t10.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t10.L2) | uint64(t10.L3)<<32))))>>32)))<<32) ^ (1 << 63))) >> 32)}
+	t10 := vec128f64{float64(t9.F0), float64(t9.F1)}
+	t11 := vec128f64{math.Float64frombits(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t10.D0))))) ^ (1 << 63)), math.Float64frombits(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t10.D1))))) ^ (1 << 63))}
 	v2 = t11
 	t12 := v2
-	t13 := int64((uint64(t12.L0) | uint64(t12.L1)<<32))
+	t13 := int64((uint64(uint32(math.Float64bits(t12.D0))) | uint64(uint32((math.Float64bits(t12.D0))>>32))<<32))
 	t14 := v2
-	t15 := int64((uint64(t14.L2) | uint64(t14.L3)<<32))
+	t15 := int64((uint64(uint32(math.Float64bits(t14.D1))) | uint64(uint32((math.Float64bits(t14.D1))>>32))<<32))
 	return t13 + i64_rotl(t15, int64(17))
 }
 

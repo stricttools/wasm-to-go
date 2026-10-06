@@ -106,7 +106,7 @@ func (t *translator) printSIMDFiles(open func(rel string) (io.Writer, error), re
 	}
 	capIsLen := t.memory != nil && t.memory.owned()
 	for _, f := range simdFiles() {
-		decls := []ast.Decl{passes.SIMDTypeDecl(f.target)}
+		decls := passes.SIMDTypeDecls(f.target)
 		var code []*ast.FuncDecl
 		for _, d := range simd {
 			c := passes.Clone(d.(*ast.FuncDecl))

@@ -13,6 +13,12 @@ import (
 type vec128 = struct {
 	L0, L1, L2, L3 uint32
 }
+type vec128f32 = struct {
+	F0, F1, F2, F3 float32
+}
+type vec128f64 = struct {
+	D0, D1 float64
+}
 
 func Fn6(m *instance.Module, v0 int32, v1 vec128) vec128 {
 	var t0 vec128

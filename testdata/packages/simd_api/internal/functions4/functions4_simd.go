@@ -9,6 +9,12 @@ import "github.com/stricttools/wasm-to-go/testdata/packages/simd_api/internal/in
 type vec128 = struct {
 	L0, L1, L2, L3 uint32
 }
+type vec128f32 = struct {
+	F0, F1, F2, F3 float32
+}
+type vec128f64 = struct {
+	D0, D1 float64
+}
 
 func XimportedLane(m *instance.Module) int32 {
 	t0 := vec128{(uint32((*m.G0)[0])<<0 | uint32((*m.G0)[1])<<8 | uint32((*m.G0)[2])<<16 | uint32((*m.G0)[3])<<24), (uint32((*m.G0)[4])<<0 | uint32((*m.G0)[5])<<8 | uint32((*m.G0)[6])<<16 | uint32((*m.G0)[7])<<24), (uint32((*m.G0)[8])<<0 | uint32((*m.G0)[9])<<8 | uint32((*m.G0)[10])<<16 | uint32((*m.G0)[11])<<24), (uint32((*m.G0)[12])<<0 | uint32((*m.G0)[13])<<8 | uint32((*m.G0)[14])<<16 | uint32((*m.G0)[15])<<24)}

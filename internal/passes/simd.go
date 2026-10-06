@@ -20,8 +20,15 @@ import (
 const SIMDPrefix = "simd_"
 
 // SIMDType is the Go type of a v128 value in translated code: an alias the
-// file of each target declares (SIMDTypeDecl).
+// file of each target declares (SIMDTypeDecls).
 const SIMDType = "vec128"
+
+// SIMDTypeF32 and SIMDTypeF64 are the Go types of the portable code's
+// vectors of float lanes, as floats (portableDomains).
+const (
+	SIMDTypeF32 = "vec128f32"
+	SIMDTypeF64 = "vec128f64"
+)
 
 // A SIMDTarget is what a file's SIMD code is written for.
 type SIMDTarget int
@@ -38,16 +45,21 @@ const (
 	SIMDWasm
 )
 
-// SIMDTypeDecl is the declaration of SIMDType for target.
-func SIMDTypeDecl(target SIMDTarget) ast.Decl {
-	var typ ast.Expr
-	if target == SIMDPortable {
-		typ = mustParseExpr("struct{ L0, L1, L2, L3 uint32 }")
-	} else {
-		typ = mustParseExpr("archsimd.Uint32x4")
+// SIMDTypeDecls are the declarations of SIMDType for target, and of the
+// portable code's float vectors.
+func SIMDTypeDecls(target SIMDTarget) []ast.Decl {
+	alias := func(name, typ string) ast.Decl {
+		return &ast.GenDecl{Tok: token.TYPE, Specs: []ast.Spec{&ast.TypeSpec{
+			Name: ast.NewIdent(name), Assign: 1, Type: mustParseExpr(typ)}}}
 	}
-	return &ast.GenDecl{Tok: token.TYPE, Specs: []ast.Spec{&ast.TypeSpec{
-		Name: ast.NewIdent(SIMDType), Assign: 1, Type: typ}}}
+	if target != SIMDPortable {
+		return []ast.Decl{alias(SIMDType, "archsimd.Uint32x4")}
+	}
+	return []ast.Decl{
+		alias(SIMDType, "struct{ L0, L1, L2, L3 uint32 }"),
+		alias(SIMDTypeF32, "struct{ F0, F1, F2, F3 float32 }"),
+		alias(SIMDTypeF64, "struct{ D0, D1 float64 }"),
+	}
 }
 
 // UsesSIMD reports whether n uses the SIMD form: an operation of it, or
@@ -189,6 +201,9 @@ func LowerSIMD(fn *ast.FuncDecl, target SIMDTarget, capIsLen bool) {
 		return
 	}
 	l := &simdLowerer{target: target, capIsLen: capIsLen, ptrs: map[int]bool{}}
+	if target == SIMDPortable {
+		l.domains = portableDomains(fn)
+	}
 	// Memory accesses, which are statements of their own (the translator
 	// writes a load's result to a variable), with their pointers in
 	// variables; stores become their statements.
@@ -199,14 +214,10 @@ func LowerSIMD(fn *ast.FuncDecl, target SIMDTarget, capIsLen bool) {
 		}
 		return out
 	})
-	astutil.Apply(fn.Body, nil, func(c *astutil.Cursor) bool {
-		if call, ok := c.Node().(*ast.CallExpr); ok {
-			if id, ok := call.Fun.(*ast.Ident); ok && IsSIMDOp(id.Name) {
-				c.Replace(l.expr(call))
-			}
-		}
-		return true
-	})
+	l.rewrite(fn.Body)
+	if target == SIMDPortable {
+		l.portable().convertUses(fn)
+	}
 	var decls []ast.Stmt
 	for _, size := range []int{1, 2, 4, 8, 16} {
 		if l.ptrs[size] {
@@ -220,6 +231,7 @@ type simdLowerer struct {
 	target   SIMDTarget
 	capIsLen bool
 	ptrs     map[int]bool
+	domains  map[string]string // the portable code's (portableDomains)
 }
 
 // The statements s becomes: a statement whose value is a SIMD memory
@@ -235,6 +247,9 @@ func (l *simdLowerer) hoist(s ast.Stmt) []ast.Stmt {
 		if call := simdAccess(st.X); call != nil {
 			out := []ast.Stmt{l.pointer(call)}
 			op := strings.TrimPrefix(call.Fun.(*ast.Ident).Name, SIMDPrefix)
+			// The stored vector's code first: the store's reads its lanes.
+			holder := &ast.CallExpr{Args: call.Args}
+			l.rewrite(holder)
 			for _, src := range l.store(op, call.Args) {
 				out = append(out, mustParseStmt(src))
 			}
@@ -289,6 +304,19 @@ func (l *simdLowerer) pointer(call *ast.CallExpr) ast.Stmt {
 	name := simdPointerNames[size]
 	call.Args = append([]ast.Expr{ast.NewIdent(name)}, call.Args[2:]...)
 	return &ast.AssignStmt{Lhs: []ast.Expr{ast.NewIdent(name)}, Tok: token.ASSIGN, Rhs: []ast.Expr{ptr}}
+}
+
+// rewrite replaces, in n, every call of a SIMD operation with the target's
+// code, operands first.
+func (l *simdLowerer) rewrite(n ast.Node) {
+	astutil.Apply(n, nil, func(c *astutil.Cursor) bool {
+		if call, ok := c.Node().(*ast.CallExpr); ok {
+			if id, ok := call.Fun.(*ast.Ident); ok && IsSIMDOp(id.Name) {
+				c.Replace(l.expr(call))
+			}
+		}
+		return true
+	})
 }
 
 // The target's code of a call of a SIMD operation other than a store,

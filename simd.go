@@ -201,6 +201,7 @@ var simdHelpers = []string{
 	"lane_u32", "lane_mask8", "lane_mask16", "lane_mask32", "lane_mask64", "lane_bool",
 	"lane_sat_s8", "lane_sat_u8", "lane_sat_s16", "lane_sat_u16", "lane_canon32", "lane_canon64",
 	"lane_pmin32", "lane_pmax32", "lane_pmin64", "lane_pmax64", "lane_byte",
+	"lane_pminf32", "lane_pmaxf32", "lane_pminf64", "lane_pmaxf64",
 	"i32_trunc_sat_f32_s", "i32_trunc_sat_f32_u", "i32_trunc_sat_f64_s", "i32_trunc_sat_f64_u",
 }
 

@@ -12,170 +12,184 @@ import (
 type vec128 = struct {
 	L0, L1, L2, L3 uint32
 }
+type vec128f32 = struct {
+	F0, F1, F2, F3 float32
+}
+type vec128f64 = struct {
+	D0, D1 float64
+}
 
 func (m *Module) Xop91(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) + math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) + math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) + math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) + math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
 	v2 = t8
 	t9 := v2
-	t10 := int32((uint32(lane_canon32(t9.L0))))
+	t10 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))))
 	t11 := int64(uint32(t10))
 	t12 := v2
-	t13 := int32((uint32(lane_canon32(t12.L1))))
+	t13 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t12.F1))))))
 	return t11 | int64(uint32(t13))<<32
 }
 func (m *Module) Xop92(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) - math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) - math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) - math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) - math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 - t7.F0), float32(t3.F1 - t7.F1), float32(t3.F2 - t7.F2), float32(t3.F3 - t7.F3)}
 	v2 = t8
 	t9 := v2
-	t10 := int32((uint32(lane_canon32(t9.L0))))
+	t10 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))))
 	t11 := int64(uint32(t10))
 	t12 := v2
-	t13 := int32((uint32(lane_canon32(t12.L1))))
+	t13 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t12.F1))))))
 	return t11 | int64(uint32(t13))<<32
 }
 func (m *Module) Xop93(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) * math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) * math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) * math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) * math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 * t7.F0), float32(t3.F1 * t7.F1), float32(t3.F2 * t7.F2), float32(t3.F3 * t7.F3)}
 	v2 = t8
 	t9 := v2
-	t10 := int32((uint32(lane_canon32(t9.L0))))
+	t10 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))))
 	t11 := int64(uint32(t10))
 	t12 := v2
-	t13 := int32((uint32(lane_canon32(t12.L1))))
+	t13 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t12.F1))))))
 	return t11 | int64(uint32(t13))<<32
 }
 func (m *Module) Xop94(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) / math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) / math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) / math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) / math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 / t7.F0), float32(t3.F1 / t7.F1), float32(t3.F2 / t7.F2), float32(t3.F3 / t7.F3)}
 	v2 = t8
 	t9 := v2
-	t10 := int32((uint32(lane_canon32(t9.L0))))
+	t10 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))))
 	t11 := int64(uint32(t10))
 	t12 := v2
-	t13 := int32((uint32(lane_canon32(t12.L1))))
+	t13 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t12.F1))))))
 	return t11 | int64(uint32(t13))<<32
 }
 func (m *Module) Xop95(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(lane_canon32(math.Float32bits(min(math.Float32frombits(t3.L0), math.Float32frombits(t7.L0))))), uint32(lane_canon32(math.Float32bits(min(math.Float32frombits(t3.L1), math.Float32frombits(t7.L1))))), uint32(lane_canon32(math.Float32bits(min(math.Float32frombits(t3.L2), math.Float32frombits(t7.L2))))), uint32(lane_canon32(math.Float32bits(min(math.Float32frombits(t3.L3), math.Float32frombits(t7.L3)))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{math.Float32frombits(lane_canon32(math.Float32bits(min(t3.F0, t7.F0)))), math.Float32frombits(lane_canon32(math.Float32bits(min(t3.F1, t7.F1)))), math.Float32frombits(lane_canon32(math.Float32bits(min(t3.F2, t7.F2)))), math.Float32frombits(lane_canon32(math.Float32bits(min(t3.F3, t7.F3))))}
 	v2 = t8
 	t9 := v2
-	t10 := int32(t9.L0)
+	t10 := int32(math.Float32bits(t9.F0))
 	t11 := int64(uint32(t10))
 	t12 := v2
-	t13 := int32(t12.L1)
+	t13 := int32(math.Float32bits(t12.F1))
 	return t11 | int64(uint32(t13))<<32
 }
 func (m *Module) Xop96(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(lane_canon32(math.Float32bits(max(math.Float32frombits(t3.L0), math.Float32frombits(t7.L0))))), uint32(lane_canon32(math.Float32bits(max(math.Float32frombits(t3.L1), math.Float32frombits(t7.L1))))), uint32(lane_canon32(math.Float32bits(max(math.Float32frombits(t3.L2), math.Float32frombits(t7.L2))))), uint32(lane_canon32(math.Float32bits(max(math.Float32frombits(t3.L3), math.Float32frombits(t7.L3)))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{math.Float32frombits(lane_canon32(math.Float32bits(max(t3.F0, t7.F0)))), math.Float32frombits(lane_canon32(math.Float32bits(max(t3.F1, t7.F1)))), math.Float32frombits(lane_canon32(math.Float32bits(max(t3.F2, t7.F2)))), math.Float32frombits(lane_canon32(math.Float32bits(max(t3.F3, t7.F3))))}
 	v2 = t8
 	t9 := v2
-	t10 := int32(t9.L0)
+	t10 := int32(math.Float32bits(t9.F0))
 	t11 := int64(uint32(t10))
 	t12 := v2
-	t13 := int32(t12.L1)
+	t13 := int32(math.Float32bits(t12.F1))
 	return t11 | int64(uint32(t13))<<32
 }
 func (m *Module) Xop97(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(lane_pmin32(t3.L0, t7.L0)), uint32(lane_pmin32(t3.L1, t7.L1)), uint32(lane_pmin32(t3.L2, t7.L2)), uint32(lane_pmin32(t3.L3, t7.L3))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{lane_pminf32(t3.F0, t7.F0), lane_pminf32(t3.F1, t7.F1), lane_pminf32(t3.F2, t7.F2), lane_pminf32(t3.F3, t7.F3)}
 	v2 = t8
 	t9 := v2
-	t10 := int32(t9.L0)
+	t10 := int32(math.Float32bits(t9.F0))
 	t11 := int64(uint32(t10))
 	t12 := v2
-	t13 := int32(t12.L1)
+	t13 := int32(math.Float32bits(t12.F1))
 	return t11 | int64(uint32(t13))<<32
 }
 func (m *Module) Xop98(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(lane_pmax32(t3.L0, t7.L0)), uint32(lane_pmax32(t3.L1, t7.L1)), uint32(lane_pmax32(t3.L2, t7.L2)), uint32(lane_pmax32(t3.L3, t7.L3))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{lane_pmaxf32(t3.F0, t7.F0), lane_pmaxf32(t3.F1, t7.F1), lane_pmaxf32(t3.F2, t7.F2), lane_pmaxf32(t3.F3, t7.F3)}
 	v2 = t8
 	t9 := v2
-	t10 := int32(t9.L0)
+	t10 := int32(math.Float32bits(t9.F0))
 	t11 := int64(uint32(t10))
 	t12 := v2
-	t13 := int32(t12.L1)
+	t13 := int32(math.Float32bits(t12.F1))
 	return t11 | int64(uint32(t13))<<32
 }
 func (m *Module) Xop99(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(lane_mask32(math.Float32frombits(t3.L0) == math.Float32frombits(t7.L0))), uint32(lane_mask32(math.Float32frombits(t3.L1) == math.Float32frombits(t7.L1))), uint32(lane_mask32(math.Float32frombits(t3.L2) == math.Float32frombits(t7.L2))), uint32(lane_mask32(math.Float32frombits(t3.L3) == math.Float32frombits(t7.L3)))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128{lane_mask32(t3.F0 == t7.F0), lane_mask32(t3.F1 == t7.F1), lane_mask32(t3.F2 == t7.F2), lane_mask32(t3.F3 == t7.F3)}
 	v2 = t8
 	t9 := v2
 	t10 := int32(t9.L0)
@@ -187,14 +201,14 @@ func (m *Module) Xop99(v0, v1 int64) int64 {
 func (m *Module) Xop100(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(lane_mask32(math.Float32frombits(t3.L0) != math.Float32frombits(t7.L0))), uint32(lane_mask32(math.Float32frombits(t3.L1) != math.Float32frombits(t7.L1))), uint32(lane_mask32(math.Float32frombits(t3.L2) != math.Float32frombits(t7.L2))), uint32(lane_mask32(math.Float32frombits(t3.L3) != math.Float32frombits(t7.L3)))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128{lane_mask32(t3.F0 != t7.F0), lane_mask32(t3.F1 != t7.F1), lane_mask32(t3.F2 != t7.F2), lane_mask32(t3.F3 != t7.F3)}
 	v2 = t8
 	t9 := v2
 	t10 := int32(t9.L0)
@@ -206,14 +220,14 @@ func (m *Module) Xop100(v0, v1 int64) int64 {
 func (m *Module) Xop101(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(lane_mask32(math.Float32frombits(t3.L0) < math.Float32frombits(t7.L0))), uint32(lane_mask32(math.Float32frombits(t3.L1) < math.Float32frombits(t7.L1))), uint32(lane_mask32(math.Float32frombits(t3.L2) < math.Float32frombits(t7.L2))), uint32(lane_mask32(math.Float32frombits(t3.L3) < math.Float32frombits(t7.L3)))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128{lane_mask32(t3.F0 < t7.F0), lane_mask32(t3.F1 < t7.F1), lane_mask32(t3.F2 < t7.F2), lane_mask32(t3.F3 < t7.F3)}
 	v2 = t8
 	t9 := v2
 	t10 := int32(t9.L0)
@@ -225,14 +239,14 @@ func (m *Module) Xop101(v0, v1 int64) int64 {
 func (m *Module) Xop102(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(lane_mask32(math.Float32frombits(t3.L0) > math.Float32frombits(t7.L0))), uint32(lane_mask32(math.Float32frombits(t3.L1) > math.Float32frombits(t7.L1))), uint32(lane_mask32(math.Float32frombits(t3.L2) > math.Float32frombits(t7.L2))), uint32(lane_mask32(math.Float32frombits(t3.L3) > math.Float32frombits(t7.L3)))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128{lane_mask32(t3.F0 > t7.F0), lane_mask32(t3.F1 > t7.F1), lane_mask32(t3.F2 > t7.F2), lane_mask32(t3.F3 > t7.F3)}
 	v2 = t8
 	t9 := v2
 	t10 := int32(t9.L0)
@@ -244,14 +258,14 @@ func (m *Module) Xop102(v0, v1 int64) int64 {
 func (m *Module) Xop103(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(lane_mask32(math.Float32frombits(t3.L0) <= math.Float32frombits(t7.L0))), uint32(lane_mask32(math.Float32frombits(t3.L1) <= math.Float32frombits(t7.L1))), uint32(lane_mask32(math.Float32frombits(t3.L2) <= math.Float32frombits(t7.L2))), uint32(lane_mask32(math.Float32frombits(t3.L3) <= math.Float32frombits(t7.L3)))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128{lane_mask32(t3.F0 <= t7.F0), lane_mask32(t3.F1 <= t7.F1), lane_mask32(t3.F2 <= t7.F2), lane_mask32(t3.F3 <= t7.F3)}
 	v2 = t8
 	t9 := v2
 	t10 := int32(t9.L0)
@@ -263,14 +277,14 @@ func (m *Module) Xop103(v0, v1 int64) int64 {
 func (m *Module) Xop104(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(lane_mask32(math.Float32frombits(t3.L0) >= math.Float32frombits(t7.L0))), uint32(lane_mask32(math.Float32frombits(t3.L1) >= math.Float32frombits(t7.L1))), uint32(lane_mask32(math.Float32frombits(t3.L2) >= math.Float32frombits(t7.L2))), uint32(lane_mask32(math.Float32frombits(t3.L3) >= math.Float32frombits(t7.L3)))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128{lane_mask32(t3.F0 >= t7.F0), lane_mask32(t3.F1 >= t7.F1), lane_mask32(t3.F2 >= t7.F2), lane_mask32(t3.F3 >= t7.F3)}
 	v2 = t8
 	t9 := v2
 	t10 := int32(t9.L0)
@@ -280,265 +294,280 @@ func (m *Module) Xop104(v0, v1 int64) int64 {
 	return t11 | int64(uint32(t13))<<32
 }
 func (m *Module) Xop105(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(math.Float32bits(float32(math.Sqrt(float64(math.Float32frombits(t3.L0)))))), uint32(math.Float32bits(float32(math.Sqrt(float64(math.Float32frombits(t3.L1)))))), uint32(math.Float32bits(float32(math.Sqrt(float64(math.Float32frombits(t3.L2)))))), uint32(math.Float32bits(float32(math.Sqrt(float64(math.Float32frombits(t3.L3))))))}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
+	t4 := vec128f32{float32(math.Sqrt(float64(t3.F0))), float32(math.Sqrt(float64(t3.F1))), float32(math.Sqrt(float64(t3.F2))), float32(math.Sqrt(float64(t3.F3)))}
 	v2 = t4
 	t5 := v2
-	t6 := int32((uint32(lane_canon32(t5.L0))))
+	t6 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t5.F0))))))
 	t7 := int64(uint32(t6))
 	t8 := v2
-	t9 := int32((uint32(lane_canon32(t8.L1))))
+	t9 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t8.F1))))))
 	return t7 | int64(uint32(t9))<<32
 }
 func (m *Module) Xop106(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(math.Float32bits(float32(math.Ceil(float64(math.Float32frombits(t3.L0)))))), uint32(math.Float32bits(float32(math.Ceil(float64(math.Float32frombits(t3.L1)))))), uint32(math.Float32bits(float32(math.Ceil(float64(math.Float32frombits(t3.L2)))))), uint32(math.Float32bits(float32(math.Ceil(float64(math.Float32frombits(t3.L3))))))}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
+	t4 := vec128f32{float32(math.Ceil(float64(t3.F0))), float32(math.Ceil(float64(t3.F1))), float32(math.Ceil(float64(t3.F2))), float32(math.Ceil(float64(t3.F3)))}
 	v2 = t4
 	t5 := v2
-	t6 := int32((uint32(lane_canon32(t5.L0))))
+	t6 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t5.F0))))))
 	t7 := int64(uint32(t6))
 	t8 := v2
-	t9 := int32((uint32(lane_canon32(t8.L1))))
+	t9 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t8.F1))))))
 	return t7 | int64(uint32(t9))<<32
 }
 func (m *Module) Xop107(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(math.Float32bits(float32(math.Floor(float64(math.Float32frombits(t3.L0)))))), uint32(math.Float32bits(float32(math.Floor(float64(math.Float32frombits(t3.L1)))))), uint32(math.Float32bits(float32(math.Floor(float64(math.Float32frombits(t3.L2)))))), uint32(math.Float32bits(float32(math.Floor(float64(math.Float32frombits(t3.L3))))))}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
+	t4 := vec128f32{float32(math.Floor(float64(t3.F0))), float32(math.Floor(float64(t3.F1))), float32(math.Floor(float64(t3.F2))), float32(math.Floor(float64(t3.F3)))}
 	v2 = t4
 	t5 := v2
-	t6 := int32((uint32(lane_canon32(t5.L0))))
+	t6 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t5.F0))))))
 	t7 := int64(uint32(t6))
 	t8 := v2
-	t9 := int32((uint32(lane_canon32(t8.L1))))
+	t9 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t8.F1))))))
 	return t7 | int64(uint32(t9))<<32
 }
 func (m *Module) Xop108(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(math.Float32bits(float32(math.Trunc(float64(math.Float32frombits(t3.L0)))))), uint32(math.Float32bits(float32(math.Trunc(float64(math.Float32frombits(t3.L1)))))), uint32(math.Float32bits(float32(math.Trunc(float64(math.Float32frombits(t3.L2)))))), uint32(math.Float32bits(float32(math.Trunc(float64(math.Float32frombits(t3.L3))))))}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
+	t4 := vec128f32{float32(math.Trunc(float64(t3.F0))), float32(math.Trunc(float64(t3.F1))), float32(math.Trunc(float64(t3.F2))), float32(math.Trunc(float64(t3.F3)))}
 	v2 = t4
 	t5 := v2
-	t6 := int32((uint32(lane_canon32(t5.L0))))
+	t6 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t5.F0))))))
 	t7 := int64(uint32(t6))
 	t8 := v2
-	t9 := int32((uint32(lane_canon32(t8.L1))))
+	t9 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t8.F1))))))
 	return t7 | int64(uint32(t9))<<32
 }
 func (m *Module) Xop109(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(math.Float32bits(float32(math.RoundToEven(float64(math.Float32frombits(t3.L0)))))), uint32(math.Float32bits(float32(math.RoundToEven(float64(math.Float32frombits(t3.L1)))))), uint32(math.Float32bits(float32(math.RoundToEven(float64(math.Float32frombits(t3.L2)))))), uint32(math.Float32bits(float32(math.RoundToEven(float64(math.Float32frombits(t3.L3))))))}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
+	t4 := vec128f32{float32(math.RoundToEven(float64(t3.F0))), float32(math.RoundToEven(float64(t3.F1))), float32(math.RoundToEven(float64(t3.F2))), float32(math.RoundToEven(float64(t3.F3)))}
 	v2 = t4
 	t5 := v2
-	t6 := int32((uint32(lane_canon32(t5.L0))))
+	t6 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t5.F0))))))
 	t7 := int64(uint32(t6))
 	t8 := v2
-	t9 := int32((uint32(lane_canon32(t8.L1))))
+	t9 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t8.F1))))))
 	return t7 | int64(uint32(t9))<<32
 }
 func (m *Module) Xop110(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(t3.L0 &^ (1 << 31)), uint32(t3.L1 &^ (1 << 31)), uint32(t3.L2 &^ (1 << 31)), uint32(t3.L3 &^ (1 << 31))}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
+	t4 := vec128f32{math.Float32frombits(math.Float32bits(t3.F0) &^ (1 << 31)), math.Float32frombits(math.Float32bits(t3.F1) &^ (1 << 31)), math.Float32frombits(math.Float32bits(t3.F2) &^ (1 << 31)), math.Float32frombits(math.Float32bits(t3.F3) &^ (1 << 31))}
 	v2 = t4
 	t5 := v2
-	t6 := int32(t5.L0)
+	t6 := int32(math.Float32bits(t5.F0))
 	t7 := int64(uint32(t6))
 	t8 := v2
-	t9 := int32(t8.L1)
+	t9 := int32(math.Float32bits(t8.F1))
 	return t7 | int64(uint32(t9))<<32
 }
 func (m *Module) Xop111(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(t3.L0 ^ (1 << 31)), uint32(t3.L1 ^ (1 << 31)), uint32(t3.L2 ^ (1 << 31)), uint32(t3.L3 ^ (1 << 31))}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
+	t4 := vec128f32{math.Float32frombits(math.Float32bits(t3.F0) ^ (1 << 31)), math.Float32frombits(math.Float32bits(t3.F1) ^ (1 << 31)), math.Float32frombits(math.Float32bits(t3.F2) ^ (1 << 31)), math.Float32frombits(math.Float32bits(t3.F3) ^ (1 << 31))}
 	v2 = t4
 	t5 := v2
-	t6 := int32(t5.L0)
+	t6 := int32(math.Float32bits(t5.F0))
 	t7 := int64(uint32(t6))
 	t8 := v2
-	t9 := int32(t8.L1)
+	t9 := int32(math.Float32bits(t8.F1))
 	return t7 | int64(uint32(t9))<<32
 }
 func (m *Module) Xop112(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) + math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) + math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))) >> 32), uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) + math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) + math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128f64{float64(t3.D0 + t7.D0), float64(t3.D1 + t7.D1)}
 	v2 = t8
 	t9 := v2
-	t10 := int64((uint64((uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32))))>>32)))<<32))
+	t10 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))>>32))<<32))
 	t11 := v2
-	t12 := int64((uint64((uint32(uint64(lane_canon64((uint64(t11.L2) | uint64(t11.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t11.L2) | uint64(t11.L3)<<32))))>>32)))<<32))
+	t12 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t11.D1))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t11.D1))))))>>32))<<32))
 	return t10 + i64_rotl(t12, int64(17))
 }
 func (m *Module) Xop113(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) - math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) - math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))) >> 32), uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) - math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) - math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128f64{float64(t3.D0 - t7.D0), float64(t3.D1 - t7.D1)}
 	v2 = t8
 	t9 := v2
-	t10 := int64((uint64((uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32))))>>32)))<<32))
+	t10 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))>>32))<<32))
 	t11 := v2
-	t12 := int64((uint64((uint32(uint64(lane_canon64((uint64(t11.L2) | uint64(t11.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t11.L2) | uint64(t11.L3)<<32))))>>32)))<<32))
+	t12 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t11.D1))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t11.D1))))))>>32))<<32))
 	return t10 + i64_rotl(t12, int64(17))
 }
 func (m *Module) Xop114(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) * math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) * math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))) >> 32), uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) * math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) * math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128f64{float64(t3.D0 * t7.D0), float64(t3.D1 * t7.D1)}
 	v2 = t8
 	t9 := v2
-	t10 := int64((uint64((uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32))))>>32)))<<32))
+	t10 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))>>32))<<32))
 	t11 := v2
-	t12 := int64((uint64((uint32(uint64(lane_canon64((uint64(t11.L2) | uint64(t11.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t11.L2) | uint64(t11.L3)<<32))))>>32)))<<32))
+	t12 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t11.D1))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t11.D1))))))>>32))<<32))
 	return t10 + i64_rotl(t12, int64(17))
 }
 func (m *Module) Xop115(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) / math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) / math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))) >> 32), uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) / math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) / math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128f64{float64(t3.D0 / t7.D0), float64(t3.D1 / t7.D1)}
 	v2 = t8
 	t9 := v2
-	t10 := int64((uint64((uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32))))>>32)))<<32))
+	t10 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))>>32))<<32))
 	t11 := v2
-	t12 := int64((uint64((uint32(uint64(lane_canon64((uint64(t11.L2) | uint64(t11.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t11.L2) | uint64(t11.L3)<<32))))>>32)))<<32))
+	t12 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t11.D1))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t11.D1))))))>>32))<<32))
 	return t10 + i64_rotl(t12, int64(17))
 }
 func (m *Module) Xop116(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(lane_canon64(math.Float64bits(min(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)), math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))))), uint32((uint64(lane_canon64(math.Float64bits(min(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)), math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))))) >> 32), uint32(uint64(lane_canon64(math.Float64bits(min(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)), math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))))), uint32((uint64(lane_canon64(math.Float64bits(min(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)), math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128f64{math.Float64frombits(lane_canon64(math.Float64bits(min(t3.D0, t7.D0)))), math.Float64frombits(lane_canon64(math.Float64bits(min(t3.D1, t7.D1))))}
 	v2 = t8
 	t9 := v2
-	t10 := int64((uint64(t9.L0) | uint64(t9.L1)<<32))
+	t10 := int64((uint64(uint32(math.Float64bits(t9.D0))) | uint64(uint32((math.Float64bits(t9.D0))>>32))<<32))
 	t11 := v2
-	t12 := int64((uint64(t11.L2) | uint64(t11.L3)<<32))
+	t12 := int64((uint64(uint32(math.Float64bits(t11.D1))) | uint64(uint32((math.Float64bits(t11.D1))>>32))<<32))
 	return t10 + i64_rotl(t12, int64(17))
 }
 func (m *Module) Xop117(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(lane_canon64(math.Float64bits(max(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)), math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))))), uint32((uint64(lane_canon64(math.Float64bits(max(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)), math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))))) >> 32), uint32(uint64(lane_canon64(math.Float64bits(max(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)), math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))))), uint32((uint64(lane_canon64(math.Float64bits(max(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)), math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128f64{math.Float64frombits(lane_canon64(math.Float64bits(max(t3.D0, t7.D0)))), math.Float64frombits(lane_canon64(math.Float64bits(max(t3.D1, t7.D1))))}
 	v2 = t8
 	t9 := v2
-	t10 := int64((uint64(t9.L0) | uint64(t9.L1)<<32))
+	t10 := int64((uint64(uint32(math.Float64bits(t9.D0))) | uint64(uint32((math.Float64bits(t9.D0))>>32))<<32))
 	t11 := v2
-	t12 := int64((uint64(t11.L2) | uint64(t11.L3)<<32))
+	t12 := int64((uint64(uint32(math.Float64bits(t11.D1))) | uint64(uint32((math.Float64bits(t11.D1))>>32))<<32))
 	return t10 + i64_rotl(t12, int64(17))
 }
 func (m *Module) Xop118(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(lane_pmin64((uint64(t3.L0) | uint64(t3.L1)<<32), (uint64(t7.L0) | uint64(t7.L1)<<32)))), uint32((uint64(lane_pmin64((uint64(t3.L0) | uint64(t3.L1)<<32), (uint64(t7.L0) | uint64(t7.L1)<<32)))) >> 32), uint32(uint64(lane_pmin64((uint64(t3.L2) | uint64(t3.L3)<<32), (uint64(t7.L2) | uint64(t7.L3)<<32)))), uint32((uint64(lane_pmin64((uint64(t3.L2) | uint64(t3.L3)<<32), (uint64(t7.L2) | uint64(t7.L3)<<32)))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128f64{lane_pminf64(t3.D0, t7.D0), lane_pminf64(t3.D1, t7.D1)}
 	v2 = t8
 	t9 := v2
-	t10 := int64((uint64(t9.L0) | uint64(t9.L1)<<32))
+	t10 := int64((uint64(uint32(math.Float64bits(t9.D0))) | uint64(uint32((math.Float64bits(t9.D0))>>32))<<32))
 	t11 := v2
-	t12 := int64((uint64(t11.L2) | uint64(t11.L3)<<32))
+	t12 := int64((uint64(uint32(math.Float64bits(t11.D1))) | uint64(uint32((math.Float64bits(t11.D1))>>32))<<32))
 	return t10 + i64_rotl(t12, int64(17))
 }
 func (m *Module) Xop119(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(lane_pmax64((uint64(t3.L0) | uint64(t3.L1)<<32), (uint64(t7.L0) | uint64(t7.L1)<<32)))), uint32((uint64(lane_pmax64((uint64(t3.L0) | uint64(t3.L1)<<32), (uint64(t7.L0) | uint64(t7.L1)<<32)))) >> 32), uint32(uint64(lane_pmax64((uint64(t3.L2) | uint64(t3.L3)<<32), (uint64(t7.L2) | uint64(t7.L3)<<32)))), uint32((uint64(lane_pmax64((uint64(t3.L2) | uint64(t3.L3)<<32), (uint64(t7.L2) | uint64(t7.L3)<<32)))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128f64{lane_pmaxf64(t3.D0, t7.D0), lane_pmaxf64(t3.D1, t7.D1)}
 	v2 = t8
 	t9 := v2
-	t10 := int64((uint64(t9.L0) | uint64(t9.L1)<<32))
+	t10 := int64((uint64(uint32(math.Float64bits(t9.D0))) | uint64(uint32((math.Float64bits(t9.D0))>>32))<<32))
 	t11 := v2
-	t12 := int64((uint64(t11.L2) | uint64(t11.L3)<<32))
+	t12 := int64((uint64(uint32(math.Float64bits(t11.D1))) | uint64(uint32((math.Float64bits(t11.D1))>>32))<<32))
 	return t10 + i64_rotl(t12, int64(17))
 }
 func (m *Module) Xop120(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(lane_mask64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) == math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))), uint32((uint64(lane_mask64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) == math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))) >> 32), uint32(uint64(lane_mask64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) == math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))), uint32((uint64(lane_mask64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) == math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128{uint32(lane_mask64(t3.D0 == t7.D0)), uint32((lane_mask64(t3.D0 == t7.D0)) >> 32), uint32(lane_mask64(t3.D1 == t7.D1)), uint32((lane_mask64(t3.D1 == t7.D1)) >> 32)}
 	v2 = t8
 	t9 := v2
 	t10 := int64((uint64(t9.L0) | uint64(t9.L1)<<32))
@@ -549,14 +578,14 @@ func (m *Module) Xop120(v0, v1 int64) int64 {
 func (m *Module) Xop121(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(lane_mask64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) != math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))), uint32((uint64(lane_mask64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) != math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))) >> 32), uint32(uint64(lane_mask64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) != math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))), uint32((uint64(lane_mask64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) != math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128{uint32(lane_mask64(t3.D0 != t7.D0)), uint32((lane_mask64(t3.D0 != t7.D0)) >> 32), uint32(lane_mask64(t3.D1 != t7.D1)), uint32((lane_mask64(t3.D1 != t7.D1)) >> 32)}
 	v2 = t8
 	t9 := v2
 	t10 := int64((uint64(t9.L0) | uint64(t9.L1)<<32))
@@ -567,14 +596,14 @@ func (m *Module) Xop121(v0, v1 int64) int64 {
 func (m *Module) Xop122(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(lane_mask64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) < math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))), uint32((uint64(lane_mask64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) < math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))) >> 32), uint32(uint64(lane_mask64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) < math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))), uint32((uint64(lane_mask64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) < math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128{uint32(lane_mask64(t3.D0 < t7.D0)), uint32((lane_mask64(t3.D0 < t7.D0)) >> 32), uint32(lane_mask64(t3.D1 < t7.D1)), uint32((lane_mask64(t3.D1 < t7.D1)) >> 32)}
 	v2 = t8
 	t9 := v2
 	t10 := int64((uint64(t9.L0) | uint64(t9.L1)<<32))
@@ -585,14 +614,14 @@ func (m *Module) Xop122(v0, v1 int64) int64 {
 func (m *Module) Xop123(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(lane_mask64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) > math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))), uint32((uint64(lane_mask64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) > math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))) >> 32), uint32(uint64(lane_mask64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) > math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))), uint32((uint64(lane_mask64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) > math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128{uint32(lane_mask64(t3.D0 > t7.D0)), uint32((lane_mask64(t3.D0 > t7.D0)) >> 32), uint32(lane_mask64(t3.D1 > t7.D1)), uint32((lane_mask64(t3.D1 > t7.D1)) >> 32)}
 	v2 = t8
 	t9 := v2
 	t10 := int64((uint64(t9.L0) | uint64(t9.L1)<<32))
@@ -603,14 +632,14 @@ func (m *Module) Xop123(v0, v1 int64) int64 {
 func (m *Module) Xop124(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(lane_mask64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) <= math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))), uint32((uint64(lane_mask64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) <= math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))) >> 32), uint32(uint64(lane_mask64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) <= math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))), uint32((uint64(lane_mask64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) <= math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128{uint32(lane_mask64(t3.D0 <= t7.D0)), uint32((lane_mask64(t3.D0 <= t7.D0)) >> 32), uint32(lane_mask64(t3.D1 <= t7.D1)), uint32((lane_mask64(t3.D1 <= t7.D1)) >> 32)}
 	v2 = t8
 	t9 := v2
 	t10 := int64((uint64(t9.L0) | uint64(t9.L1)<<32))
@@ -621,14 +650,14 @@ func (m *Module) Xop124(v0, v1 int64) int64 {
 func (m *Module) Xop125(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(lane_mask64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) >= math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))), uint32((uint64(lane_mask64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) >= math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32))))) >> 32), uint32(uint64(lane_mask64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) >= math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))), uint32((uint64(lane_mask64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) >= math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128{uint32(lane_mask64(t3.D0 >= t7.D0)), uint32((lane_mask64(t3.D0 >= t7.D0)) >> 32), uint32(lane_mask64(t3.D1 >= t7.D1)), uint32((lane_mask64(t3.D1 >= t7.D1)) >> 32)}
 	v2 = t8
 	t9 := v2
 	t10 := int64((uint64(t9.L0) | uint64(t9.L1)<<32))
@@ -637,197 +666,210 @@ func (m *Module) Xop125(v0, v1 int64) int64 {
 	return t10 + i64_rotl(t12, int64(17))
 }
 func (m *Module) Xop126(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
-	t4 := vec128{uint32(uint64(math.Float64bits(math.Sqrt(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)))))), uint32((uint64(math.Float64bits(math.Sqrt(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)))))) >> 32), uint32(uint64(math.Float64bits(math.Sqrt(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)))))), uint32((uint64(math.Float64bits(math.Sqrt(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)))))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
+	t4 := vec128f64{math.Sqrt(t3.D0), math.Sqrt(t3.D1)}
 	v2 = t4
 	t5 := v2
-	t6 := int64((uint64((uint32(uint64(lane_canon64((uint64(t5.L0) | uint64(t5.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t5.L0) | uint64(t5.L1)<<32))))>>32)))<<32))
+	t6 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))>>32))<<32))
 	t7 := v2
-	t8 := int64((uint64((uint32(uint64(lane_canon64((uint64(t7.L2) | uint64(t7.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t7.L2) | uint64(t7.L3)<<32))))>>32)))<<32))
+	t8 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))>>32))<<32))
 	return t6 + i64_rotl(t8, int64(17))
 }
 func (m *Module) Xop127(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
-	t4 := vec128{uint32(uint64(math.Float64bits(math.Ceil(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)))))), uint32((uint64(math.Float64bits(math.Ceil(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)))))) >> 32), uint32(uint64(math.Float64bits(math.Ceil(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)))))), uint32((uint64(math.Float64bits(math.Ceil(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)))))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
+	t4 := vec128f64{math.Ceil(t3.D0), math.Ceil(t3.D1)}
 	v2 = t4
 	t5 := v2
-	t6 := int64((uint64((uint32(uint64(lane_canon64((uint64(t5.L0) | uint64(t5.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t5.L0) | uint64(t5.L1)<<32))))>>32)))<<32))
+	t6 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))>>32))<<32))
 	t7 := v2
-	t8 := int64((uint64((uint32(uint64(lane_canon64((uint64(t7.L2) | uint64(t7.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t7.L2) | uint64(t7.L3)<<32))))>>32)))<<32))
+	t8 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))>>32))<<32))
 	return t6 + i64_rotl(t8, int64(17))
 }
 func (m *Module) Xop128(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
-	t4 := vec128{uint32(uint64(math.Float64bits(math.Floor(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)))))), uint32((uint64(math.Float64bits(math.Floor(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)))))) >> 32), uint32(uint64(math.Float64bits(math.Floor(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)))))), uint32((uint64(math.Float64bits(math.Floor(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)))))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
+	t4 := vec128f64{math.Floor(t3.D0), math.Floor(t3.D1)}
 	v2 = t4
 	t5 := v2
-	t6 := int64((uint64((uint32(uint64(lane_canon64((uint64(t5.L0) | uint64(t5.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t5.L0) | uint64(t5.L1)<<32))))>>32)))<<32))
+	t6 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))>>32))<<32))
 	t7 := v2
-	t8 := int64((uint64((uint32(uint64(lane_canon64((uint64(t7.L2) | uint64(t7.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t7.L2) | uint64(t7.L3)<<32))))>>32)))<<32))
+	t8 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))>>32))<<32))
 	return t6 + i64_rotl(t8, int64(17))
 }
 func (m *Module) Xop129(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
-	t4 := vec128{uint32(uint64(math.Float64bits(math.Trunc(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)))))), uint32((uint64(math.Float64bits(math.Trunc(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)))))) >> 32), uint32(uint64(math.Float64bits(math.Trunc(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)))))), uint32((uint64(math.Float64bits(math.Trunc(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)))))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
+	t4 := vec128f64{math.Trunc(t3.D0), math.Trunc(t3.D1)}
 	v2 = t4
 	t5 := v2
-	t6 := int64((uint64((uint32(uint64(lane_canon64((uint64(t5.L0) | uint64(t5.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t5.L0) | uint64(t5.L1)<<32))))>>32)))<<32))
+	t6 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))>>32))<<32))
 	t7 := v2
-	t8 := int64((uint64((uint32(uint64(lane_canon64((uint64(t7.L2) | uint64(t7.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t7.L2) | uint64(t7.L3)<<32))))>>32)))<<32))
+	t8 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))>>32))<<32))
 	return t6 + i64_rotl(t8, int64(17))
 }
 func (m *Module) Xop130(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
-	t4 := vec128{uint32(uint64(math.Float64bits(math.RoundToEven(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)))))), uint32((uint64(math.Float64bits(math.RoundToEven(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)))))) >> 32), uint32(uint64(math.Float64bits(math.RoundToEven(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)))))), uint32((uint64(math.Float64bits(math.RoundToEven(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)))))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
+	t4 := vec128f64{math.RoundToEven(t3.D0), math.RoundToEven(t3.D1)}
 	v2 = t4
 	t5 := v2
-	t6 := int64((uint64((uint32(uint64(lane_canon64((uint64(t5.L0) | uint64(t5.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t5.L0) | uint64(t5.L1)<<32))))>>32)))<<32))
+	t6 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))>>32))<<32))
 	t7 := v2
-	t8 := int64((uint64((uint32(uint64(lane_canon64((uint64(t7.L2) | uint64(t7.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t7.L2) | uint64(t7.L3)<<32))))>>32)))<<32))
+	t8 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))>>32))<<32))
 	return t6 + i64_rotl(t8, int64(17))
 }
 func (m *Module) Xop131(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
-	t4 := vec128{uint32(uint64((uint64(t3.L0) | uint64(t3.L1)<<32) &^ (1 << 63))), uint32((uint64((uint64(t3.L0) | uint64(t3.L1)<<32) &^ (1 << 63))) >> 32), uint32(uint64((uint64(t3.L2) | uint64(t3.L3)<<32) &^ (1 << 63))), uint32((uint64((uint64(t3.L2) | uint64(t3.L3)<<32) &^ (1 << 63))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
+	t4 := vec128f64{math.Float64frombits(math.Float64bits(t3.D0) &^ (1 << 63)), math.Float64frombits(math.Float64bits(t3.D1) &^ (1 << 63))}
 	v2 = t4
 	t5 := v2
-	t6 := int64((uint64(t5.L0) | uint64(t5.L1)<<32))
+	t6 := int64((uint64(uint32(math.Float64bits(t5.D0))) | uint64(uint32((math.Float64bits(t5.D0))>>32))<<32))
 	t7 := v2
-	t8 := int64((uint64(t7.L2) | uint64(t7.L3)<<32))
+	t8 := int64((uint64(uint32(math.Float64bits(t7.D1))) | uint64(uint32((math.Float64bits(t7.D1))>>32))<<32))
 	return t6 + i64_rotl(t8, int64(17))
 }
 func (m *Module) Xop132(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
-	t4 := vec128{uint32(uint64((uint64(t3.L0) | uint64(t3.L1)<<32) ^ (1 << 63))), uint32((uint64((uint64(t3.L0) | uint64(t3.L1)<<32) ^ (1 << 63))) >> 32), uint32(uint64((uint64(t3.L2) | uint64(t3.L3)<<32) ^ (1 << 63))), uint32((uint64((uint64(t3.L2) | uint64(t3.L3)<<32) ^ (1 << 63))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
+	t4 := vec128f64{math.Float64frombits(math.Float64bits(t3.D0) ^ (1 << 63)), math.Float64frombits(math.Float64bits(t3.D1) ^ (1 << 63))}
 	v2 = t4
 	t5 := v2
-	t6 := int64((uint64(t5.L0) | uint64(t5.L1)<<32))
+	t6 := int64((uint64(uint32(math.Float64bits(t5.D0))) | uint64(uint32((math.Float64bits(t5.D0))>>32))<<32))
 	t7 := v2
-	t8 := int64((uint64(t7.L2) | uint64(t7.L3)<<32))
+	t8 := int64((uint64(uint32(math.Float64bits(t7.D1))) | uint64(uint32((math.Float64bits(t7.D1))>>32))<<32))
 	return t6 + i64_rotl(t8, int64(17))
 }
 func (m *Module) Xop133(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
-	t4 := vec128{math.Float32bits(float32(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)))), math.Float32bits(float32(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)))), 0, 0}
+	t3 := vec128f64{t1.D0, (t2)}
+	t4 := vec128f32{float32(t3.D0), float32(t3.D1), 0, 0}
 	v2 = t4
 	t5 := v2
-	t6 := int32((uint32(lane_canon32(t5.L0))))
+	t6 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t5.F0))))))
 	t7 := int64(uint32(t6))
 	t8 := v2
-	t9 := int32((uint32(lane_canon32(t8.L1))))
+	t9 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t8.F1))))))
 	return t7 | int64(uint32(t9))<<32
 }
 func (m *Module) Xop134(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(math.Float64bits(float64(math.Float32frombits(t3.L0)))), uint32((math.Float64bits(float64(math.Float32frombits(t3.L0)))) >> 32), uint32(math.Float64bits(float64(math.Float32frombits(t3.L1)))), uint32((math.Float64bits(float64(math.Float32frombits(t3.L1)))) >> 32)}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
+	t4 := vec128f64{float64(t3.F0), float64(t3.F1)}
 	v2 = t4
 	t5 := v2
-	t6 := int64((uint64((uint32(uint64(lane_canon64((uint64(t5.L0) | uint64(t5.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t5.L0) | uint64(t5.L1)<<32))))>>32)))<<32))
+	t6 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))>>32))<<32))
 	t7 := v2
-	t8 := int64((uint64((uint32(uint64(lane_canon64((uint64(t7.L2) | uint64(t7.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t7.L2) | uint64(t7.L3)<<32))))>>32)))<<32))
+	t8 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))>>32))<<32))
 	return t6 + i64_rotl(t8, int64(17))
 }
 func (m *Module) Xop135(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := int32(v0)
 	t1 := vec128{uint32((t0)), uint32((t0)), uint32((t0)), uint32((t0))}
 	t2 := int32(v1)
 	t3 := vec128{t1.L0, uint32((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(math.Float32bits(float32(int32(t3.L0)))), uint32(math.Float32bits(float32(int32(t3.L1)))), uint32(math.Float32bits(float32(int32(t3.L2)))), uint32(math.Float32bits(float32(int32(t3.L3))))}
+	t4 := vec128f32{float32(int32(t3.L0)), float32(int32(t3.L1)), float32(int32(t3.L2)), float32(int32(t3.L3))}
 	v2 = t4
 	t5 := v2
-	t6 := int32(t5.L0)
+	t6 := int32(math.Float32bits(t5.F0))
 	t7 := int64(uint32(t6))
 	t8 := v2
-	t9 := int32(t8.L1)
+	t9 := int32(math.Float32bits(t8.F1))
 	return t7 | int64(uint32(t9))<<32
 }
 func (m *Module) Xop136(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f32
+	var _, _ vec128
 	t0 := int32(v0)
 	t1 := vec128{uint32((t0)), uint32((t0)), uint32((t0)), uint32((t0))}
 	t2 := int32(v1)
 	t3 := vec128{t1.L0, uint32((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(math.Float32bits(float32(t3.L0))), uint32(math.Float32bits(float32(t3.L1))), uint32(math.Float32bits(float32(t3.L2))), uint32(math.Float32bits(float32(t3.L3)))}
+	t4 := vec128f32{float32(t3.L0), float32(t3.L1), float32(t3.L2), float32(t3.L3)}
 	v2 = t4
 	t5 := v2
-	t6 := int32(t5.L0)
+	t6 := int32(math.Float32bits(t5.F0))
 	t7 := int64(uint32(t6))
 	t8 := v2
-	t9 := int32(t8.L1)
+	t9 := int32(math.Float32bits(t8.F1))
 	return t7 | int64(uint32(t9))<<32
 }
 func (m *Module) Xop137(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := int32(v0)
 	t1 := vec128{uint32((t0)), uint32((t0)), uint32((t0)), uint32((t0))}
 	t2 := int32(v1)
 	t3 := vec128{t1.L0, uint32((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(math.Float64bits(float64(int32(t3.L0)))), uint32((math.Float64bits(float64(int32(t3.L0)))) >> 32), uint32(math.Float64bits(float64(int32(t3.L1)))), uint32((math.Float64bits(float64(int32(t3.L1)))) >> 32)}
+	t4 := vec128f64{float64(int32(t3.L0)), float64(int32(t3.L1))}
 	v2 = t4
 	t5 := v2
-	t6 := int64((uint64(t5.L0) | uint64(t5.L1)<<32))
+	t6 := int64((uint64(uint32(math.Float64bits(t5.D0))) | uint64(uint32((math.Float64bits(t5.D0))>>32))<<32))
 	t7 := v2
-	t8 := int64((uint64(t7.L2) | uint64(t7.L3)<<32))
+	t8 := int64((uint64(uint32(math.Float64bits(t7.D1))) | uint64(uint32((math.Float64bits(t7.D1))>>32))<<32))
 	return t6 + i64_rotl(t8, int64(17))
 }
 func (m *Module) Xop138(v0, v1 int64) int64 {
-	var v2, _, _ vec128
+	var v2 vec128f64
+	var _, _ vec128
 	t0 := int32(v0)
 	t1 := vec128{uint32((t0)), uint32((t0)), uint32((t0)), uint32((t0))}
 	t2 := int32(v1)
 	t3 := vec128{t1.L0, uint32((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(math.Float64bits(float64(t3.L0))), uint32((math.Float64bits(float64(t3.L0))) >> 32), uint32(math.Float64bits(float64(t3.L1))), uint32((math.Float64bits(float64(t3.L1))) >> 32)}
+	t4 := vec128f64{float64(t3.L0), float64(t3.L1)}
 	v2 = t4
 	t5 := v2
-	t6 := int64((uint64(t5.L0) | uint64(t5.L1)<<32))
+	t6 := int64((uint64(uint32(math.Float64bits(t5.D0))) | uint64(uint32((math.Float64bits(t5.D0))>>32))<<32))
 	t7 := v2
-	t8 := int64((uint64(t7.L2) | uint64(t7.L3)<<32))
+	t8 := int64((uint64(uint32(math.Float64bits(t7.D1))) | uint64(uint32((math.Float64bits(t7.D1))>>32))<<32))
 	return t6 + i64_rotl(t8, int64(17))
 }
 func (m *Module) Xop139(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(i32_trunc_sat_f32_s(math.Float32frombits(t3.L0))), uint32(i32_trunc_sat_f32_s(math.Float32frombits(t3.L1))), uint32(i32_trunc_sat_f32_s(math.Float32frombits(t3.L2))), uint32(i32_trunc_sat_f32_s(math.Float32frombits(t3.L3)))}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
+	t4 := vec128{uint32(i32_trunc_sat_f32_s(t3.F0)), uint32(i32_trunc_sat_f32_s(t3.F1)), uint32(i32_trunc_sat_f32_s(t3.F2)), uint32(i32_trunc_sat_f32_s(t3.F3))}
 	v2 = t4
 	t5 := v2
 	t6 := int32(t5.L0)
@@ -839,10 +881,10 @@ func (m *Module) Xop139(v0, v1 int64) int64 {
 func (m *Module) Xop140(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
-	t4 := vec128{uint32(i32_trunc_sat_f32_u(math.Float32frombits(t3.L0))), uint32(i32_trunc_sat_f32_u(math.Float32frombits(t3.L1))), uint32(i32_trunc_sat_f32_u(math.Float32frombits(t3.L2))), uint32(i32_trunc_sat_f32_u(math.Float32frombits(t3.L3)))}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
+	t4 := vec128{uint32(i32_trunc_sat_f32_u(t3.F0)), uint32(i32_trunc_sat_f32_u(t3.F1)), uint32(i32_trunc_sat_f32_u(t3.F2)), uint32(i32_trunc_sat_f32_u(t3.F3))}
 	v2 = t4
 	t5 := v2
 	t6 := int32(t5.L0)
@@ -854,10 +896,10 @@ func (m *Module) Xop140(v0, v1 int64) int64 {
 func (m *Module) Xop141(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
-	t4 := vec128{uint32(i32_trunc_sat_f64_s(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)))), uint32(i32_trunc_sat_f64_s(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)))), 0, 0}
+	t3 := vec128f64{t1.D0, (t2)}
+	t4 := vec128{uint32(i32_trunc_sat_f64_s(t3.D0)), uint32(i32_trunc_sat_f64_s(t3.D1)), 0, 0}
 	v2 = t4
 	t5 := v2
 	t6 := int32(t5.L0)
@@ -869,10 +911,10 @@ func (m *Module) Xop141(v0, v1 int64) int64 {
 func (m *Module) Xop142(v0, v1 int64) int64 {
 	var v2, _, _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
-	t4 := vec128{uint32(i32_trunc_sat_f64_u(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)))), uint32(i32_trunc_sat_f64_u(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)))), 0, 0}
+	t3 := vec128f64{t1.D0, (t2)}
+	t4 := vec128{uint32(i32_trunc_sat_f64_u(t3.D0)), uint32(i32_trunc_sat_f64_u(t3.D1)), 0, 0}
 	v2 = t4
 	t5 := v2
 	t6 := int32(t5.L0)
@@ -882,115 +924,120 @@ func (m *Module) Xop142(v0, v1 int64) int64 {
 	return t7 | int64(uint32(t9))<<32
 }
 func (m *Module) Xop143(v0, v1 int64) int64 {
-	var v2, v3, _ vec128
+	var v2, v3 vec128f32
+	var _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) + math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) + math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) + math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) + math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
 	v3 = t8
 	t9 := v3
-	t10 := vec128{uint32((uint32(lane_canon32(t9.L0))) ^ (1 << 31)), uint32((uint32(lane_canon32(t9.L1))) ^ (1 << 31)), uint32((uint32(lane_canon32(t9.L2))) ^ (1 << 31)), uint32((uint32(lane_canon32(t9.L3))) ^ (1 << 31))}
+	t10 := vec128f32{math.Float32frombits(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))) ^ (1 << 31)), math.Float32frombits(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1))))) ^ (1 << 31)), math.Float32frombits(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2))))) ^ (1 << 31)), math.Float32frombits(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3))))) ^ (1 << 31))}
 	v2 = t10
 	t11 := v2
-	t12 := int32(t11.L0)
+	t12 := int32(math.Float32bits(t11.F0))
 	t13 := int64(uint32(t12))
 	t14 := v2
-	t15 := int32(t14.L1)
+	t15 := int32(math.Float32bits(t14.F1))
 	return t13 | int64(uint32(t15))<<32
 }
 func (m *Module) Xop144(v0, v1 int64) int64 {
-	var v2, v3, _ vec128
+	var v2, v3 vec128f32
+	var _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) + math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) + math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) + math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) + math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
 	v3 = t8
 	t9 := v3
-	t10 := vec128{uint32((uint32(lane_canon32(t9.L0))) &^ (1 << 31)), uint32((uint32(lane_canon32(t9.L1))) &^ (1 << 31)), uint32((uint32(lane_canon32(t9.L2))) &^ (1 << 31)), uint32((uint32(lane_canon32(t9.L3))) &^ (1 << 31))}
+	t10 := vec128f32{math.Float32frombits(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))) &^ (1 << 31)), math.Float32frombits(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1))))) &^ (1 << 31)), math.Float32frombits(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2))))) &^ (1 << 31)), math.Float32frombits(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3))))) &^ (1 << 31))}
 	v2 = t10
 	t11 := v2
-	t12 := int32(t11.L0)
+	t12 := int32(math.Float32bits(t11.F0))
 	t13 := int64(uint32(t12))
 	t14 := v2
-	t15 := int32(t14.L1)
+	t15 := int32(math.Float32bits(t14.F1))
 	return t13 | int64(uint32(t15))<<32
 }
 func (m *Module) Xop145(v0, v1 int64) int64 {
-	var _, v3, _ vec128
+	var _, _ vec128
+	var v3 vec128f32
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) + math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) + math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) + math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) + math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
 	v3 = t8
 	t9 := v3
-	t10 := math.Float32frombits((uint32(lane_canon32(t9.L1))))
+	t10 := (math.Float32frombits(lane_canon32(math.Float32bits(t9.F1))))
 	return int64(uint32(int32(math.Float32bits(t10))))
 }
 func (m *Module) Xop146(v0, v1 int64) int64 {
 	var q16 *[16]byte
 	mem := m.memory
-	var _, v3, _ vec128
+	var _, _ vec128
+	var v3 vec128f32
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) + math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) + math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) + math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) + math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
 	v3 = t8
 	t9 := v3
 	q16 = (*[16]byte)(mem[uint64(uint32(int32(32))) : uint64(uint32(int32(32)))+16])
-	q16[0] = byte((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L0)
-	q16[1] = byte(((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L0 >> 8))
-	q16[2] = byte(((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L0 >> 16))
-	q16[3] = byte(((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L0 >> 24))
-	q16[4] = byte((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L1)
-	q16[5] = byte(((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L1 >> 8))
-	q16[6] = byte(((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L1 >> 16))
-	q16[7] = byte(((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L1 >> 24))
-	q16[8] = byte((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L2)
-	q16[9] = byte(((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L2 >> 8))
-	q16[10] = byte(((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L2 >> 16))
-	q16[11] = byte(((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L2 >> 24))
-	q16[12] = byte((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L3)
-	q16[13] = byte(((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L3 >> 8))
-	q16[14] = byte(((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L3 >> 16))
-	q16[15] = byte(((vec128{uint32(lane_canon32(t9.L0)), uint32(lane_canon32(t9.L1)), uint32(lane_canon32(t9.L2)), uint32(lane_canon32(t9.L3))}).L3 >> 24))
+	q16[0] = byte(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))))
+	q16[1] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))) >> 8))
+	q16[2] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))) >> 16))
+	q16[3] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))) >> 24))
+	q16[4] = byte(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1))))))
+	q16[5] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1))))) >> 8))
+	q16[6] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1))))) >> 16))
+	q16[7] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1))))) >> 24))
+	q16[8] = byte(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2))))))
+	q16[9] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2))))) >> 8))
+	q16[10] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2))))) >> 16))
+	q16[11] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2))))) >> 24))
+	q16[12] = byte(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3))))))
+	q16[13] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3))))) >> 8))
+	q16[14] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3))))) >> 16))
+	q16[15] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3))))) >> 24))
 	t10 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(32))) : uint64(uint32(i32(32)))+8])[:]))
 	return t10
 }
 func (m *Module) Xop147(v0, v1 int64) int64 {
-	var v2, v3, _ vec128
+	var v2, _ vec128
+	var v3 vec128f32
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) + math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) + math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) + math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) + math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
 	v3 = t8
 	t9 := v3
 	_ = v3
-	t11 := vec128{(uint32(lane_canon32(t9.L1))), (uint32(lane_canon32(t9.L0))), (uint32(lane_canon32(t9.L2))), (uint32(lane_canon32(t9.L3)))}
+	t11 := vec128{math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1))))), math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))), math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2))))), math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3)))))}
 	v2 = t11
 	t12 := v2
 	t13 := int32(t12.L0)
@@ -1000,19 +1047,20 @@ func (m *Module) Xop147(v0, v1 int64) int64 {
 	return t14 | int64(uint32(t16))<<32
 }
 func (m *Module) Xop148(v0, v1 int64) int64 {
-	var v2, v3, _ vec128
+	var v2, _ vec128
+	var v3 vec128f32
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) + math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) + math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) + math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) + math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
 	v3 = t8
 	t9 := v3
-	t10 := vec128{(uint32(lane_canon32(t9.L0))) ^ (lane_u32(0x0)), (uint32(lane_canon32(t9.L1))) ^ (lane_u32(0x80000000)), (uint32(lane_canon32(t9.L2))) ^ (lane_u32(0x0)), (uint32(lane_canon32(t9.L3))) ^ (lane_u32(0x0))}
+	t10 := vec128{math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))) ^ (lane_u32(0x0)), math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1))))) ^ (lane_u32(0x80000000)), math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2))))) ^ (lane_u32(0x0)), math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3))))) ^ (lane_u32(0x0))}
 	v2 = t10
 	t11 := v2
 	t12 := int32(t11.L0)
@@ -1022,176 +1070,184 @@ func (m *Module) Xop148(v0, v1 int64) int64 {
 	return t13 | int64(uint32(t15))<<32
 }
 func (m *Module) Xop149(v0, v1 int64) int64 {
-	var v2, v3, _ vec128
+	var v2, v3 vec128f32
+	var _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) + math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) + math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) + math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) + math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
 	v3 = t8
 	t9 := v3
 	t10 := math.Float32frombits(uint32(int32(v1)))
-	t11 := vec128{math.Float32bits((t10)), math.Float32bits((t10)), math.Float32bits((t10)), math.Float32bits((t10))}
+	t11 := vec128f32{(t10), (t10), (t10), (t10)}
 	t12 := math.Float32frombits(uint32(int32(v0)))
-	t13 := vec128{t11.L0, math.Float32bits((t12)), t11.L2, t11.L3}
-	t14 := vec128{uint32(lane_pmin32((uint32(lane_canon32(t9.L0))), t13.L0)), uint32(lane_pmin32((uint32(lane_canon32(t9.L1))), t13.L1)), uint32(lane_pmin32((uint32(lane_canon32(t9.L2))), t13.L2)), uint32(lane_pmin32((uint32(lane_canon32(t9.L3))), t13.L3))}
+	t13 := vec128f32{t11.F0, (t12), t11.F2, t11.F3}
+	t14 := vec128f32{lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0)))), t13.F0), lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1)))), t13.F1), lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2)))), t13.F2), lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3)))), t13.F3)}
 	v2 = t14
 	t15 := v2
-	t16 := int32(t15.L0)
+	t16 := int32(math.Float32bits(t15.F0))
 	t17 := int64(uint32(t16))
 	t18 := v2
-	t19 := int32(t18.L1)
+	t19 := int32(math.Float32bits(t18.F1))
 	return t17 | int64(uint32(t19))<<32
 }
 func (m *Module) Xop150(v0, v1 int64) int64 {
-	var v2, v3, _ vec128
+	var v2, v3 vec128f32
+	var _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) + math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) + math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) + math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) + math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
 	v3 = t8
 	t9 := v3
-	t10 := vec128{math.Float32bits((math.Float32frombits(0x3f800000))), (uint32(lane_canon32(t9.L1))), (uint32(lane_canon32(t9.L2))), (uint32(lane_canon32(t9.L3)))}
+	t10 := vec128f32{(math.Float32frombits(0x3f800000)), (math.Float32frombits(lane_canon32(math.Float32bits(t9.F1)))), (math.Float32frombits(lane_canon32(math.Float32bits(t9.F2)))), (math.Float32frombits(lane_canon32(math.Float32bits(t9.F3))))}
 	v2 = t10
 	t11 := v2
-	t12 := int32(t11.L0)
+	t12 := int32(math.Float32bits(t11.F0))
 	t13 := int64(uint32(t12))
 	t14 := v2
-	t15 := int32(t14.L1)
+	t15 := int32(math.Float32bits(t14.F1))
 	return t13 | int64(uint32(t15))<<32
 }
 func (m *Module) Xop151(v0, v1 int64) int64 {
-	var v2, v3, v4 vec128
+	var v2, v3, v4 vec128f32
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) * math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) * math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) * math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) * math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 * t7.F0), float32(t3.F1 * t7.F1), float32(t3.F2 * t7.F2), float32(t3.F3 * t7.F3)}
 	v3 = t8
 	t9 := v3
-	t10 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t9.L0) + math.Float32frombits((lane_u32(0xbf800000)))))), uint32(math.Float32bits(float32(math.Float32frombits(t9.L1) + math.Float32frombits((lane_u32(0xbf800000)))))), uint32(math.Float32bits(float32(math.Float32frombits(t9.L2) + math.Float32frombits((lane_u32(0xbf800000)))))), uint32(math.Float32bits(float32(math.Float32frombits(t9.L3) + math.Float32frombits((lane_u32(0xbf800000))))))}
+	t10 := vec128f32{float32(t9.F0 + math.Float32frombits((lane_u32(0xbf800000)))), float32(t9.F1 + math.Float32frombits((lane_u32(0xbf800000)))), float32(t9.F2 + math.Float32frombits((lane_u32(0xbf800000)))), float32(t9.F3 + math.Float32frombits((lane_u32(0xbf800000))))}
 	v4 = t10
 	t11 := v4
-	t12 := vec128{uint32((uint32(lane_canon32(t11.L0))) ^ (1 << 31)), uint32((uint32(lane_canon32(t11.L1))) ^ (1 << 31)), uint32((uint32(lane_canon32(t11.L2))) ^ (1 << 31)), uint32((uint32(lane_canon32(t11.L3))) ^ (1 << 31))}
+	t12 := vec128f32{math.Float32frombits(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t11.F0))))) ^ (1 << 31)), math.Float32frombits(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t11.F1))))) ^ (1 << 31)), math.Float32frombits(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t11.F2))))) ^ (1 << 31)), math.Float32frombits(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t11.F3))))) ^ (1 << 31))}
 	v2 = t12
 	t13 := v2
-	t14 := int32(t13.L0)
+	t14 := int32(math.Float32bits(t13.F0))
 	t15 := int64(uint32(t14))
 	t16 := v2
-	t17 := int32(t16.L1)
+	t17 := int32(math.Float32bits(t16.F1))
 	return t15 | int64(uint32(t17))<<32
 }
 func (m *Module) Xop152(v0, v1 int64) int64 {
-	var v2, v3, _ vec128
+	var v2 vec128f64
+	var v3 vec128f32
+	var _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) + math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) + math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) + math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) + math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
 	v3 = t8
 	t9 := v3
-	t10 := vec128{uint32(math.Float64bits(float64(math.Float32frombits(t9.L0)))), uint32((math.Float64bits(float64(math.Float32frombits(t9.L0)))) >> 32), uint32(math.Float64bits(float64(math.Float32frombits(t9.L1)))), uint32((math.Float64bits(float64(math.Float32frombits(t9.L1)))) >> 32)}
-	t11 := vec128{uint32(uint64((uint64((uint32(uint64(lane_canon64((uint64(t10.L0) | uint64(t10.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t10.L0) | uint64(t10.L1)<<32))))>>32)))<<32) ^ (1 << 63))), uint32((uint64((uint64((uint32(uint64(lane_canon64((uint64(t10.L0) | uint64(t10.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t10.L0) | uint64(t10.L1)<<32))))>>32)))<<32) ^ (1 << 63))) >> 32), uint32(uint64((uint64((uint32(uint64(lane_canon64((uint64(t10.L2) | uint64(t10.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t10.L2) | uint64(t10.L3)<<32))))>>32)))<<32) ^ (1 << 63))), uint32((uint64((uint64((uint32(uint64(lane_canon64((uint64(t10.L2) | uint64(t10.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t10.L2) | uint64(t10.L3)<<32))))>>32)))<<32) ^ (1 << 63))) >> 32)}
+	t10 := vec128f64{float64(t9.F0), float64(t9.F1)}
+	t11 := vec128f64{math.Float64frombits(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t10.D0))))) ^ (1 << 63)), math.Float64frombits(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t10.D1))))) ^ (1 << 63))}
 	v2 = t11
 	t12 := v2
-	t13 := int64((uint64(t12.L0) | uint64(t12.L1)<<32))
+	t13 := int64((uint64(uint32(math.Float64bits(t12.D0))) | uint64(uint32((math.Float64bits(t12.D0))>>32))<<32))
 	t14 := v2
-	t15 := int64((uint64(t14.L2) | uint64(t14.L3)<<32))
+	t15 := int64((uint64(uint32(math.Float64bits(t14.D1))) | uint64(uint32((math.Float64bits(t14.D1))>>32))<<32))
 	return t13 + i64_rotl(t15, int64(17))
 }
 func (m *Module) Xop153(v0, v1 int64) int64 {
-	var v2, v3, _ vec128
+	var v2, v3 vec128f64
+	var _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) + math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) + math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))) >> 32), uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) + math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) + math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128f64{float64(t3.D0 + t7.D0), float64(t3.D1 + t7.D1)}
 	v3 = t8
 	t9 := v3
-	t10 := vec128{uint32(uint64((uint64((uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32))))>>32)))<<32) ^ (1 << 63))), uint32((uint64((uint64((uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32))))>>32)))<<32) ^ (1 << 63))) >> 32), uint32(uint64((uint64((uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32))))>>32)))<<32) ^ (1 << 63))), uint32((uint64((uint64((uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))))) | uint64((uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32))))>>32)))<<32) ^ (1 << 63))) >> 32)}
+	t10 := vec128f64{math.Float64frombits(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))) ^ (1 << 63)), math.Float64frombits(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1))))) ^ (1 << 63))}
 	v2 = t10
 	t11 := v2
-	t12 := int64((uint64(t11.L0) | uint64(t11.L1)<<32))
+	t12 := int64((uint64(uint32(math.Float64bits(t11.D0))) | uint64(uint32((math.Float64bits(t11.D0))>>32))<<32))
 	t13 := v2
-	t14 := int64((uint64(t13.L2) | uint64(t13.L3)<<32))
+	t14 := int64((uint64(uint32(math.Float64bits(t13.D1))) | uint64(uint32((math.Float64bits(t13.D1))>>32))<<32))
 	return t12 + i64_rotl(t14, int64(17))
 }
 func (m *Module) Xop154(v0, v1 int64) int64 {
 	var q16 *[16]byte
 	mem := m.memory
-	var _, v3, _ vec128
+	var _, _ vec128
+	var v3 vec128f64
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) + math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) + math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))) >> 32), uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) + math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) + math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128f64{float64(t3.D0 + t7.D0), float64(t3.D1 + t7.D1)}
 	v3 = t8
 	t9 := v3
 	q16 = (*[16]byte)(mem[uint64(uint32(int32(48))) : uint64(uint32(int32(48)))+16])
-	q16[0] = byte((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L0)
-	q16[1] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L0 >> 8))
-	q16[2] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L0 >> 16))
-	q16[3] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L0 >> 24))
-	q16[4] = byte((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L1)
-	q16[5] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L1 >> 8))
-	q16[6] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L1 >> 16))
-	q16[7] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L1 >> 24))
-	q16[8] = byte((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L2)
-	q16[9] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L2 >> 8))
-	q16[10] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L2 >> 16))
-	q16[11] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L2 >> 24))
-	q16[12] = byte((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L3)
-	q16[13] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L3 >> 8))
-	q16[14] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L3 >> 16))
-	q16[15] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L3 >> 24))
+	q16[0] = byte(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0)))))))
+	q16[1] = byte((uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0)))))) >> 8))
+	q16[2] = byte((uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0)))))) >> 16))
+	q16[3] = byte((uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0)))))) >> 24))
+	q16[4] = byte(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0)))))) >> 32))
+	q16[5] = byte((uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))>>32) >> 8))
+	q16[6] = byte((uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))>>32) >> 16))
+	q16[7] = byte((uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))>>32) >> 24))
+	q16[8] = byte(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1)))))))
+	q16[9] = byte((uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1)))))) >> 8))
+	q16[10] = byte((uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1)))))) >> 16))
+	q16[11] = byte((uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1)))))) >> 24))
+	q16[12] = byte(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1)))))) >> 32))
+	q16[13] = byte((uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1))))))>>32) >> 8))
+	q16[14] = byte((uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1))))))>>32) >> 16))
+	q16[15] = byte((uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1))))))>>32) >> 24))
 	t10 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(48))) : uint64(uint32(i32(48)))+8])[:]))
 	t11 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(56))) : uint64(uint32(i32(56)))+8])[:]))
 	return t10 + i64_rotl(t11, int64(17))
 }
 func (m *Module) Xop155(v0, v1 int64) int64 {
-	var v2, v3, _ vec128
+	var v2 vec128f32
+	var v3 vec128f64
+	var _ vec128
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) + math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) + math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))) >> 32), uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) + math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) + math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128f64{float64(t3.D0 + t7.D0), float64(t3.D1 + t7.D1)}
 	v3 = t8
 	t9 := v3
-	t10 := vec128{uint32((uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32))))) ^ (1 << 31)), uint32((uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32)) ^ (1 << 31)), uint32((uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32))))) ^ (1 << 31)), uint32((uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)) ^ (1 << 31))}
+	t10 := vec128f32{math.Float32frombits(math.Float32bits(math.Float32frombits(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0)))))))) ^ (1 << 31)), math.Float32frombits(math.Float32bits(math.Float32frombits(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))>>32))) ^ (1 << 31)), math.Float32frombits(math.Float32bits(math.Float32frombits(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1)))))))) ^ (1 << 31)), math.Float32frombits(math.Float32bits(math.Float32frombits(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1))))))>>32))) ^ (1 << 31))}
 	v2 = t10
 	t11 := v2
-	t12 := int32(t11.L0)
+	t12 := int32(math.Float32bits(t11.F0))
 	t13 := int64(uint32(t12))
 	t14 := v2
-	t15 := int32(t14.L1)
+	t15 := int32(math.Float32bits(t14.F1))
 	return t13 | int64(uint32(t15))<<32
 }

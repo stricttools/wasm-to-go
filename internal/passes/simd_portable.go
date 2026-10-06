@@ -14,9 +14,77 @@ import (
 // for an operation, they are the vector's elements (GetElem), and the
 // result is set element by element (SetElem): the same code, slower.
 
-type simdPortable struct{ target SIMDTarget }
+type simdPortable struct {
+	target SIMDTarget
+	// The domain of each vector variable (portableDomains): "f32" for a
+	// SIMDTypeF32, "f64" for a SIMDTypeF64, and "bits" (or missing) for a
+	// SIMDType.
+	domains map[string]string
+}
 
-func (l *simdLowerer) portable() simdPortable { return simdPortable{l.target} }
+func (l *simdLowerer) portable() simdPortable { return simdPortable{l.target, l.domains} }
+
+// The domain of the vector expression e: a variable's, or a composite
+// literal's by its type.
+func (p simdPortable) domain(e ast.Expr) string {
+	switch x := e.(type) {
+	case *ast.Ident:
+		if d := p.domains[x.Name]; d != "" {
+			return d
+		}
+	case *ast.CompositeLit:
+		if id, ok := x.Type.(*ast.Ident); ok {
+			switch id.Name {
+			case SIMDTypeF32:
+				return "f32"
+			case SIMDTypeF64:
+				return "f64"
+			}
+		}
+	case *ast.ParenExpr:
+		return p.domain(x.X)
+	}
+	return "bits"
+}
+
+// The float lanes of width bits of the vector operand e, as expressions.
+func (p simdPortable) floats(e ast.Expr, width int) []string {
+	n := 128 / width
+	out := make([]string, n)
+	field := map[int]string{32: ".F", 64: ".D"}[width]
+	switch d := p.domain(e); {
+	case d == "f32" && width == 32, d == "f64" && width == 64:
+		if lit, ok := e.(*ast.CompositeLit); ok && len(lit.Elts) == n {
+			for i := range out {
+				out[i] = "(" + exprString(lit.Elts[i]) + ")"
+			}
+			return out
+		}
+		s := exprString(e)
+		for i := range out {
+			out[i] = s + field + strconv.Itoa(i)
+		}
+		return out
+	}
+	for i, l := range lanesOf(p.words(e), width) {
+		out[i] = float(l, width)
+	}
+	return out
+}
+
+// The vector of float lanes l of width bits: of the float domain in the
+// portable code, of words elsewhere.
+func (p simdPortable) packFloats(l []string, width int) string {
+	if p.target == SIMDPortable {
+		t := map[int]string{32: SIMDTypeF32, 64: SIMDTypeF64}[width]
+		return t + "{" + strings.Join(l, ", ") + "}"
+	}
+	bits := make([]string, len(l))
+	for i, f := range l {
+		bits[i] = "math.Float" + strconv.Itoa(width) + "bits(" + f + ")"
+	}
+	return p.pack(packLanes(bits, width))
+}
 
 // The four words of the vector operand e, as expressions.
 func (p simdPortable) words(e ast.Expr) [4]string {
@@ -39,6 +107,20 @@ func (p simdPortable) words(e ast.Expr) [4]string {
 			}
 			return w
 		}
+	}
+	switch p.domain(e) {
+	case "f32":
+		var bits []string
+		for _, f := range p.floats(e, 32) {
+			bits = append(bits, "math.Float32bits("+f+")")
+		}
+		return packLanes(bits, 32)
+	case "f64":
+		var bits []string
+		for _, f := range p.floats(e, 64) {
+			bits = append(bits, "math.Float64bits("+f+")")
+		}
+		return packLanes(bits, 64)
 	}
 	s := exprString(e)
 	if _, ok := e.(*ast.Ident); !ok {
@@ -198,25 +280,25 @@ func (p simdPortable) op(op string, args []ast.Expr) string {
 	switch {
 	case name == "splat":
 		v := scalar(args[0])
-		var lane string
-		switch {
-		case isFloat:
-			lane = "math.Float" + strconv.Itoa(width) + "bits(" + v + ")"
-		default:
-			lane = laneType(width) + "(" + v + ")"
-		}
 		n := 128 / width
 		l := make([]string, n)
 		for j := range l {
-			l[j] = lane
+			l[j] = v
+		}
+		if isFloat {
+			return p.packFloats(l, width)
+		}
+		for j := range l {
+			l[j] = laneType(width) + "(" + v + ")"
 		}
 		return p.pack(packLanes(l, width))
 	case strings.HasPrefix(name, "extract_lane"):
+		if isFloat {
+			return p.floats(args[0], width)[laneIndex(args[1])]
+		}
 		lanes := lanesOf(p.words(args[0]), width)
 		a := lanes[laneIndex(args[1])]
 		switch {
-		case isFloat:
-			return float(a, width)
 		case width == 64:
 			return "int64(" + a + ")"
 		case name == "extract_lane_s":
@@ -225,14 +307,13 @@ func (p simdPortable) op(op string, args []ast.Expr) string {
 			return "int32(" + a + ")"
 		}
 	case name == "replace_lane":
-		lanes := lanesOf(p.words(args[0]), width)
-		v := scalar(args[2])
 		if isFloat {
-			v = "math.Float" + strconv.Itoa(width) + "bits(" + v + ")"
-		} else {
-			v = laneType(width) + "(" + v + ")"
+			lanes := p.floats(args[0], width)
+			lanes[laneIndex(args[1])] = scalar(args[2])
+			return p.packFloats(lanes, width)
 		}
-		lanes[laneIndex(args[1])] = v
+		lanes := lanesOf(p.words(args[0]), width)
+		lanes[laneIndex(args[1])] = laneType(width) + "(" + scalar(args[2]) + ")"
 		return p.pack(packLanes(lanes, width))
 	case name == "all_true":
 		var cs []string
@@ -258,7 +339,12 @@ func (p simdPortable) op(op string, args []ast.Expr) string {
 			return a[0] + ">>" + s
 		}, args[0])
 	case name == "canon":
-		return p.lanewise(width, func(a ...string) string { return "lane_canon" + strconv.Itoa(width) + "(" + a[0] + ")" }, args[0])
+		var out []string
+		for _, f := range p.floats(args[0], width) {
+			w := strconv.Itoa(width)
+			out = append(out, "math.Float"+w+"frombits(lane_canon"+w+"(math.Float"+w+"bits("+f+")))")
+		}
+		return p.packFloats(out, width)
 	case isFloat:
 		return p.float(shape, width, name, args)
 	}
@@ -414,11 +500,15 @@ func (p simdPortable) op(op string, args []ast.Expr) string {
 	switch op {
 	case "i32x4_trunc_sat_f32x4_s", "i32x4_trunc_sat_f32x4_u":
 		helper := "i32_trunc_sat_f32_" + op[len(op)-1:]
-		return p.lanewise(32, func(a ...string) string { return helper + "(" + float(a[0], 32) + ")" }, args[0])
+		var out [4]string
+		for j, f := range p.floats(args[0], 32) {
+			out[j] = "uint32(" + helper + "(" + f + "))"
+		}
+		return p.pack(out)
 	case "i32x4_trunc_sat_f64x2_s_zero", "i32x4_trunc_sat_f64x2_u_zero":
 		helper := "i32_trunc_sat_f64_" + op[len(op)-6:len(op)-5]
-		src := lanes64(p.words(args[0]))
-		return p.pack([4]string{"uint32(" + helper + "(" + float(src[0], 64) + "))", "uint32(" + helper + "(" + float(src[1], 64) + "))", "0", "0"})
+		src := p.floats(args[0], 64)
+		return p.pack([4]string{"uint32(" + helper + "(" + src[0] + "))", "uint32(" + helper + "(" + src[1] + "))", "0", "0"})
 	}
 	panic("no portable code for SIMD operation " + op)
 }
@@ -439,60 +529,89 @@ func extOp(name string) (from int, high, sign, ok bool) {
 	return laneWidth(shape), strings.Contains(name, "_high_"), s == "s", true
 }
 
-// The code of a float operation of shape.
+// The code of a float operation of shape: on the lanes as floats, whose
+// result is in the float domain (packFloats) but for the comparisons.
 func (p simdPortable) float(shape string, width int, name string, args []ast.Expr) string {
 	w := strconv.Itoa(width)
-	f := func(a string) string { return float(a, width) }
+	ft := "float" + w
+	lanewise := func(f func(a ...string) string, operands ...ast.Expr) string {
+		ls := make([][]string, len(operands))
+		for i, o := range operands {
+			ls[i] = p.floats(o, width)
+		}
+		out := make([]string, 128/width)
+		for j := range out {
+			a := make([]string, len(ls))
+			for i := range ls {
+				a[i] = ls[i][j]
+			}
+			out[j] = f(a...)
+		}
+		return p.packFloats(out, width)
+	}
+	bits := func(f string) string { return "math.Float" + w + "bits(" + f + ")" }
+	frombits := func(b string) string { return "math.Float" + w + "frombits(" + b + ")" }
 	cmp := map[string]string{"eq": "==", "ne": "!=", "lt": "<", "gt": ">", "le": "<=", "ge": ">="}
 	if c, ok := cmp[name]; ok {
-		return p.lanewise(width, func(a ...string) string { return "lane_mask" + w + "(" + f(a[0]) + c + f(a[1]) + ")" }, args[0], args[1])
-	}
-	math64 := func(fn, a string) string { // a math function of float64, rounded to the lane's float
-		if width == 32 {
-			return "math.Float32bits(float32(math." + fn + "(float64(" + f(a) + "))))"
+		x, y := p.floats(args[0], width), p.floats(args[1], width)
+		out := make([]string, len(x))
+		for j := range out {
+			out[j] = "lane_mask" + w + "(" + x[j] + c + y[j] + ")"
 		}
-		return "math.Float64bits(math." + fn + "(" + f(a) + "))"
+		return p.pack(packLanes(out, width))
 	}
 	switch name {
 	case "add", "sub", "mul", "div":
 		op := map[string]string{"add": "+", "sub": "-", "mul": "*", "div": "/"}[name]
-		return p.lanewise(width, func(a ...string) string { return floatBits(f(a[0])+op+f(a[1]), width) }, args[0], args[1])
+		return lanewise(func(a ...string) string { return ft + "(" + a[0] + op + a[1] + ")" }, args[0], args[1])
 	case "sqrt", "ceil", "floor", "trunc", "nearest":
 		fn := map[string]string{"sqrt": "Sqrt", "ceil": "Ceil", "floor": "Floor", "trunc": "Trunc", "nearest": "RoundToEven"}[name]
-		return p.lanewise(width, func(a ...string) string { return math64(fn, a[0]) }, args[0])
+		return lanewise(func(a ...string) string {
+			if width == 32 {
+				return "float32(math." + fn + "(float64(" + a[0] + ")))"
+			}
+			return "math." + fn + "(" + a[0] + ")"
+		}, args[0])
 	case "min", "max":
-		return p.lanewise(width, func(a ...string) string {
-			return "lane_canon" + w + "(math.Float" + w + "bits(" + name + "(" + f(a[0]) + ", " + f(a[1]) + ")))"
+		return lanewise(func(a ...string) string {
+			return frombits("lane_canon" + w + "(" + bits(name+"("+a[0]+", "+a[1]+")") + ")")
 		}, args[0], args[1])
 	case "pmin", "pmax":
-		return p.lanewise(width, func(a ...string) string { return "lane_" + name + w + "(" + a[0] + ", " + a[1] + ")" }, args[0], args[1])
+		return lanewise(func(a ...string) string { return "lane_" + name + "f" + w + "(" + a[0] + ", " + a[1] + ")" }, args[0], args[1])
 	case "abs":
-		return p.lanewise(width, func(a ...string) string { return a[0] + "&^(1<<" + strconv.Itoa(width-1) + ")" }, args[0])
+		return lanewise(func(a ...string) string { return frombits(bits(a[0]) + "&^(1<<" + strconv.Itoa(width-1) + ")") }, args[0])
 	case "neg":
-		return p.lanewise(width, func(a ...string) string { return a[0] + "^(1<<" + strconv.Itoa(width-1) + ")" }, args[0])
+		return lanewise(func(a ...string) string { return frombits(bits(a[0]) + "^(1<<" + strconv.Itoa(width-1) + ")") }, args[0])
 	}
 	switch shape + "_" + name {
-	case "f32x4_convert_i32x4_s":
-		return p.lanewise(32, func(a ...string) string { return "math.Float32bits(float32(int32(" + a[0] + ")))" }, args[0])
-	case "f32x4_convert_i32x4_u":
-		return p.lanewise(32, func(a ...string) string { return "math.Float32bits(float32(" + a[0] + "))" }, args[0])
+	case "f32x4_convert_i32x4_s", "f32x4_convert_i32x4_u":
+		src := lanes32(p.words(args[0]))
+		out := make([]string, 4)
+		for j := range out {
+			if strings.HasSuffix(name, "_s") {
+				out[j] = "float32(int32(" + src[j] + "))"
+			} else {
+				out[j] = "float32(" + src[j] + ")"
+			}
+		}
+		return p.packFloats(out, 32)
 	case "f64x2_convert_low_i32x4_s", "f64x2_convert_low_i32x4_u":
 		src := lanes32(p.words(args[0]))
-		conv := func(a string) string {
+		out := make([]string, 2)
+		for j := range out {
 			if strings.HasSuffix(name, "_s") {
-				return "math.Float64bits(float64(int32(" + a + ")))"
+				out[j] = "float64(int32(" + src[j] + "))"
+			} else {
+				out[j] = "float64(" + src[j] + ")"
 			}
-			return "math.Float64bits(float64(" + a + "))"
 		}
-		return p.pack(packLanes([]string{conv(src[0]), conv(src[1])}, 64))
+		return p.packFloats(out, 64)
 	case "f32x4_demote_f64x2_zero":
-		src := lanes64(p.words(args[0]))
-		d := func(a string) string { return "math.Float32bits(float32(" + float(a, 64) + "))" }
-		return p.pack([4]string{d(src[0]), d(src[1]), "0", "0"})
+		src := p.floats(args[0], 64)
+		return p.packFloats([]string{"float32(" + src[0] + ")", "float32(" + src[1] + ")", "0", "0"}, 32)
 	case "f64x2_promote_low_f32x4":
-		src := lanes32(p.words(args[0]))
-		pr := func(a string) string { return "math.Float64bits(float64(" + float(a, 32) + "))" }
-		return p.pack(packLanes([]string{pr(src[0]), pr(src[1])}, 64))
+		src := p.floats(args[0], 32)
+		return p.packFloats([]string{"float64(" + src[0] + ")", "float64(" + src[1] + ")"}, 64)
 	}
 	panic(fmt.Sprintf("no portable code for SIMD operation %s_%s", shape, name))
 }

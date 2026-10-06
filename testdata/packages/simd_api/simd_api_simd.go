@@ -14,6 +14,12 @@ import (
 type vec128 = struct {
 	L0, L1, L2, L3 uint32
 }
+type vec128f32 = struct {
+	F0, F1, F2, F3 float32
+}
+type vec128f64 = struct {
+	D0, D1 float64
+}
 
 func (m *Module) Xadd(v0 [16]byte) [16]byte {
 	r := wasm2go_functions6.Fn3(&m.instance, vec128{(uint32(v0[0])<<0 | uint32(v0[1])<<8 | uint32(v0[2])<<16 | uint32(v0[3])<<24), (uint32(v0[4])<<0 | uint32(v0[5])<<8 | uint32(v0[6])<<16 | uint32(v0[7])<<24), (uint32(v0[8])<<0 | uint32(v0[9])<<8 | uint32(v0[10])<<16 | uint32(v0[11])<<24), (uint32(v0[12])<<0 | uint32(v0[13])<<8 | uint32(v0[14])<<16 | uint32(v0[15])<<24)})

@@ -14,39 +14,46 @@ import (
 type vec128 = struct {
 	L0, L1, L2, L3 uint32
 }
+type vec128f32 = struct {
+	F0, F1, F2, F3 float32
+}
+type vec128f64 = struct {
+	D0, D1 float64
+}
 
 func Xop154(m *instance.Module, v0, v1 int64) int64 {
 	var q16 *[16]byte
 	mem := m.Memory
-	var _, v3, _ vec128
+	var _, _ vec128
+	var v3 vec128f64
 	t0 := math.Float64frombits(uint64(v0))
-	t1 := vec128{uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32), uint32(math.Float64bits((t0))), uint32((math.Float64bits((t0))) >> 32)}
+	t1 := vec128f64{(t0), (t0)}
 	t2 := math.Float64frombits(uint64(v1))
-	t3 := vec128{uint32((uint64(t1.L0) | uint64(t1.L1)<<32)), uint32((uint64(t1.L0) | uint64(t1.L1)<<32) >> 32), uint32(math.Float64bits((t2))), uint32((math.Float64bits((t2))) >> 32)}
+	t3 := vec128f64{t1.D0, (t2)}
 	t4 := math.Float64frombits(uint64(v1))
-	t5 := vec128{uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32), uint32(math.Float64bits((t4))), uint32((math.Float64bits((t4))) >> 32)}
+	t5 := vec128f64{(t4), (t4)}
 	t6 := math.Float64frombits(uint64(v0))
-	t7 := vec128{uint32((uint64(t5.L0) | uint64(t5.L1)<<32)), uint32((uint64(t5.L0) | uint64(t5.L1)<<32) >> 32), uint32(math.Float64bits((t6))), uint32((math.Float64bits((t6))) >> 32)}
-	t8 := vec128{uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) + math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L0) | uint64(t3.L1)<<32)) + math.Float64frombits((uint64(t7.L0) | uint64(t7.L1)<<32)))))) >> 32), uint32(uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) + math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))), uint32((uint64(math.Float64bits(float64(math.Float64frombits((uint64(t3.L2) | uint64(t3.L3)<<32)) + math.Float64frombits((uint64(t7.L2) | uint64(t7.L3)<<32)))))) >> 32)}
+	t7 := vec128f64{t5.D0, (t6)}
+	t8 := vec128f64{float64(t3.D0 + t7.D0), float64(t3.D1 + t7.D1)}
 	v3 = t8
 	t9 := v3
 	q16 = (*[16]byte)(mem[uint64(uint32(int32(48))) : uint64(uint32(int32(48)))+16])
-	q16[0] = byte((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L0)
-	q16[1] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L0 >> 8))
-	q16[2] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L0 >> 16))
-	q16[3] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L0 >> 24))
-	q16[4] = byte((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L1)
-	q16[5] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L1 >> 8))
-	q16[6] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L1 >> 16))
-	q16[7] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L1 >> 24))
-	q16[8] = byte((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L2)
-	q16[9] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L2 >> 8))
-	q16[10] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L2 >> 16))
-	q16[11] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L2 >> 24))
-	q16[12] = byte((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L3)
-	q16[13] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L3 >> 8))
-	q16[14] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L3 >> 16))
-	q16[15] = byte(((vec128{uint32(uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L0) | uint64(t9.L1)<<32)))) >> 32), uint32(uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))), uint32((uint64(lane_canon64((uint64(t9.L2) | uint64(t9.L3)<<32)))) >> 32)}).L3 >> 24))
+	q16[0] = byte(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0)))))))
+	q16[1] = byte((uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0)))))) >> 8))
+	q16[2] = byte((uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0)))))) >> 16))
+	q16[3] = byte((uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0)))))) >> 24))
+	q16[4] = byte(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0)))))) >> 32))
+	q16[5] = byte((uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))>>32) >> 8))
+	q16[6] = byte((uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))>>32) >> 16))
+	q16[7] = byte((uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))>>32) >> 24))
+	q16[8] = byte(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1)))))))
+	q16[9] = byte((uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1)))))) >> 8))
+	q16[10] = byte((uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1)))))) >> 16))
+	q16[11] = byte((uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1)))))) >> 24))
+	q16[12] = byte(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1)))))) >> 32))
+	q16[13] = byte((uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1))))))>>32) >> 8))
+	q16[14] = byte((uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1))))))>>32) >> 16))
+	q16[15] = byte((uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D1))))))>>32) >> 24))
 	t10 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(48))) : uint64(uint32(i32(48)))+8])[:]))
 	t11 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(56))) : uint64(uint32(i32(56)))+8])[:]))
 	return t10 + i64_rotl(t11, int64(17))

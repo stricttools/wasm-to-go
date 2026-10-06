@@ -12,31 +12,38 @@ import (
 type vec128 = struct {
 	L0, L1, L2, L3 uint32
 }
+type vec128f32 = struct {
+	F0, F1, F2, F3 float32
+}
+type vec128f64 = struct {
+	D0, D1 float64
+}
 
 func Xop149(m *instance.Module, v0, v1 int64) int64 {
-	var v2, v3, _ vec128
+	var v2, v3 vec128f32
+	var _ vec128
 	t0 := math.Float32frombits(uint32(int32(v0)))
-	t1 := vec128{math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0)), math.Float32bits((t0))}
+	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
-	t3 := vec128{t1.L0, math.Float32bits((t2)), t1.L2, t1.L3}
+	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
 	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128{math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4)), math.Float32bits((t4))}
+	t5 := vec128f32{(t4), (t4), (t4), (t4)}
 	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128{t5.L0, math.Float32bits((t6)), t5.L2, t5.L3}
-	t8 := vec128{uint32(math.Float32bits(float32(math.Float32frombits(t3.L0) + math.Float32frombits(t7.L0)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L1) + math.Float32frombits(t7.L1)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L2) + math.Float32frombits(t7.L2)))), uint32(math.Float32bits(float32(math.Float32frombits(t3.L3) + math.Float32frombits(t7.L3))))}
+	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
+	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
 	v3 = t8
 	t9 := v3
 	t10 := math.Float32frombits(uint32(int32(v1)))
-	t11 := vec128{math.Float32bits((t10)), math.Float32bits((t10)), math.Float32bits((t10)), math.Float32bits((t10))}
+	t11 := vec128f32{(t10), (t10), (t10), (t10)}
 	t12 := math.Float32frombits(uint32(int32(v0)))
-	t13 := vec128{t11.L0, math.Float32bits((t12)), t11.L2, t11.L3}
-	t14 := vec128{uint32(lane_pmin32((uint32(lane_canon32(t9.L0))), t13.L0)), uint32(lane_pmin32((uint32(lane_canon32(t9.L1))), t13.L1)), uint32(lane_pmin32((uint32(lane_canon32(t9.L2))), t13.L2)), uint32(lane_pmin32((uint32(lane_canon32(t9.L3))), t13.L3))}
+	t13 := vec128f32{t11.F0, (t12), t11.F2, t11.F3}
+	t14 := vec128f32{lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0)))), t13.F0), lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1)))), t13.F1), lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2)))), t13.F2), lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3)))), t13.F3)}
 	v2 = t14
 	t15 := v2
-	t16 := int32(t15.L0)
+	t16 := int32(math.Float32bits(t15.F0))
 	t17 := int64(uint32(t16))
 	t18 := v2
-	t19 := int32(t18.L1)
+	t19 := int32(math.Float32bits(t18.F1))
 	return t17 | int64(uint32(t19))<<32
 }
 
@@ -49,12 +56,11 @@ func lane_canon32(b uint32) uint32 {
 	return b ^ (b^0x7fc00000)&-((b&0x7fffffff+0x7fffff)>>31)
 }
 
-// pmin and pmax return one of their operands, bit for bit:
-// b < a ? b : a, and a < b ? b : a.
+// The same, of lanes held as floats: moves keep their bits.
 //
 //go:nosplit
-func lane_pmin32(a, b uint32) uint32 {
-	if math.Float32frombits(b) < math.Float32frombits(a) {
+func lane_pminf32(a, b float32) float32 {
+	if b < a {
 		return b
 	}
 	return a

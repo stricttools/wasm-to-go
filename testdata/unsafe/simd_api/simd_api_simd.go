@@ -7,6 +7,12 @@ package wasm2go
 type vec128 = struct {
 	L0, L1, L2, L3 uint32
 }
+type vec128f32 = struct {
+	F0, F1, F2, F3 float32
+}
+type vec128f64 = struct {
+	D0, D1 float64
+}
 
 func (m *Module) fn0(v0 vec128) vec128 {
 	r := m._env.Xdouble([16]byte{byte(v0.L0), byte((v0.L0 >> 8)), byte((v0.L0 >> 16)), byte((v0.L0 >> 24)), byte(v0.L1), byte((v0.L1 >> 8)), byte((v0.L1 >> 16)), byte((v0.L1 >> 24)), byte(v0.L2), byte((v0.L2 >> 8)), byte((v0.L2 >> 16)), byte((v0.L2 >> 24)), byte(v0.L3), byte((v0.L3 >> 8)), byte((v0.L3 >> 16)), byte((v0.L3 >> 24))})

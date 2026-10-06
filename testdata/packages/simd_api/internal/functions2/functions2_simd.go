@@ -7,6 +7,12 @@ package functions2
 type vec128 = struct {
 	L0, L1, L2, L3 uint32
 }
+type vec128f32 = struct {
+	F0, F1, F2, F3 float32
+}
+type vec128f64 = struct {
+	D0, D1 float64
+}
 
 func Fn7(v0 int32, v1, v2 vec128) vec128 {
 	t1 := v1

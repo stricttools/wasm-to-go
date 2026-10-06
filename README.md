@@ -223,7 +223,7 @@ of the files below, and the module's other code only in the output file.
 | `output_simd_amd64.go` | `goexperiment.simd && amd64.v3 && go1.27 && !go1.28` | calls of [`simd/archsimd`](https://pkg.go.dev/simd/archsimd)'s methods |
 | `output_simd_arm64.go` | `goexperiment.simd && arm64 && go1.27 && !go1.28` | the same |
 | `output_simd_wasm.go` | `goexperiment.simd && wasm && go1.27 && !go1.28` | the same |
-| `output_simd.go` | every other build | inline scalar code over four `uint32` lanes |
+| `output_simd.go` | every other build | inline scalar code over the lanes |
 | `output_simd_untested.go` | `goexperiment.simd` on amd64.v3, arm64, or wasm with another Go version | a build error |
 
 `simd/archsimd` exists only with `GOEXPERIMENT=simd` and has no compatibility
@@ -243,7 +243,13 @@ that computes what WebAssembly defines, and writes the others lane by lane
 saturate, for example, and its 64-bit multiplication is AVX-512.
 The portable code is written inline, operation by operation, never as calls
 of helper functions taking vectors, which the Go compiler would not inline
-(measured 3.4 times as slow as the module built without SIMD).
+(measured 3.4 times as slow as the module built without SIMD). It holds a
+vector as four `uint32` words, or, in a variable whose every value is the
+result of a float operation of one lane shape, as four `float32` or two
+`float64` lanes (`vec128f32` and `vec128f64`), so a chain of float operations
+through variables, a loop's accumulator, stays in float registers instead of
+moving each lane between integer and float registers at every operation;
+other uses convert.
 
 `v128` values cross the `Module`'s exports and imports, and live in its
 globals, as their 16 bytes in memory order, `[16]byte`.
@@ -262,8 +268,8 @@ results is canonicalized where a use reads its lanes in another way.
 
 Measured on onnxruntime's basic-pitch build (inference, medians of
 interleaved runs on linux/amd64; outputs identical to the build without SIMD):
-781 ms without SIMD, 254 ms with SIMD on amd64 with archsimd, and 1,909 ms with
-SIMD in the portable code.
+781 ms without SIMD, 254 ms with SIMD on amd64 with archsimd, and 1,033 ms with
+SIMD in the portable code (1,896 ms with every vector held as words).
 
 The SIMD spec tests (`internal/spectest/simd`) run on the portable code, and
 [scripts/cross-targets.sh](scripts/cross-targets.sh) runs them with the
