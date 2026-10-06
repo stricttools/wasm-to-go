@@ -84,3 +84,18 @@ func TestChargeIsTheScaledEstimate(t *testing.T) {
 		t.Fatalf("got estimate %d, charge %d, recursive %t; want 274, 832, true", f.Estimate, f.Charge, f.Recursive)
 	}
 }
+
+// A module with SIMD instructions is weighed, and a v128 parameter or
+// local takes two slots of the estimate.
+func TestSIMD(t *testing.T) {
+	res, err := Weigh(read(t, "simd"), opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	f := res.Functions[0]
+	// Slots: the v128 parameter 2, the i32 parameter 1, the two v128
+	// locals 4, the i32 local 1: 272 + 2*8.
+	if f.Estimate != 288 || !f.Recursive {
+		t.Fatalf("got estimate %d, recursive %t; want 288, true", f.Estimate, f.Recursive)
+	}
+}

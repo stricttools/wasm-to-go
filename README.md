@@ -388,7 +388,7 @@ stack-weight -stack-limit BYTES -native-stack BYTES -o out.wasm [-report file.ts
   the estimated frames add up to at most `-native-stack` bytes.
 - The module must export `__stack_pointer` (link with
   `-Wl,--export=__stack_pointer`), whose initial value must be a constant.
-  Tail calls, exception handling, SIMD, typed function references, and
+  Tail calls, exception handling, typed function references, and
   garbage collection instructions are refused: a tail call or an exception
   would leave frames without giving their charge back.
 - The pass adds a custom section named `stack-weight` recording its options
@@ -406,11 +406,13 @@ an assumption about the engine, which the estimate was measured against:
 - **Frames within the estimate.** The estimate
   ([internal/stackweight/estimate.go](internal/stackweight/estimate.go))
   is the larger of 272 plus 2 per slot and 48 plus 8 per slot
-  (parameters and declared locals), plus 8 per parameter an x86-64
-  engine passes on the stack. For every function on a cycle of
+  (parameters and declared locals, a `v128` two slots), plus 8 per
+  parameter an x86-64 engine passes on the stack. For every function on a cycle of
   QuickJS-ng's call graph, the frame V8's two compilers give it
   (Liftoff and TurboFan, in Node 22's V8 12.4, read from
   `--print-wasm-code`) is at most 0.975 of the estimate.
+  QuickJS-ng has no SIMD: the two slots of a `v128` follow its 16 bytes,
+  and no frame of a function with `v128` values was measured.
   A large constant per frame makes recursion through small frames that
   keep no shadow stack (deeply nested JSON, arrays walked by `flat`)
   and recursion through QuickJS's interpreter, whose frames also take

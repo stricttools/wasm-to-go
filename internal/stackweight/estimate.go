@@ -2,7 +2,7 @@ package stackweight
 
 // EstimateVersion names the frame estimate; the custom section records it,
 // so a module says which estimate its charges came from.
-const EstimateVersion = "max(272 + 2 per slot, 48 + 8 per slot) + 8 per stack parameter"
+const EstimateVersion = "max(272 + 2 per slot, 48 + 8 per slot) + 8 per stack parameter, a v128 two slots"
 
 // estimate is a function's estimated native frame in bytes, from its slots
 // (parameters and declared locals): the larger of 272 plus 2 per slot and
@@ -21,17 +21,30 @@ const EstimateVersion = "max(272 + 2 per slot, 48 + 8 per slot) + 8 per stack pa
 // with a frame's slots past the functions it was fitted to, as compiled
 // frames do. The README's section on the stack-weight pass gives the
 // measurements.
+//
+// A v128 parameter or local counts as two slots, since it takes 16 bytes
+// of a frame where the others take 8, and a v128 parameter is passed in a
+// floating-point register, as V8 passes SIMD values. No frame of a
+// function with SIMD values was measured against the estimate.
 func estimate(ft funcType, locals []byte) int64 {
 	gp, fp := 0, 0
 	for _, t := range ft.params {
 		switch t {
-		case f32, f64:
+		case f32, f64, v128:
 			fp++
 		default:
 			gp++
 		}
 	}
 	stackParams := int64(max(gp-5, 0) + max(fp-6, 0))
-	n := int64(len(ft.params) + len(locals))
+	n := int64(0)
+	for _, ts := range [][]byte{ft.params, locals} {
+		for _, t := range ts {
+			n++
+			if t == v128 {
+				n++
+			}
+		}
+	}
 	return max(272+2*n, 48+8*n) + 8*stackParams
 }
