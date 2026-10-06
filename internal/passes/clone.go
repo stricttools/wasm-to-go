@@ -7,7 +7,12 @@ import (
 
 // Clone returns a deep copy of n: every node reachable from n is copied,
 // and a node reachable twice (the translator's trees share nodes) is
-// copied twice, so no node of the copy is shared, with n or within it.
+// copied twice, so no node of the copy is shared, with n or within it,
+// except identifiers and basic literals. Those are leaves the translator
+// shares by the thousand (every use of a local variable is one *ast.Ident,
+// newID's), and no pass changes a leaf in place once a function is
+// cleaned up: a pass replaces a leaf in its parent, which is copied.
+// Copying them made a copy of QuickJS's code a third larger than the code.
 // Positions and comments are copied as they are.
 func Clone[N ast.Node](n N) N {
 	return clone(reflect.ValueOf(n)).Interface().(N)
@@ -24,6 +29,8 @@ func clone(v reflect.Value) reflect.Value {
 		// trees do).
 		if t := v.Type(); t == objectType || t == scopeType {
 			return reflect.Zero(t)
+		} else if t == identType || t == basicLitType {
+			return v
 		}
 		c := reflect.New(v.Type().Elem())
 		c.Elem().Set(clone(v.Elem()))
@@ -59,4 +66,7 @@ func clone(v reflect.Value) reflect.Value {
 var (
 	objectType = reflect.TypeFor[*ast.Object]()
 	scopeType  = reflect.TypeFor[*ast.Scope]()
+
+	identType    = reflect.TypeFor[*ast.Ident]()
+	basicLitType = reflect.TypeFor[*ast.BasicLit]()
 )

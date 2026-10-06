@@ -468,7 +468,14 @@ over the slots holding a function of the called type,
 each calling that function directly,
 with the original indirect call as the default (for null slots,
 slots of other types, and indexes out of range, which trap as before).
-Calls through tables that are not closed are left alone.
+Calls through tables that are not closed are left alone, and so are calls
+that can reach more than 16 functions (`maxDispatchTargets` in
+[closed.go](closed.go)): the switch is written at every call site,
+and C++ code has signatures that hundreds of virtual functions share.
+In onnxruntime's basic-pitch build, 2,538 calls through its closed table
+made 642,209 cases, in a translation of 2.25 million lines;
+neither that inference nor QuickJS-ng's game workload changed measurably
+with the bound, from no dispatch at all to all of it.
 
 When linking with `wasm-ld`, `-Wl,--export-table` exports the table,
 so it is not closed; leave it out unless the host needs the table.
@@ -517,7 +524,19 @@ and more; `bigFunctionSize` in [translate.go](translate.go) is below that)
 it inlines only callees of cost 20 or less, and `encoding/binary`'s 32- and
 64-bit functions cost more, so there the translator writes each access as
 the byte operations those functions are, which the compiler combines into
-single loads and stores. With `-unsafe`, `output.go` writes the accesses
+single loads and stores. The array pointer of such an access is assigned
+once, to a variable of the function, and its bytes index the variable,
+as does the value of a store:
+
+```go
+a4 = (*[4]byte)(mem[uint64(v1) : uint64(v1)+4])
+t2 := int32(uint32(a4[3])<<24 | uint32(a4[0]) | uint32(a4[1])<<8 | uint32(a4[2])<<16)
+```
+
+(an access inside a larger expression, which the translator rarely writes,
+repeats the pointer at each byte instead). The compiler emits the same
+instructions either way; the variables made QuickJS-ng's interpreter loop
+compile in half the memory. With `-unsafe`, `output.go` writes the accesses
 inline with `unsafe` instead (see [below](#-unsafe-and-two-output-files)).
 
 On QuickJS-ng without `-unsafe`, where the interpreter loop is a big
@@ -638,10 +657,11 @@ measurably: calls between packages are direct calls, except calls to
 an earlier package, which go through a function variable.
 
 The interpreter loop is a big function, so its accesses are written as bytes
-(see [memory accesses](#memory-accesses)), which makes its source several
-times larger than calls do: its compile, the largest, takes 540 to 604 MiB
-on linux/amd64 and 526 to 595 MiB on js/wasm (eight runs of the test below),
-where the bytes of `mem[a:]` took 444 to 552 MiB and calls 170 to 245 MiB.
+(see [memory accesses](#memory-accesses)), through the variables holding each
+access's array pointer: its compile, the largest, takes 237 to 273 MiB
+on linux/amd64 and 262 to 281 MiB on js/wasm (four runs of the test below).
+With the pointer written at each byte, it took 540 to 604 MiB and 526 to
+595 MiB, the bytes of `mem[a:]` 444 to 552 MiB, and calls 170 to 245 MiB.
 
 `Test_quickjs` translates QuickJS-ng (`testdata/quickjs`), compiles it for
 linux/amd64 and js/wasm one package at a time with `GOMAXPROCS=4`,
@@ -649,6 +669,22 @@ and fails if any compile process of its packages takes more than
 `compileMemoryBound` (in `compilemem_test.go`), just above the largest
 it has measured; it then runs `testdata/quickjs/test.js` on it and
 compares the result with a native build's.
+
+The translator itself holds the module's code as Go syntax trees, which
+take tens of times the module's size, so it keeps one tree of each function
+(a package's copy replaces the function's tree when the module is written
+as several packages, and the copy shares the identifiers and literals,
+the tree's most frequent nodes), and lowers each package's memory accesses
+only when it writes the package, dropping the package's trees once written.
+Translating onnxruntime's basic-pitch build (a module of 1.6 MB) peaked at
+2.8 GB before these and the dispatch bound (see
+[closed tables](#closed-tables-and-indirect-calls)), and peaks at 430 to
+460 MB with them, less than the largest compile of its translation then
+takes (650 MB); its translation went from 84 MB of Go to 22 MB.
+Translating QuickJS-ng went from 454 to 239 MB.
+`Test_translate_memory` (in `translatemem_test.go`) runs the translator on
+QuickJS-ng and fails if it peaks above `translateMemoryBound`, just above
+the 223 to 239 MiB measured.
 
 ## Usage
 

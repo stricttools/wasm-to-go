@@ -20,7 +20,7 @@ import (
 // Test_quickjs: the measured peak on linux/amd64 and js/wasm, with the
 // margin its run-to-run variation needs (see the README's compile cost
 // section). A change that makes the translation cost more fails the test.
-const compileMemoryBound = 640
+const compileMemoryBound = 300
 
 // The toolexec mode of the test binary: `go build -toolexec` runs it as
 // "test.binary -wasm2go-toolexec-log=FILE tool args...", and it runs the
@@ -30,6 +30,11 @@ const toolexecFlag = "-wasm2go-toolexec-log="
 func TestMain(m *testing.M) {
 	if len(os.Args) > 2 && strings.HasPrefix(os.Args[1], toolexecFlag) {
 		os.Exit(toolexec(strings.TrimPrefix(os.Args[1], toolexecFlag), os.Args[2:]))
+	}
+	if len(os.Args) > 1 && os.Args[1] == translateFlag {
+		os.Args = append([]string{"wasm2go"}, os.Args[2:]...)
+		main()
+		os.Exit(0)
 	}
 	os.Exit(m.Run())
 }

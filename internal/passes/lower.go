@@ -43,9 +43,11 @@ var lowerSizes = map[string]int{
 //	store32(mem, a, v)   → { p[3] = byte(v >> 24); p[0] = byte(v); p[1] = byte(v >> 8); p[2] = byte(v >> 16) }
 //
 // and likewise for the 16- and 64-bit and the unchecked (-unsafe) helpers.
-// A store whose value is not a variable, a constant, or an operation on
-// them keeps the call. An address the translator already writes as a
-// uint64 expression is not converted again.
+// Where the access is a statement of its own, the array pointer is a
+// variable assigned once instead (hoistAccesses). A store whose value is
+// not a variable, a constant, or an operation on them keeps the call. An
+// address the translator already writes as a uint64 expression is not
+// converted again.
 //
 // Slicing checks its bounds against the memory's capacity, so it needs
 // the capacity to equal the length. capIsLen reports that the translator
@@ -101,6 +103,9 @@ func Lower(fn *ast.FuncDecl, bytes, capIsLen bool) int {
 		return 0
 	}
 	sites := 0
+	if bytes {
+		sites += hoistAccesses(fn, capIsLen)
+	}
 	astutil.Apply(fn.Body, nil, func(c *astutil.Cursor) bool {
 		var call *ast.CallExpr
 		stmt := false
@@ -267,8 +272,218 @@ func pureValue(e ast.Expr) bool {
 			return ok || f.Name == "i32" || f.Name == "i64"
 		case *ast.SelectorExpr:
 			pkg, ok := f.X.(*ast.Ident)
-			return ok && pkg.Name == "math" && (f.Sel.Name == "Float32bits" || f.Sel.Name == "Float64bits")
+			if !ok || pkg.Name != "math" {
+				return false
+			}
+			switch f.Sel.Name {
+			case "Float32bits", "Float64bits", "Float32frombits", "Float64frombits":
+				return true
+			}
 		}
 	}
 	return false
+}
+
+// The names of the variables hoistAccesses declares: a pointer to the
+// array of each access size (aN), and the value of each store size (wN).
+var hoistNames = map[int][2]string{2: {"a2", "w2"}, 4: {"a4", "w4"}, 8: {"a8", "w8"}}
+
+// hoistAccesses writes, in a function whose accesses Lower writes as bytes,
+// the array pointer of an access once, in a variable of the function,
+// instead of at each byte, and returns the number of accesses it wrote:
+//
+//	t1 := int32(load32(mem, a))
+//	store32(mem, b, uint32(t1+t2))
+//
+// becomes
+//
+//	var a4 *[4]byte
+//	var w4 uint32
+//	...
+//	a4 = (*[4]byte)(mem[uint64(a) : uint64(a)+4])
+//	t1 := int32(uint32(a4[3])<<24 | uint32(a4[0]) | uint32(a4[1])<<8 | uint32(a4[2])<<16)
+//	a4 = (*[4]byte)(mem[uint64(b) : uint64(b)+4])
+//	w4 = uint32(t1 + t2)
+//	a4[3] = byte(w4 >> 24)
+//	...
+//
+// It writes the access of a statement of a statement list (a label stays
+// on the statement's first part) that is an assignment of one variable
+// whose value holds one load and is otherwise a pureValue, or a store
+// whose address and value are pureValues; every other access, and every
+// access of a function already using one of the names, is left to Lower's
+// form. A store's value goes to the variable unless it is a variable or a
+// constant.
+//
+// Why: Lower's form repeats the slice expression at each byte, and the
+// value at each byte of a store, which made the translated source of
+// onnxruntime's largest functions several times larger than their
+// operations. The compiler combines the bytes as it did, since they index
+// one pointer.
+//
+// # Why this preserves behavior
+//
+// The statement evaluates the address, the value of a store, and the
+// operands around a load before the access, and none of them can panic or
+// has an effect (pureValue: no call but conversions, no division, no
+// memory access); the assignment of the pointer performs the access's
+// whole bounds check, as the first byte's slice did, before any byte is
+// accessed. So the statements panic for the same addresses before
+// changing anything, and otherwise compute the same values. The variables
+// are declared first in the function, before any label, so no goto jumps
+// over their declarations.
+func hoistAccesses(fn *ast.FuncDecl, capIsLen bool) int {
+	used := false
+	ast.Inspect(fn, func(n ast.Node) bool {
+		if id, ok := n.(*ast.Ident); ok {
+			for _, names := range hoistNames {
+				if id.Name == names[0] || id.Name == names[1] {
+					used = true
+				}
+			}
+		}
+		return !used
+	})
+	if used {
+		return 0
+	}
+	h := &hoister{capIsLen: capIsLen, ptrs: map[int]bool{}, vals: map[int]bool{}}
+	postApplyStmts(fn.Body, func(list []ast.Stmt) []ast.Stmt {
+		var out []ast.Stmt
+		for _, s := range list {
+			out = append(out, h.stmt(s)...)
+		}
+		return out
+	})
+	var decls []ast.Stmt
+	for _, size := range []int{2, 4, 8} {
+		names := hoistNames[size]
+		if h.ptrs[size] {
+			decls = append(decls, varDecl(names[0], &ast.StarExpr{X: &ast.ArrayType{Len: lit(size), Elt: ast.NewIdent("byte")}}))
+		}
+		if h.vals[size] {
+			decls = append(decls, varDecl(names[1], ast.NewIdent(uintType(size))))
+		}
+	}
+	fn.Body.List = append(decls, fn.Body.List...)
+	return h.sites
+}
+
+func varDecl(name string, typ ast.Expr) ast.Stmt {
+	return &ast.DeclStmt{Decl: &ast.GenDecl{Tok: token.VAR, Specs: []ast.Spec{
+		&ast.ValueSpec{Names: []*ast.Ident{ast.NewIdent(name)}, Type: typ}}}}
+}
+
+type hoister struct {
+	capIsLen   bool
+	ptrs, vals map[int]bool // the sizes whose variables are used
+	sites      int
+}
+
+// The statements s becomes.
+func (h *hoister) stmt(s ast.Stmt) []ast.Stmt {
+	switch s := s.(type) {
+	case *ast.LabeledStmt:
+		parts := h.stmt(s.Stmt)
+		s.Stmt = parts[0]
+		return append([]ast.Stmt{s}, parts[1:]...)
+	case *ast.ExprStmt:
+		call, ok := s.X.(*ast.CallExpr)
+		if !ok {
+			break
+		}
+		size, store, ok := accessCall(call)
+		if !ok || !store || !pureValue(call.Args[1]) || !pureValue(call.Args[2]) {
+			break
+		}
+		names := hoistNames[size]
+		out := []ast.Stmt{h.pointer(call, size)}
+		v := call.Args[2]
+		switch v.(type) {
+		case *ast.Ident, *ast.BasicLit:
+		default:
+			h.vals[size] = true
+			out = append(out, &ast.AssignStmt{Lhs: []ast.Expr{ast.NewIdent(names[1])}, Tok: token.ASSIGN, Rhs: []ast.Expr{v}})
+			v = ast.NewIdent(names[1])
+		}
+		p := func() ast.Expr { return ast.NewIdent(names[0]) }
+		return append(out, storeBytes(p, v, size).(*ast.BlockStmt).List...)
+	case *ast.AssignStmt:
+		if len(s.Lhs) != 1 || len(s.Rhs) != 1 || (s.Tok != token.ASSIGN && s.Tok != token.DEFINE) {
+			break
+		}
+		if _, ok := s.Lhs[0].(*ast.Ident); !ok {
+			break
+		}
+		var load *ast.CallExpr
+		loads := 0
+		ast.Inspect(s.Rhs[0], func(n ast.Node) bool {
+			if call, ok := n.(*ast.CallExpr); ok {
+				if _, store, ok := accessCall(call); ok && !store {
+					load = call
+					loads++
+				}
+			}
+			return true
+		})
+		if loads != 1 || !pureValue(load.Args[1]) {
+			break
+		}
+		size := lowerSizes[load.Fun.(*ast.Ident).Name]
+		hole := ast.NewIdent(hoistNames[size][0])
+		rhs := replaceExpr(s.Rhs[0], load, hole)
+		if !pureValue(rhs) {
+			s.Rhs[0] = replaceExpr(rhs, hole, load)
+			break
+		}
+		ptr := h.pointer(load, size)
+		s.Rhs[0] = replaceExpr(rhs, hole, loadBytes(func() ast.Expr { return ast.NewIdent(hoistNames[size][0]) }, size))
+		return []ast.Stmt{ptr, s}
+	}
+	return []ast.Stmt{s}
+}
+
+// The assignment of the array pointer of the access call, of size bytes.
+func (h *hoister) pointer(call *ast.CallExpr, size int) ast.Stmt {
+	h.sites++
+	h.ptrs[size] = true
+	mem := call.Args[0]
+	switch mem.(type) {
+	case *ast.Ident, *ast.SelectorExpr, *ast.ParenExpr:
+	default:
+		mem = &ast.ParenExpr{X: mem}
+	}
+	return &ast.AssignStmt{
+		Lhs: []ast.Expr{ast.NewIdent(hoistNames[size][0])},
+		Tok: token.ASSIGN,
+		Rhs: []ast.Expr{arrayPointer(mem, call.Args[1], size, h.capIsLen)}}
+}
+
+// Reports the size of the access a call of a memory access helper makes,
+// and whether it is a store; ok is false for any other call.
+func accessCall(call *ast.CallExpr) (size int, store, ok bool) {
+	id, isID := call.Fun.(*ast.Ident)
+	if !isID || lowerFuncs[id.Name] == "" {
+		return 0, false, false
+	}
+	store = id.Name[0] == 's'
+	if len(call.Args) != 2+btoi(store) {
+		return 0, false, false
+	}
+	return lowerSizes[id.Name], store, true
+}
+
+// e with the node old replaced by repl (e itself if it is old).
+func replaceExpr(e, old, repl ast.Expr) ast.Expr {
+	if e == old {
+		return repl
+	}
+	astutil.Apply(e, func(c *astutil.Cursor) bool {
+		if c.Node() == old {
+			c.Replace(repl)
+			return false
+		}
+		return true
+	}, nil)
+	return e
 }

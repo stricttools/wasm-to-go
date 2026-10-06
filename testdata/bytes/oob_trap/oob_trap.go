@@ -58,46 +58,58 @@ func (m *wasmMemory) Grow(delta, max int64) int64 {
 	return memory_grow(&m.memory, &m.memBacking, delta, max)
 }
 func (m *Module) Xld16(v0 int32) int32 {
+	var a2 *[2]byte
 	mem := m.memory
-	t0 := int32(uint16((*[2]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+2])[1])<<8 | uint16((*[2]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+2])[0]))
+	a2 = (*[2]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+2])
+	t0 := int32(uint16(a2[1])<<8 | uint16(a2[0]))
 	return t0
 }
 func (m *Module) Xld32(v0 int32) int32 {
+	var a4 *[4]byte
 	mem := m.memory
-	t0 := int32(uint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[3])<<24 | uint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[0]) | uint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[1])<<8 | uint32((*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[2])<<16)
+	a4 = (*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])
+	t0 := int32(uint32(a4[3])<<24 | uint32(a4[0]) | uint32(a4[1])<<8 | uint32(a4[2])<<16)
 	return t0
 }
 func (m *Module) Xld64(v0 int32) int64 {
+	var a8 *[8]byte
 	mem := m.memory
-	t0 := int64(uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[7])<<56 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[0]) | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[1])<<8 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[2])<<16 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[3])<<24 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[4])<<32 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[5])<<40 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[6])<<48)
+	a8 = (*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])
+	t0 := int64(uint64(a8[7])<<56 | uint64(a8[0]) | uint64(a8[1])<<8 | uint64(a8[2])<<16 | uint64(a8[3])<<24 | uint64(a8[4])<<32 | uint64(a8[5])<<40 | uint64(a8[6])<<48)
 	return t0
 }
 func (m *Module) Xld32o(v0 int32) int32 {
+	var a4 *[4]byte
 	mem := m.memory
-	t0 := int32(uint32((*[4]byte)(mem[uint64(uint32(v0))+0xffffffff : uint64(uint32(v0))+0xffffffff+4])[3])<<24 | uint32((*[4]byte)(mem[uint64(uint32(v0))+0xffffffff : uint64(uint32(v0))+0xffffffff+4])[0]) | uint32((*[4]byte)(mem[uint64(uint32(v0))+0xffffffff : uint64(uint32(v0))+0xffffffff+4])[1])<<8 | uint32((*[4]byte)(mem[uint64(uint32(v0))+0xffffffff : uint64(uint32(v0))+0xffffffff+4])[2])<<16)
+	a4 = (*[4]byte)(mem[uint64(uint32(v0))+0xffffffff : uint64(uint32(v0))+0xffffffff+4])
+	t0 := int32(uint32(a4[3])<<24 | uint32(a4[0]) | uint32(a4[1])<<8 | uint32(a4[2])<<16)
 	return t0
 }
 func (m *Module) Xst32(v0, v1 int32) {
+	var a4 *[4]byte
+	var w4 uint32
 	mem := m.memory
-	{
-		(*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[3] = byte(uint32(v1) >> 24)
-		(*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[0] = byte(uint32(v1))
-		(*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[1] = byte(uint32(v1) >> 8)
-		(*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])[2] = byte(uint32(v1) >> 16)
-	}
+	a4 = (*[4]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+4])
+	w4 = uint32(v1)
+	a4[3] = byte(w4 >> 24)
+	a4[0] = byte(w4)
+	a4[1] = byte(w4 >> 8)
+	a4[2] = byte(w4 >> 16)
 }
 func (m *Module) Xst64(v0 int32, v1 int64) {
+	var a8 *[8]byte
+	var w8 uint64
 	mem := m.memory
-	{
-		(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[7] = byte(uint64(v1) >> 56)
-		(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[0] = byte(uint64(v1))
-		(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[1] = byte(uint64(v1) >> 8)
-		(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[2] = byte(uint64(v1) >> 16)
-		(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[3] = byte(uint64(v1) >> 24)
-		(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[4] = byte(uint64(v1) >> 32)
-		(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[5] = byte(uint64(v1) >> 40)
-		(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[6] = byte(uint64(v1) >> 48)
-	}
+	a8 = (*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])
+	w8 = uint64(v1)
+	a8[7] = byte(w8 >> 56)
+	a8[0] = byte(w8)
+	a8[1] = byte(w8 >> 8)
+	a8[2] = byte(w8 >> 16)
+	a8[3] = byte(w8 >> 24)
+	a8[4] = byte(w8 >> 32)
+	a8[5] = byte(w8 >> 40)
+	a8[6] = byte(w8 >> 48)
 }
 func (m *Module) Xgrow(v0 int32) int32 {
 	t0 := int32(memory_grow(&m.memory, &m.memBacking, int64(v0), m.maxMem))

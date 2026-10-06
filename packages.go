@@ -121,6 +121,9 @@ func (t *translator) writePackages(moduleDecl *ast.GenDecl) (*packaging, []pkgFi
 		// the translator's trees share nodes between functions.
 		d := passes.Clone(fn.decl)
 		original[fn.decl] = true
+		// The copy replaces the original, whose body nothing reads
+		// again: dropping it keeps one tree of each function, not two.
+		fn.decl.Body = nil
 		f := &codeFunc{decl: d, name: d.Name.Name, recv: d.Recv != nil, size: passes.Size(d), params: d.Type.Params, self: receiverName(d)}
 		f.pub = exportName(f.name)
 		if !pubs.add(f.pub) {
@@ -1011,20 +1014,41 @@ func (p *packaging) print(files []pkgFile, w, generic io.Writer, sub func(rel st
 		return sub(rel)
 	}
 	var code []*ast.FuncDecl
+	isCode := map[ast.Decl]bool{}
 	for _, f := range p.funcs {
 		code = append(code, f.decl)
+		isCode[f.decl] = true
 	}
 	p.t.code = code
+	// Each file's functions are lowered (or expanded) when the file is
+	// printed, and dropped once every file holding them is printed, so the
+	// translator holds the larger lowered code of one package at a time.
+	codeOf := func(decls []ast.Decl) []*ast.FuncDecl {
+		var fds []*ast.FuncDecl
+		for _, d := range decls {
+			if isCode[d] {
+				fds = append(fds, d.(*ast.FuncDecl))
+			}
+		}
+		return fds
+	}
+	release := func(fds []*ast.FuncDecl) {
+		for _, fd := range fds {
+			fd.Body = nil
+		}
+	}
 	if generic == nil {
-		p.t.lower(code)
 		for _, pf := range files {
 			out, err := open(pf.rel, w)
 			if err != nil {
 				return err
 			}
+			fds := codeOf(pf.decls)
+			p.t.lower(fds)
 			if err := p.t.printDecls(out, fset, pf.name, p.withHelpers(pf.decls), *tags, pf.doc, p.imports); err != nil {
 				return err
 			}
+			release(fds)
 		}
 		return nil
 	}
@@ -1044,16 +1068,15 @@ func (p *packaging) print(files []pkgFile, w, generic io.Writer, sub func(rel st
 		if err := p.t.printDecls(out, fset, pf.name, p.withHelpers(p.t.lowered(pf.decls)), others, pf.doc, p.imports); err != nil {
 			return err
 		}
-	}
-	p.t.expand(code)
-	for _, pf := range files {
-		out, err := open(pf.rel, w)
-		if err != nil {
+		fds := codeOf(pf.decls)
+		p.t.expand(fds)
+		if out, err = open(pf.rel, w); err != nil {
 			return err
 		}
 		if err := p.t.printDecls(out, fset, pf.name, p.withHelpers(pf.decls), expanded, pf.doc, p.imports); err != nil {
 			return err
 		}
+		release(fds)
 	}
 	return nil
 }

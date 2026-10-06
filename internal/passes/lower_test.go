@@ -45,24 +45,33 @@ func TestLower(t *testing.T) {
 			return int64(binary.LittleEndian.Uint64((*[8]byte)(mem[:len(mem):len(mem)][uint64(uint32(v0)) : uint64(uint32(v0))+8])[:]))
 		}`,
 	}, {
-		// A store of a value read from memory keeps the call.
+		// Each access of a statement of its own goes through a variable
+		// holding its array pointer, and a store's value through one
+		// holding the value; a store of a value read from memory, and
+		// accesses inside other statements, keep Lower's form.
 		name:     "bytes",
 		bytes:    true,
 		capIsLen: true,
 		want: `func (m *Module) f(v0 int32) int64 {
+			var a2 *[2]byte
+			var a4 *[4]byte
+			var a8 *[8]byte
+			var w8 uint64
 			mem := *m.memory
-			t0 := int32(uint32((*[4]byte)(mem[uint64(uint32(v0))+8 : uint64(uint32(v0))+8+4])[3])<<24 | uint32((*[4]byte)(mem[uint64(uint32(v0))+8 : uint64(uint32(v0))+8+4])[0]) | uint32((*[4]byte)(mem[uint64(uint32(v0))+8 : uint64(uint32(v0))+8+4])[1])<<8 | uint32((*[4]byte)(mem[uint64(uint32(v0))+8 : uint64(uint32(v0))+8+4])[2])<<16)
-			t1 := int32(uint16((*[2]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+2])[1])<<8 | uint16((*[2]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+2])[0]))
-			{
-				(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[7] = byte(uint64(t0+t1) >> 56)
-				(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[0] = byte(uint64(t0 + t1))
-				(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[1] = byte(uint64(t0+t1) >> 8)
-				(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[2] = byte(uint64(t0+t1) >> 16)
-				(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[3] = byte(uint64(t0+t1) >> 24)
-				(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[4] = byte(uint64(t0+t1) >> 32)
-				(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[5] = byte(uint64(t0+t1) >> 40)
-				(*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[6] = byte(uint64(t0+t1) >> 48)
-			}
+			a4 = (*[4]byte)(mem[uint64(uint32(v0))+8 : uint64(uint32(v0))+8+4])
+			t0 := int32(uint32(a4[3])<<24 | uint32(a4[0]) | uint32(a4[1])<<8 | uint32(a4[2])<<16)
+			a2 = (*[2]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+2])
+			t1 := int32(uint16(a2[1])<<8 | uint16(a2[0]))
+			a8 = (*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])
+			w8 = uint64(t0 + t1)
+			a8[7] = byte(w8 >> 56)
+			a8[0] = byte(w8)
+			a8[1] = byte(w8 >> 8)
+			a8[2] = byte(w8 >> 16)
+			a8[3] = byte(w8 >> 24)
+			a8[4] = byte(w8 >> 32)
+			a8[5] = byte(w8 >> 40)
+			a8[6] = byte(w8 >> 48)
 			binary.LittleEndian.PutUint32((*[4]byte)((*m.memory)[uint64(uint32(v0))+4 : uint64(uint32(v0))+4+4])[:], uint32(uint32((*[4]byte)(mem[uint64(uint32(t0)) : uint64(uint32(t0))+4])[3])<<24|uint32((*[4]byte)(mem[uint64(uint32(t0)) : uint64(uint32(t0))+4])[0])|uint32((*[4]byte)(mem[uint64(uint32(t0)) : uint64(uint32(t0))+4])[1])<<8|uint32((*[4]byte)(mem[uint64(uint32(t0)) : uint64(uint32(t0))+4])[2])<<16))
 			m.f2(uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[7])<<56 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[0]) | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[1])<<8 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[2])<<16 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[3])<<24 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[4])<<32 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[5])<<40 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[6])<<48)
 			return int64(uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[7])<<56 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[0]) | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[1])<<8 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[2])<<16 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[3])<<24 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[4])<<32 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[5])<<40 | uint64((*[8]byte)(mem[uint64(uint32(v0)) : uint64(uint32(v0))+8])[6])<<48)
@@ -78,6 +87,54 @@ func TestLower(t *testing.T) {
 				t.Errorf("got:\n%s\n\nwant:\n%s", got, want)
 			}
 		})
+	}
+}
+
+// In bytes, a label stays on the first statement an access becomes, so a
+// goto to it performs the access; and a function already using a name of the
+// variables keeps Lower's form.
+func TestLowerBytesHoisting(t *testing.T) {
+	fn := parseFunc(t, `func (m *Module) f(v0 int32) {
+	l1:
+		t0 := int32(load32(m.memory, uint32(v0)))
+		store16(m.memory, uint32(v0), uint16(7))
+		store16(m.memory, uint32(t0), uint16(t0))
+		goto l1
+	}`)
+	if sites := Lower(fn, true, true); sites != 3 {
+		t.Errorf("Lower = %d sites, want 3", sites)
+	}
+	want := `func (m *Module) f(v0 int32) {
+		var a2 *[2]byte
+		var w2 uint16
+		var a4 *[4]byte
+	l1:
+		a4 = (*[4]byte)(m.memory[uint64(uint32(v0)) : uint64(uint32(v0))+4])
+		t0 := int32(uint32(a4[3])<<24 | uint32(a4[0]) | uint32(a4[1])<<8 | uint32(a4[2])<<16)
+		a2 = (*[2]byte)(m.memory[uint64(uint32(v0)) : uint64(uint32(v0))+2])
+		w2 = uint16(7)
+		a2[1] = byte(w2 >> 8)
+		a2[0] = byte(w2)
+		a2 = (*[2]byte)(m.memory[uint64(uint32(t0)) : uint64(uint32(t0))+2])
+		w2 = uint16(t0)
+		a2[1] = byte(w2 >> 8)
+		a2[0] = byte(w2)
+		goto l1
+	}`
+	if got, want := formatFunc(t, fn), normalizeFunc(t, want); got != want {
+		t.Errorf("got:\n%s\n\nwant:\n%s", got, want)
+	}
+
+	taken := parseFunc(t, `func (m *Module) f(v0 int32) int32 {
+		a4 := v0
+		return int32(load16(m.memory, uint32(a4)))
+	}`)
+	Lower(taken, true, true)
+	if got, want := formatFunc(t, taken), normalizeFunc(t, `func (m *Module) f(v0 int32) int32 {
+		a4 := v0
+		return int32(uint16((*[2]byte)(m.memory[uint64(uint32(a4)) : uint64(uint32(a4))+2])[1])<<8 | uint16((*[2]byte)(m.memory[uint64(uint32(a4)) : uint64(uint32(a4))+2])[0]))
+	}`); got != want {
+		t.Errorf("got:\n%s\n\nwant:\n%s", got, want)
 	}
 }
 
@@ -117,17 +174,35 @@ func TestClone(t *testing.T) {
 // package must leave the code of another alone.
 func TestCloneUnshares(t *testing.T) {
 	fn := parseFunc(t, `func (m *Module) f() {
-		a := x
-		b := x
+		a := (x)
+		b := (x)
 	}`)
 	shared := fn.Body.List[0].(*ast.AssignStmt).Rhs[0]
 	fn.Body.List[1].(*ast.AssignStmt).Rhs[0] = shared
 	c := Clone(fn)
-	c.Body.List[0].(*ast.AssignStmt).Rhs[0].(*ast.Ident).Name = "y"
-	if got := c.Body.List[1].(*ast.AssignStmt).Rhs[0].(*ast.Ident).Name; got != "x" {
+	c.Body.List[0].(*ast.AssignStmt).Rhs[0].(*ast.ParenExpr).X = ast.NewIdent("y")
+	if got := c.Body.List[1].(*ast.AssignStmt).Rhs[0].(*ast.ParenExpr).X.(*ast.Ident).Name; got != "x" {
 		t.Errorf("the second use changed with the first: %s", got)
 	}
-	if shared.(*ast.Ident).Name != "x" {
+	if shared.(*ast.ParenExpr).X.(*ast.Ident).Name != "x" {
 		t.Errorf("the original changed")
+	}
+}
+
+// Clone shares identifiers and basic literals with the original, the
+// leaves no pass changes in place, so a copy of translated code costs no
+// more than its other nodes.
+func TestCloneSharesLeaves(t *testing.T) {
+	fn := parseFunc(t, `func (m *Module) f() {
+		a := x + 1
+	}`)
+	c := Clone(fn)
+	orig := fn.Body.List[0].(*ast.AssignStmt).Rhs[0].(*ast.BinaryExpr)
+	copied := c.Body.List[0].(*ast.AssignStmt).Rhs[0].(*ast.BinaryExpr)
+	if copied == orig {
+		t.Fatal("the expression is not copied")
+	}
+	if copied.X != orig.X || copied.Y != orig.Y {
+		t.Errorf("the leaves are copied: %p %p, original %p %p", copied.X, copied.Y, orig.X, orig.Y)
 	}
 }
