@@ -45,7 +45,7 @@ func Test_stack_weight_module(t *testing.T) {
 func Test_translate(t *testing.T) {
 	tests := []string{
 		"determinism", "fib", "loops", "memory", "primes", "recursion", "stack", "table", "trig",
-		"regression/bulk_bounds", "regression/bulk_bounds_imported", "regression/constfold", "regression/dispatch", "regression/f32convert", "regression/nancanon", "regression/oob_trap", "regression/oob_trap_imported", "regression/select_effect", "regression/stack_bound", "regression/stack_weight", "regression/store_grow", "regression/tee_self_loop", "regression/use_memory",
+		"regression/bulk_bounds", "regression/bulk_bounds_imported", "regression/constfold", "regression/dispatch", "regression/f32convert", "regression/nancanon", "regression/oob_trap", "regression/oob_trap_imported", "regression/select_effect", "regression/split_locals", "regression/stack_bound", "regression/stack_weight", "regression/store_grow", "regression/tee_self_loop", "regression/use_memory",
 	}
 	for _, name := range tests {
 		t.Run(name, func(t *testing.T) {

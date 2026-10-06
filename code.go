@@ -1,10 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"go/ast"
 	"go/token"
+	"io"
 	"slices"
+
+	"github.com/stricttools/wasm-to-go/internal/offset"
 )
 
 func (t *translator) readCodeSection() error {
@@ -17,20 +21,33 @@ func (t *translator) readCodeSection() error {
 
 	for i := range numFuncs {
 		i += importedFuncs
-		_, err := readLEB128(t.in)
+		size, err := readLEB128(t.in)
 		if err != nil {
 			return err
 		}
-
-		err = t.readCodeForFunction(&t.functions[i])
+		// The body is read whole, for the analysis of its locals, and
+		// translated from a reader of it at its offset in the module.
+		at := t.in.Offset()
+		body := make([]byte, size)
+		if _, err := io.ReadFull(t.in, body); err != nil {
+			return err
+		}
+		outer := t.in
+		t.in = offset.NewReaderAt(bytes.NewReader(body), at)
+		err = t.readCodeForFunction(&t.functions[i], body, at)
+		read := t.in.Offset() - at
+		t.in = outer
 		if err != nil {
 			return err
+		}
+		if read != size {
+			return fmt.Errorf("function %d: its code ends %d bytes into its body of %d bytes", i, read, size)
 		}
 	}
 	return nil
 }
 
-func (t *translator) readCodeForFunction(fn *funcCompiler) error {
+func (t *translator) readCodeForFunction(fn *funcCompiler, raw []byte, at uint64) error {
 	body := &ast.BlockStmt{}
 	fn.translator = t
 	fn.decl.Body = body
@@ -45,6 +62,7 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 	// Parameters are predeclared locals.
 	vars := make([]ast.Expr, 0, numVars)
 	numLocals := len(fn.typ.params)
+	types := []byte(fn.typ.params)
 	for range numVars {
 		n, err := readLEB128(t.in)
 		if err != nil {
@@ -60,6 +78,7 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 			ids[i] = localVar(numLocals)
 			vars = append(vars, ids[i])
 			numLocals++
+			types = append(types, typ)
 		}
 		body.List = append(body.List, &ast.DeclStmt{
 			Decl: &ast.GenDecl{
@@ -68,6 +87,19 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 					&ast.ValueSpec{
 						Names: ids,
 						Type:  wasmType(typ).ident()}}}})
+	}
+	// The variables of the locals' webs (splitLocals).
+	if !*noopt {
+		decls, err := fn.splitLocals(raw[t.in.Offset()-at:], types)
+		if err != nil {
+			return err
+		}
+		for _, d := range decls {
+			fn.decl.Body.List = append(fn.decl.Body.List, d)
+			for _, id := range d.(*ast.DeclStmt).Decl.(*ast.GenDecl).Specs[0].(*ast.ValueSpec).Names {
+				vars = append(vars, id)
+			}
+		}
 	}
 	// Ensure local variables are used.
 	if len(vars) > 0 {
@@ -544,7 +576,7 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 			if err != nil {
 				return err
 			}
-			fn.pushPure(localVar(i)) // Pure because assigning locals flushes.
+			fn.pushPure(fn.local(i)) // Pure because assigning locals flushes.
 
 		case 0x21: // local.set
 			i, err := readLEB128(t.in)
@@ -552,7 +584,7 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 				return err
 			}
 			fn.emit(&ast.AssignStmt{
-				Lhs: []ast.Expr{localVar(i)},
+				Lhs: []ast.Expr{fn.local(i)},
 				Rhs: []ast.Expr{fn.pop()},
 				Tok: token.ASSIGN})
 
@@ -561,11 +593,12 @@ func (t *translator) readCodeForFunction(fn *funcCompiler) error {
 			if err != nil {
 				return err
 			}
+			id := fn.local(i)
 			fn.emit(&ast.AssignStmt{
-				Lhs: []ast.Expr{localVar(i)},
+				Lhs: []ast.Expr{id},
 				Rhs: []ast.Expr{fn.pop()},
 				Tok: token.ASSIGN})
-			fn.pushPure(localVar(i)) // Pure because assigning locals flushes.
+			fn.pushPure(id) // Pure because assigning locals flushes.
 
 		case 0x23: // global.get
 			e, mut, err := t.globalGet()

@@ -60,6 +60,8 @@ func (m *Module) Xsin(v0 float64) float64 {
 	var v1, v2 float64
 	var v3 int32
 	var v4 int64
+	var v0_1 float64
+	var v0_2 float64
 	if v0 == math.Float64frombits(0x0) {
 		return v0
 	}
@@ -80,14 +82,14 @@ func (m *Module) Xsin(v0 float64) float64 {
 				v1 = f64_canon(float64(v1 * math.Float64frombits(0x3fe0000000000000)))
 				goto l1
 			} else {
-				v0 = math.Float64frombits(0x3ff0000000000000)
+				v0_1 = math.Float64frombits(0x3ff0000000000000)
 			l2:
 				if v3 != 0 {
 					v3 = v3 - int32(1)
 					v2 = f64_canon(float64(v1 * v1))
-					v0 = f64_canon(float64(v0 * v1))
-					v1 = f64_canon(float64(v0 + v0))
-					v0 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) - float64(v2+v2)))
+					v0_2 = f64_canon(float64(v0_1 * v1))
+					v1 = f64_canon(float64(v0_2 + v0_2))
+					v0_1 = f64_canon(float64(math.Float64frombits(0x3ff0000000000000) - float64(v2+v2)))
 					goto l2
 				} else {
 					switch int32(v4)&int32(3) - int32(1) {
@@ -100,9 +102,9 @@ func (m *Module) Xsin(v0 float64) float64 {
 					case 0:
 					}
 				}
-				return v0
+				return v0_1
 			l5:
-				p2 = f64_neg(v0)
+				p2 = f64_neg(v0_1)
 			}
 			p1 = p2
 		}

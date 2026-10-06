@@ -43,7 +43,11 @@ const (
 // each parameter, result, and local variable, and 64 for the return
 // address, frame pointer, and spill space. Every translated value is at
 // most 8 bytes; the Go compiler can share slots between variables, so this
-// is an upper estimate of what the variables take, not a measurement.
+// is an upper estimate of what the variables take, not a measurement. The
+// variables of a local's webs past its first (isWebVar) are not counted:
+// they hold the values of the one local, which the estimate counts, so the
+// split leaves the estimate, and the depth at which recursion traps, as
+// the module's locals set them.
 func frameEstimate(fn *ast.FuncDecl) int64 {
 	n := int64(0)
 	count := func(fl *ast.FieldList) {
@@ -59,7 +63,11 @@ func frameEstimate(fn *ast.FuncDecl) int64 {
 	ast.Inspect(fn.Body, func(node ast.Node) bool {
 		switch s := node.(type) {
 		case *ast.ValueSpec:
-			n += int64(len(s.Names))
+			for _, id := range s.Names {
+				if !isWebVar(id.Name) {
+					n++
+				}
+			}
 		case *ast.AssignStmt:
 			if s.Tok == token.DEFINE {
 				n += int64(len(s.Lhs))

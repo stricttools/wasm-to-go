@@ -23,6 +23,11 @@ type funcCompiler struct {
 
 	provided bool
 	host     bool // an imported function, implemented by the host
+
+	// The variable of each local.get, local.set, and local.tee of the
+	// function, and the number of them translated (splitLocals).
+	localRefs []*ast.Ident
+	localRef  int
 }
 
 type entryKind int

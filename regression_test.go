@@ -10,6 +10,7 @@ import (
 
 	bce_test "github.com/stricttools/wasm-to-go/testdata/regression/bce"
 	dispatch_test "github.com/stricttools/wasm-to-go/testdata/regression/dispatch"
+	split_locals_test "github.com/stricttools/wasm-to-go/testdata/regression/split_locals"
 	memgrow_test "github.com/stricttools/wasm-to-go/testdata/regression/memgrow"
 	oob_trap_test "github.com/stricttools/wasm-to-go/testdata/regression/oob_trap"
 	oob_trap_imported_test "github.com/stricttools/wasm-to-go/testdata/regression/oob_trap_imported"
@@ -388,4 +389,55 @@ func testBCE(t *testing.T, m bceModule) {
 		t.Errorf("copy(65528) = %#x", got)
 	}
 	mustPanic("copy(65529)", func() { m.Xcopy(65529) })
+}
+
+// A local reused for unrelated values gets a variable per web
+// (splitLocals), and the functions compute what they did.
+func Test_regression_split_locals(t *testing.T) {
+	src, err := os.ReadFile("testdata/regression/split_locals/split_locals.go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !*noopt {
+		for _, tt := range []struct{ fn, decls string }{
+			{"XtwoSums", "var v2_1 int32"},
+			{"XtwoSums", "var v0_1 int32"},
+			{"Xloop", "var v2_1 int32"},
+			{"Xbranch", "var v2_1 float64"},
+		} {
+			if body := funcBody(src, tt.fn); !strings.Contains(body, tt.decls) {
+				t.Errorf("%s does not declare %s:\n%s", tt.fn, tt.decls, body)
+			}
+		}
+		if body := funcBody(src, "Xloop"); strings.Contains(body, "v1_1") || strings.Contains(body, "v0_1") {
+			t.Errorf("loop splits a local whose values meet at the loop:\n%s", body)
+		}
+	}
+	m := split_locals_test.New()
+	for _, tt := range []struct{ a, b, want int32 }{{1, 2, 26}, {-5, 7, 33}, {0, 0, 13}} {
+		if got := m.XtwoSums(tt.a, tt.b); got != tt.want {
+			t.Errorf("twoSums(%d, %d) = %d, want %d", tt.a, tt.b, got, tt.want)
+		}
+	}
+	for _, tt := range []struct{ n, want int32 }{{3, 1014}, {1, 1001}, {0, 1000}, {10, 1385}} {
+		if got := m.Xloop(tt.n); got != tt.want {
+			t.Errorf("loop(%d) = %d, want %d", tt.n, got, tt.want)
+		}
+	}
+	if got := m.Xbranch(1, 2.5); got != 6 {
+		t.Errorf("branch(1, 2.5) = %v, want 6", got)
+	}
+	if got := m.Xbranch(0, 2.5); got != 2.5 {
+		t.Errorf("branch(0, 2.5) = %v, want 2.5", got)
+	}
+}
+
+// The body of the translated function name in src.
+func funcBody(src []byte, name string) string {
+	_, body, _ := strings.Cut(string(src), "func (m *Module) "+name+"(")
+	if body == "" {
+		_, body, _ = strings.Cut(string(src), "func "+name+"(")
+	}
+	body, _, _ = strings.Cut(body, "\n}\n")
+	return body
 }

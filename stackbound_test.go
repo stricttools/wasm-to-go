@@ -3,6 +3,9 @@
 package main
 
 import (
+	"go/ast"
+	"go/parser"
+	"go/token"
 	"runtime"
 	"runtime/debug"
 	"testing"
@@ -68,6 +71,40 @@ func Test_regression_stack_bound(t *testing.T) {
 			}
 			// Give the grown stack back before the next call.
 			runtime.GC()
+		}
+	}
+}
+
+// The variables of a local's webs past its first (splitLocals) leave the
+// frame estimate, and so the depth at which recursion traps, as the
+// module's locals set it.
+func Test_frameEstimate_webs(t *testing.T) {
+	parse := func(src string) *ast.FuncDecl {
+		f, err := parser.ParseFile(token.NewFileSet(), "", "package p\n"+src, 0)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return f.Decls[0].(*ast.FuncDecl)
+	}
+	whole := parse(`func f(v0 int32) int32 {
+		var v1 int32
+		v1 = v0 + 1
+		v1 = v1 * 2
+		return v1
+	}`)
+	split := parse(`func f(v0 int32) int32 {
+		var v1 int32
+		var v1_1 int32
+		v1 = v0 + 1
+		v1_1 = v1 * 2
+		return v1_1
+	}`)
+	if a, b := frameEstimate(whole), frameEstimate(split); a != b {
+		t.Errorf("frameEstimate = %d with the local split, %d without", b, a)
+	}
+	for name, want := range map[string]bool{"v1_1": true, "v12_30": true, "v1": false, "v_1": false, "v1_": false, "t1_1": false, "v1_x": false} {
+		if got := isWebVar(name); got != want {
+			t.Errorf("isWebVar(%q) = %v, want %v", name, got, want)
 		}
 	}
 }

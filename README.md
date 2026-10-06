@@ -480,6 +480,17 @@ with the bound, from no dispatch at all to all of it.
 When linking with `wasm-ld`, `-Wl,--export-table` exports the table,
 so it is not closed; leave it out unless the host needs the table.
 
+### Locals
+
+A WebAssembly local that the code reuses for unrelated values (as a
+compiler reuses a register) becomes a Go variable per web: the
+definitions of the local that reach common uses, found by SSA construction
+on the function's control flow (see [splitlocals.go](splitlocals.go) and
+[internal/locals](internal/locals)). The web holding the local's value at
+entry keeps the local's variable, `v3`; the others are `v3_1`, `v3_2`, and so
+on. Each variable is then assigned only the values one group of uses reads.
+The [Go stack bound](#the-go-stack) counts the local once, as before.
+
 ### Caching the memory
 
 A function that reads the linear memory loads its slice into a local
