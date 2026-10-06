@@ -7,11 +7,11 @@ import (
 	"math"
 )
 
-func Xop5(m *instance.Module, v0, v1 int64) int64 {
-	return int64(math.Float64bits(f64_abs(math.Float64frombits(uint64(v0)))))
+func Xop29(m *instance.Module, v0, v1 int64) int64 {
+	return int64(uint32(int32(math.Float32bits(f32_copysign(math.Float32frombits(uint32(int32(v0))), math.Float32frombits(uint32(int32(v1))))))))
 }
 
 //go:nosplit
-func f64_abs(x float64) float64 {
-	return math.Float64frombits(math.Float64bits(x) &^ (1 << 63))
+func f32_copysign(x, y float32) float32 {
+	return math.Float32frombits(math.Float32bits(x)&^(1<<31) | math.Float32bits(y)&(1<<31))
 }

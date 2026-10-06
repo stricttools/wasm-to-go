@@ -140,4 +140,58 @@
   (func (export "op67") (param i64 i64) (result i64) (i64.extend_i32_u (i32.reinterpret_f32 (f32.add (f32.demote_f64 (f64.mul (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (f32.const 0)))))
   ;; f64.chain_promote_add
   (func (export "op68") (param i64 i64) (result i64) (i64.reinterpret_f64 (f64.add (f64.promote_f32 (f32.mul (f32.reinterpret_i32 (i32.wrap_i64 (local.get 0))) (f32.reinterpret_i32 (i32.wrap_i64 (local.get 1))))) (f64.const -1))))
+  ;; Deferred float locals (passes.DeferCanon): a float result kept in a
+  ;; local, then used where its NaN's bits show (neg, abs, copysign, a
+  ;; reinterpretation, a store, a call, a global, a return) or do not (a
+  ;; comparison, min, a conversion to integer, another operation).
+  (memory 1)
+  (global $g64 (mut f64) (f64.const 0))
+  (func $bits64 (param f64) (result i64) (i64.reinterpret_f64 (local.get 0)))
+  (func $sum64 (param f64 f64) (result f64) (local $t f64)
+    (local.set $t (f64.add (local.get 0) (local.get 1)))
+    (local.get $t))
+  ;; f64.local_add_neg
+  (func (export "op69") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.add (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (i64.reinterpret_f64 (f64.neg (local.get $t))))
+  ;; f64.local_add_abs
+  (func (export "op70") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.add (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (i64.reinterpret_f64 (f64.abs (local.get $t))))
+  ;; f64.local_add_copysign
+  (func (export "op71") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.add (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (i64.reinterpret_f64 (f64.copysign (local.get $t) (f64.reinterpret_i64 (local.get 1)))))
+  ;; f64.local_add_reinterpret
+  (func (export "op72") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.add (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (i64.reinterpret_f64 (local.get $t)))
+  ;; f64.local_add_store
+  (func (export "op73") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.add (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (f64.store (i32.const 8) (local.get $t)) (i64.load (i32.const 8)))
+  ;; f64.local_add_call
+  (func (export "op74") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.add (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (call $bits64 (local.get $t)))
+  ;; f64.local_add_global
+  (func (export "op75") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.add (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (global.set $g64 (local.get $t)) (i64.reinterpret_f64 (global.get $g64)))
+  ;; f64.local_add_return
+  (func (export "op76") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (i64.reinterpret_f64 (call $sum64 (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))))
+  ;; f64.local_mul_local_add
+  (func (export "op77") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.mul (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (local.set $u (f64.add (local.get $t) (f64.const -1))) (i64.reinterpret_f64 (local.get $u)))
+  ;; f64.local_add_lt
+  (func (export "op78") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.add (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (i64.extend_i32_u (f64.lt (local.get $t) (f64.const 0))))
+  ;; f64.local_add_ne_self
+  (func (export "op79") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.add (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (i64.extend_i32_u (f64.ne (local.get $t) (local.get $t))))
+  ;; f64.local_add_min
+  (func (export "op80") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.add (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (i64.reinterpret_f64 (f64.min (local.get $t) (f64.const 0))))
+  ;; f64.local_add_trunc_sat
+  (func (export "op81") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.add (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (i64.trunc_sat_f64_s (local.get $t)))
+  ;; f64.local_add_sqrt_neg
+  (func (export "op82") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.sqrt (f64.add (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1))))) (i64.reinterpret_f64 (f64.neg (local.get $t))))
+  ;; f64.local_select_neg
+  (func (export "op83") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.add (f64.reinterpret_i64 (local.get 0)) (f64.reinterpret_i64 (local.get 1)))) (local.set $u (select (local.get $t) (f64.reinterpret_i64 (local.get 0)) (i64.lt_s (local.get 1) (i64.const 0)))) (i64.reinterpret_f64 (f64.neg (local.get $u))))
+  ;; f64.local_loop_neg
+  (func (export "op84") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $t (f64.reinterpret_i64 (local.get 0))) (local.set $n (i32.const 3)) (loop $l (local.set $t (f64.add (local.get $t) (f64.reinterpret_i64 (local.get 1)))) (local.set $n (i32.sub (local.get $n) (i32.const 1))) (br_if $l (local.get $n))) (i64.reinterpret_f64 (f64.neg (local.get $t))))
+  ;; f32.local_add_neg
+  (func (export "op85") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $x (f32.add (f32.reinterpret_i32 (i32.wrap_i64 (local.get 0))) (f32.reinterpret_i32 (i32.wrap_i64 (local.get 1))))) (i64.extend_i32_u (i32.reinterpret_f32 (f32.neg (local.get $x)))))
+  ;; f32.local_add_copysign
+  (func (export "op86") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $x (f32.add (f32.reinterpret_i32 (i32.wrap_i64 (local.get 0))) (f32.reinterpret_i32 (i32.wrap_i64 (local.get 1))))) (i64.extend_i32_u (i32.reinterpret_f32 (f32.copysign (local.get $x) (f32.reinterpret_i32 (i32.wrap_i64 (local.get 1)))))))
+  ;; f32.local_add_store
+  (func (export "op87") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $x (f32.add (f32.reinterpret_i32 (i32.wrap_i64 (local.get 0))) (f32.reinterpret_i32 (i32.wrap_i64 (local.get 1))))) (f32.store (i32.const 16) (local.get $x)) (i64.load32_u (i32.const 16)))
+  ;; f32.local_add_reinterpret
+  (func (export "op88") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $x (f32.add (f32.reinterpret_i32 (i32.wrap_i64 (local.get 0))) (f32.reinterpret_i32 (i32.wrap_i64 (local.get 1))))) (i64.extend_i32_u (i32.reinterpret_f32 (local.get $x))))
+  ;; f32.local_add_promote_neg
+  (func (export "op89") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $x (f32.add (f32.reinterpret_i32 (i32.wrap_i64 (local.get 0))) (f32.reinterpret_i32 (i32.wrap_i64 (local.get 1))))) (i64.reinterpret_f64 (f64.neg (f64.promote_f32 (local.get $x)))))
+  ;; f32.local_mul_local_add_neg
+  (func (export "op90") (param i64 i64) (result i64) (local $t f64) (local $u f64) (local $x f32) (local $y f32) (local $n i32) (local.set $x (f32.mul (f32.reinterpret_i32 (i32.wrap_i64 (local.get 0))) (f32.reinterpret_i32 (i32.wrap_i64 (local.get 1))))) (local.set $y (f32.add (local.get $x) (f32.const -1))) (i64.extend_i32_u (i32.reinterpret_f32 (f32.neg (local.get $y)))))
 )

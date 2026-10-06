@@ -4,4 +4,8 @@ package instance
 
 // Module is the state of an instance of the module: the output package's Module holds one.
 type Module struct {
+	Memory     []byte
+	MemBacking []byte
+	MaxMem     int64
+	G0         float64
 }

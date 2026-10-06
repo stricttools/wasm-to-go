@@ -7,11 +7,29 @@ import (
 	"math"
 )
 
-func Xop6(m *instance.Module, v0, v1 int64) int64 {
-	return int64(math.Float64bits(f64_neg(math.Float64frombits(uint64(v0)))))
+func Xop30(m *instance.Module, v0, v1 int64) int64 {
+	t0 := i32_trunc_f32_s(math.Float32frombits(uint32(int32(v0))))
+	return int64(uint32(t0))
+}
+
+// Returns x, an integer of magnitude below 2^51 (the caller has checked
+// it), as an int64. Adding 1.5 * 2^52 is exact for such an x, and leaves it
+// in the significand's low bits, offset by the constant's own bits: two
+// instructions beside the addition, fewer than a shift by the exponent.
+//
+//go:nosplit
+func trunc_small(x float64) int64 {
+	return int64(math.Float64bits(x+0x1.8p52)) - 0x4338000000000000
 }
 
 //go:nosplit
-func f64_neg(x float64) float64 {
-	return math.Float64frombits(math.Float64bits(x) ^ 1<<63)
+func i32_trunc_f32_s(f float32) int32 {
+	x := math.Trunc(float64(f))
+	switch {
+	case f != f:
+		panic("invalid conversion to integer")
+	case x < math.MinInt32 || x > math.MaxInt32:
+		panic("integer overflow")
+	}
+	return int32(trunc_small(x))
 }

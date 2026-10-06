@@ -7,35 +7,14 @@ import (
 	"math"
 )
 
-func Xop34(m *instance.Module, v0, v1 int64) int64 {
-	t0 := i64_trunc_f32_s(math.Float32frombits(uint32(int32(v0))))
-	return t0
-}
-
-// Returns the truncation of f toward zero as a 64-bit two's complement
-// integer, for every f whose magnitude is below 2^64 (the caller has
-// checked it). The significand, its implicit one restored, is aligned to
-// the top of a uint64, where it stands for the magnitude scaled into
-// [2^63, 2^64), and shifted right by 63 less the exponent; a magnitude below
-// one (zero and the subnormals included) shifts by 64 or more, which Go
-// defines to yield zero. It is how strictgo's reproducible.Trunc computes.
-//
-//go:nosplit
-func trunc_u64(f float64) uint64 {
-	b := math.Float64bits(f)
-	u := (b<<11 | 1<<63) >> (1086 - b>>52&0x7ff)
-	sign := uint64(int64(b) >> 63)
-	return u ^ sign - sign
+func Xop58(m *instance.Module, v0, v1 int64) int64 {
+	return int64(math.Float64bits(f64_min(float64(math.Float64frombits(uint64(v0))+math.Float64frombits(uint64(v1))), math.Float64frombits(0x0))))
 }
 
 //go:nosplit
-func i64_trunc_f32_s(f float32) int64 {
-	x := math.Trunc(float64(f))
-	switch {
-	case f != f:
-		panic("invalid conversion to integer")
-	case x < math.MinInt64 || x >= math.MaxInt64:
-		panic("integer overflow")
+func f64_min(x, y float64) float64 {
+	if m := min(x, y); m == m {
+		return m
 	}
-	return int64(trunc_u64(float64(f)))
+	return math.Float64frombits(0x7ff8000000000000)
 }

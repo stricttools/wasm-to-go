@@ -2,11 +2,18 @@
 
 package functions23
 
-import (
-	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
-	"math"
-)
+import "math"
 
-func Xop46(m *instance.Module, v0, v1 int64) int64 {
-	return int64(uint32(int32(math.Float32bits(float32(int32(v0))))))
+func Fn70(v0, v1 float64) float64 {
+	var v2 float64
+	v2 = f64_canon(float64(v0 + v1))
+	return v2
+}
+
+//go:nosplit
+func f64_canon(x float64) float64 {
+	if x != x {
+		return math.Float64frombits(0x7ff8000000000000)
+	}
+	return x
 }

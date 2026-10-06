@@ -3,16 +3,49 @@
 package wasm2go
 
 import (
+	"encoding/binary"
 	"math"
 	"math/bits"
 )
 
 type Module struct {
+	memory     []byte
+	memBacking []byte
+	maxMem     int64
+	g0         float64
 }
 
 func New() *Module {
 	m := new(Module)
+	m.maxMem = 65536
+	m.memBacking = make([]byte, 65536)
+	m.memory = m.memBacking
+	m.g0 = math.Float64frombits(0x0)
 	return m
+}
+
+// MemoryMax is the most bytes the module's memory can grow to
+// through its own memory.grow: its declared maximum.
+func (m *Module) MemoryMax() int64 { return 4294967296 }
+
+// UseMemory moves the module's memory to the start of buf's backing array,
+// where it keeps its size and contents and grows in place, without
+// copying or allocating, as far as buf's capacity allows (past it, it moves
+// to a new array in the Go heap). buf's bytes past the memory's size must
+// be zero, and nothing else may write to them. UseMemory returns false,
+// and leaves the memory where it is, when buf's capacity is less than the
+// memory's size (a nil buf included). Slices of the memory taken before
+// the call are stale after it, as after the memory grows.
+func (m *Module) UseMemory(buf []byte) bool {
+	n := len(m.memory)
+	if cap(buf) < n {
+		return false
+	}
+	buf = buf[:cap(buf)]
+	copy(buf, m.memory)
+	m.memBacking = buf
+	m.memory = buf[:n:n]
+	return true
 }
 func (m *Module) Xop0(v0, v1 int64) int64 {
 	return int64(math.Float64bits(f64_canon(math.RoundToEven(math.Float64frombits(uint64(v0))))))
@@ -229,6 +262,205 @@ func (m *Module) Xop67(v0, v1 int64) int64 {
 func (m *Module) Xop68(v0, v1 int64) int64 {
 	return int64(math.Float64bits(f64_canon(float64(float64(float32(math.Float32frombits(uint32(int32(v0)))*math.Float32frombits(uint32(int32(v1))))) + math.Float64frombits(0xbff0000000000000)))))
 }
+func fn69(v0 float64) int64 {
+	return int64(math.Float64bits(v0))
+}
+func fn70(v0, v1 float64) float64 {
+	var v2 float64
+	v2 = f64_canon(float64(v0 + v1))
+	return v2
+}
+func (m *Module) Xop69(v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	return int64(math.Float64bits(f64_neg(v2)))
+}
+func (m *Module) Xop70(v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	return int64(math.Float64bits(f64_abs(v2)))
+}
+func (m *Module) Xop71(v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	return int64(math.Float64bits(math.Copysign(v2, math.Float64frombits(uint64(v1)))))
+}
+func (m *Module) Xop72(v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	return int64(math.Float64bits(v2))
+}
+func (m *Module) Xop73(v0, v1 int64) int64 {
+	mem := m.memory
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	binary.LittleEndian.PutUint64((*[8]byte)(mem[uint64(uint32(i32(8))) : uint64(uint32(i32(8)))+8])[:], math.Float64bits(v2))
+	t0 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(8))) : uint64(uint32(i32(8)))+8])[:]))
+	return t0
+}
+func (m *Module) Xop74(v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	t0 := fn69(v2)
+	return t0
+}
+func (m *Module) Xop75(v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	m.g0 = v2
+	t0 := m.g0
+	return int64(math.Float64bits(t0))
+}
+func (m *Module) Xop76(v0, v1 int64) int64 {
+	var _, _ float64
+	var _, _ float32
+	var _ int32
+	t0 := fn70(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)))
+	return int64(math.Float64bits(t0))
+}
+func (m *Module) Xop77(v0, v1 int64) int64 {
+	var v2, v3 float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) * math.Float64frombits(uint64(v1))))
+	v3 = f64_canon(float64(v2 + math.Float64frombits(0xbff0000000000000)))
+	return int64(math.Float64bits(v3))
+}
+func (m *Module) Xop78(v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	var p0 int32
+	if v2 < math.Float64frombits(0x0) {
+		p0 = 1
+	}
+	return int64(uint32(p0))
+}
+func (m *Module) Xop79(v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	var p0 int32
+	if v2 != v2 {
+		p0 = 1
+	}
+	return int64(uint32(p0))
+}
+func (m *Module) Xop80(v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	return int64(math.Float64bits(f64_min(v2, math.Float64frombits(0x0))))
+}
+func (m *Module) Xop81(v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	return i64_trunc_sat_f64_s(v2)
+}
+func (m *Module) Xop82(v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(math.Sqrt(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))))
+	return int64(math.Float64bits(f64_neg(v2)))
+}
+func (m *Module) Xop83(v0, v1 int64) int64 {
+	var v2, v3 float64
+	var _, _ float32
+	var _ int32
+	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	p0 := math.Float64frombits(uint64(v0))
+	if v1 < int64(0) {
+		p0 = v2
+	}
+	v3 = p0
+	return int64(math.Float64bits(f64_neg(v3)))
+}
+func (m *Module) Xop84(v0, v1 int64) int64 {
+	var v2, _ float64
+	var _, _ float32
+	var v6 int32
+	v2 = math.Float64frombits(uint64(v0))
+	v6 = int32(3)
+l0:
+	v2 = f64_canon(float64(v2 + math.Float64frombits(uint64(v1))))
+	v6 = v6 - int32(1)
+	if v6 != 0 {
+		goto l0
+	}
+	return int64(math.Float64bits(f64_neg(v2)))
+}
+func (m *Module) Xop85(v0, v1 int64) int64 {
+	var _, _ float64
+	var v4, _ float32
+	var _ int32
+	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1)))))
+	return int64(uint32(int32(math.Float32bits(f32_neg(v4)))))
+}
+func (m *Module) Xop86(v0, v1 int64) int64 {
+	var _, _ float64
+	var v4, _ float32
+	var _ int32
+	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1)))))
+	return int64(uint32(int32(math.Float32bits(f32_copysign(v4, math.Float32frombits(uint32(int32(v1))))))))
+}
+func (m *Module) Xop87(v0, v1 int64) int64 {
+	mem := m.memory
+	var _, _ float64
+	var v4, _ float32
+	var _ int32
+	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1)))))
+	binary.LittleEndian.PutUint32((*[4]byte)(mem[uint64(uint32(i32(16))) : uint64(uint32(i32(16)))+4])[:], math.Float32bits(v4))
+	t0 := int64(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(i32(16))) : uint64(uint32(i32(16)))+4])[:]))
+	return t0
+}
+func (m *Module) Xop88(v0, v1 int64) int64 {
+	var _, _ float64
+	var v4, _ float32
+	var _ int32
+	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1)))))
+	return int64(uint32(int32(math.Float32bits(v4))))
+}
+func (m *Module) Xop89(v0, v1 int64) int64 {
+	var _, _ float64
+	var v4, _ float32
+	var _ int32
+	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1)))))
+	return int64(math.Float64bits(f64_neg(f64_canon(float64(v4)))))
+}
+func (m *Module) Xop90(v0, v1 int64) int64 {
+	var _, _ float64
+	var v4, v5 float32
+	var _ int32
+	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) * math.Float32frombits(uint32(int32(v1)))))
+	v5 = f32_canon(float32(v4 + math.Float32frombits(0xbf800000)))
+	return int64(uint32(int32(math.Float32bits(f32_neg(v5)))))
+}
+
+//go:nosplit
+func i32(x int32) int32 { return x }
+
+//go:nosplit
+func i64(x int64) int64 { return x }
 
 //go:nosplit
 func f32_abs(x float32) float32 {
@@ -542,4 +774,57 @@ func i64_trunc_sat_f32_u(f float32) int64 {
 		return -1
 	}
 	return int64(trunc_u64(float64(f)))
+}
+
+//go:nosplit
+func load32[T uint32 | uint64](mem []byte, addr T) uint32 {
+	return binary.LittleEndian.Uint32(mem[addr:])
+}
+
+//go:nosplit
+func store32[T uint32 | uint64](mem []byte, addr T, val uint32) {
+	binary.LittleEndian.PutUint32(mem[addr:], val)
+}
+
+//go:nosplit
+func load64[T uint32 | uint64](mem []byte, addr T) uint64 {
+	return binary.LittleEndian.Uint64(mem[addr:])
+}
+
+//go:nosplit
+func store64[T uint32 | uint64](mem []byte, addr T, val uint64) {
+	binary.LittleEndian.PutUint64(mem[addr:], val)
+}
+
+// Grows the memory *mem by delta pages, up to max, and returns its old size
+// in pages, or -1. *back is the memory's backing array: *mem is its prefix,
+// with its capacity cut to its length, so no slice of the memory reaches
+// past its end, and back's bytes past the memory's end are zero. Growth
+// within back is in place: no copy, no allocation. Past it, the memory moves
+// to a new backing array of twice the size, at least what the growth needs,
+// at most max pages.
+func memory_grow(mem, back *[]byte, delta, max int64) int64 {
+	buf := *mem
+	len := len(buf)
+	old := len >> 16
+	if delta == 0 {
+		return int64(old)
+	}
+	max = int64(min(uint64(max), math.MaxInt>>16))
+	new, c := bits.Add64(uint64(old), uint64(delta), 0)
+	if c != 0 || new > uint64(max) {
+		return -1
+	}
+	size := int(new << 16)
+	if size > cap(*back) {
+		n := int(min(uint64(cap(*back))>>15, uint64(max)) << 16)
+		if n < size {
+			n = size
+		}
+		b := make([]byte, n)
+		copy(b, buf)
+		*back = b
+	}
+	*mem = (*back)[:size:size]
+	return int64(old)
 }

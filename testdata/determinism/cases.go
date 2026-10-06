@@ -34,6 +34,28 @@ var ops = []struct{ name, operands string }{
 	{"f64.chain_add_abs", "f64 f64"}, {"f64.chain_add_copysign", "f64 f64"}, {"f64.chain_add_floor", "f64 f64"},
 	{"f32.chain_mul_add", "f32 f32"}, {"f32.chain_mul_sub", "f32 f32"}, {"f32.chain_add_neg", "f32 f32"},
 	{"f32.chain_add_abs", "f32 f32"}, {"f32.chain_demote_add", "f64 f64"}, {"f64.chain_promote_add", "f32 f32"},
+	{"f64.local_add_neg", "f64 f64"},
+	{"f64.local_add_abs", "f64 f64"},
+	{"f64.local_add_copysign", "f64 f64"},
+	{"f64.local_add_reinterpret", "f64 f64"},
+	{"f64.local_add_store", "f64 f64"},
+	{"f64.local_add_call", "f64 f64"},
+	{"f64.local_add_global", "f64 f64"},
+	{"f64.local_add_return", "f64 f64"},
+	{"f64.local_mul_local_add", "f64 f64"},
+	{"f64.local_add_lt", "f64 f64"},
+	{"f64.local_add_ne_self", "f64 f64"},
+	{"f64.local_add_min", "f64 f64"},
+	{"f64.local_add_trunc_sat", "f64 f64"},
+	{"f64.local_add_sqrt_neg", "f64 f64"},
+	{"f64.local_select_neg", "f64 f64"},
+	{"f64.local_loop_neg", "f64 f64"},
+	{"f32.local_add_neg", "f32 f32"},
+	{"f32.local_add_copysign", "f32 f32"},
+	{"f32.local_add_store", "f32 f32"},
+	{"f32.local_add_reinterpret", "f32 f32"},
+	{"f32.local_add_promote_neg", "f32 f32"},
+	{"f32.local_mul_local_add_neg", "f32 f32"},
 }
 
 // Unary operands: signed zeros, halves and rounding ties, integer and
@@ -45,8 +67,8 @@ var f64s = []uint64{
 	0x3fdfffffffffffff, 0xbfeccccccccccccd, // 0.49999999999999994, -0.9
 	0x3ff8000000000000, 0x4004000000000000, 0xc004000000000000, // 1.5, 2.5, -2.5
 	0x4330000000000001, 0xc330000000000001, // 2^52+1, -(2^52+1)
-	0x432fffffffffffff, // 2^52-0.5
-	0xbff0000000000000, // -1
+	0x432fffffffffffff,                                         // 2^52-0.5
+	0xbff0000000000000,                                         // -1
 	0x41dfffffffe00000, 0x41dfffffffc00000, 0x41e0000000000000, // 2^31-0.5, 2^31-1, 2^31
 	0xc1e0000000100000, 0xc1e0000000000000, 0xc1e0000000200000, // -2^31-0.5, -2^31, -2^31-1
 	0x41efffffffe00000, 0x41efffffffffffff, 0x41f0000000000000, // 2^32-1, 2^32-epsilon, 2^32

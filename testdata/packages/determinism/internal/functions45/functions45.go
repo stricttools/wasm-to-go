@@ -5,16 +5,32 @@ package functions45
 import (
 	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
 	"math"
+	"math/bits"
 )
 
-func Xop24(m *instance.Module, v0, v1 int64) int64 {
-	return int64(uint32(int32(math.Float32bits(f32_canon(float32(math.Float32frombits(uint32(int32(v0))) - math.Float32frombits(uint32(int32(v1)))))))))
+func Xop48(m *instance.Module, v0, v1 int64) int64 {
+	return int64(uint32(int32(math.Float32bits(f32_convert_i64_s(v0)))))
 }
 
 //go:nosplit
-func f32_canon(x float32) float32 {
-	if x != x {
-		return math.Float32frombits(0x7fc00000)
+func f32_convert_i64_u(x int64) float32 {
+	u := uint64(x)
+	if u < 1<<53 {
+		return float32(float64(int64(u)))
 	}
-	return x
+	s := uint(bits.Len64(u) - 53)
+	y := u >> s
+	if u&(1<<s-1) != 0 {
+		y |= 1
+	}
+	return float32(float64(int64(y)) * math.Float64frombits(uint64(1023+s)<<52))
+}
+
+//go:nosplit
+func f32_convert_i64_s(x int64) float32 {
+	if x < 0 {
+
+		return -f32_convert_i64_u(-x)
+	}
+	return f32_convert_i64_u(x)
 }

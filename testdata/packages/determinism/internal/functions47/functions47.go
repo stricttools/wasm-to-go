@@ -7,6 +7,6 @@ import (
 	"math"
 )
 
-func Xop22(m *instance.Module, v0, v1 int64) int64 {
-	return int64(math.Float64bits(math.Copysign(math.Float64frombits(uint64(v0)), math.Float64frombits(uint64(v1)))))
+func Xop46(m *instance.Module, v0, v1 int64) int64 {
+	return int64(uint32(int32(math.Float32bits(float32(int32(v0))))))
 }
