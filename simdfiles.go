@@ -22,23 +22,44 @@ type simdFile struct {
 	expanded   bool // memory accesses written with unsafe (passes.Expand), as -unsafe's expanded file
 }
 
-// The SIMD files of a package file: the portable code for every build
-// (with -unsafe, as an expanded and a generic file).
+// The Go versions whose simd/archsimd the archsimd targets are written for
+// and were tested with: the package has no compatibility promise, and its
+// API changed between Go 1.26 and 1.27.
+const simdGoVersions = "go1.27 && !go1.28"
+
+// The builds that call simd/archsimd: GOEXPERIMENT=simd on amd64 with AVX2
+// (GOAMD64=v3, since archsimd's 128-bit operations need AVX), arm64, and
+// wasm.
+const simdArchBuilds = "goexperiment.simd && (amd64.v3 || arm64 || wasm)"
+
+// simdUntested names, in the build error of a build that calls
+// simd/archsimd with a Go version the translation was not tested with, the
+// ways out: build with Go 1.27, or without GOEXPERIMENT=simd, which uses
+// the portable SIMD code.
+const simdUntested = "wasm2go_simd_needs_go1_27_or_GOEXPERIMENT_simd_off"
+
+// The SIMD files of a package file: one per archsimd target, the portable
+// code for every other build (with -unsafe, as an expanded and a generic
+// file), and a file that fails the build of an untested Go version.
 func simdFiles() []simdFile {
-	if *unsafe {
-		return []simdFile{
-			{"_simd", passes.ExpandPlatforms, passes.SIMDPortable, true},
-			{"_simd_generic", "!(" + passes.ExpandPlatforms + ")", passes.SIMDPortable, false},
-		}
+	files := []simdFile{
+		{"_simd_amd64", "goexperiment.simd && amd64.v3 && " + simdGoVersions, passes.SIMDAMD64, *unsafe},
+		{"_simd_arm64", "goexperiment.simd && arm64 && " + simdGoVersions, passes.SIMDARM64, *unsafe},
+		{"_simd_wasm", "goexperiment.simd && wasm && " + simdGoVersions, passes.SIMDWasm, *unsafe},
 	}
-	return []simdFile{{"_simd", "", passes.SIMDPortable, false}}
+	portable := "!(" + simdArchBuilds + ")"
+	if *unsafe {
+		files = append(files,
+			simdFile{"_simd", portable + " && (" + passes.ExpandPlatforms + ")", passes.SIMDPortable, true},
+			simdFile{"_simd_generic", portable + " && !(" + passes.ExpandPlatforms + ")", passes.SIMDPortable, false})
+	} else {
+		files = append(files, simdFile{"_simd", portable, passes.SIMDPortable, false})
+	}
+	return files
 }
 
 // The constraint expr combined with the user's -tags.
 func withTags(expr string) (string, error) {
-	if expr == "" {
-		return *tags, nil
-	}
 	e, err := constraint.Parse("//go:build " + expr)
 	if err != nil {
 		return "", err
@@ -116,7 +137,24 @@ func (t *translator) printSIMDFiles(open func(rel string) (io.Writer, error), re
 			return err
 		}
 	}
-	return nil
+	tags, err := withTags(simdArchBuilds + " && !(" + simdGoVersions + ")")
+	if err != nil {
+		return err
+	}
+	w, err := open(simdFileName(rel, name, "_simd_untested"))
+	if err != nil {
+		return err
+	}
+	untested := &ast.GenDecl{
+		Tok: token.VAR,
+		Doc: &ast.CommentGroup{List: []*ast.Comment{
+			{Text: "// This build calls simd/archsimd (GOEXPERIMENT=simd), whose API has no compatibility"},
+			{Text: "// promise, with a Go version the translation's SIMD code was not written for and tested"},
+			{Text: "// with (" + simdGoVersions + "): build with Go 1.27, or without GOEXPERIMENT=simd."},
+		}},
+		Specs: []ast.Spec{&ast.ValueSpec{Names: []*ast.Ident{ast.NewIdent("_")}, Values: []ast.Expr{ast.NewIdent(simdUntested)}}},
+	}
+	return t.printDecls(w, fset, pkg, []ast.Decl{untested}, tags, true, nil)
 }
 
 // codeFuncs returns the FuncDecls of decls that are the module's code.

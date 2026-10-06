@@ -213,12 +213,35 @@ compiled into the module, and imports no math functions.
 ## SIMD
 
 A module built with `-msimd128` has its `v128` values in Go variables of the
-type `vec128`, an alias of a struct of four `uint32` lanes, and its SIMD
-instructions written inline, as scalar code over the lanes, in a file of its
-own beside the output file (`output_simd.go`, so the output needs `-o`; with
-`-unsafe`, an expanded and a generic file, as the other code is): each
-function that uses `v128` values is in that file, and the module's other code
-in the output file. The code is written operation by operation, never as calls
+type `vec128`, which each build defines (an alias), and its SIMD instructions
+written for the build's target, in files of their own beside the output file
+(so the output needs `-o`): each function that uses `v128` values is in each
+of the files below, and the module's other code only in the output file.
+
+| file | build constraint | code |
+|---|---|---|
+| `output_simd_amd64.go` | `goexperiment.simd && amd64.v3 && go1.27 && !go1.28` | calls of [`simd/archsimd`](https://pkg.go.dev/simd/archsimd)'s methods |
+| `output_simd_arm64.go` | `goexperiment.simd && arm64 && go1.27 && !go1.28` | the same |
+| `output_simd_wasm.go` | `goexperiment.simd && wasm && go1.27 && !go1.28` | the same |
+| `output_simd.go` | every other build | inline scalar code over four `uint32` lanes |
+| `output_simd_untested.go` | `goexperiment.simd` on amd64.v3, arm64, or wasm with another Go version | a build error |
+
+`simd/archsimd` exists only with `GOEXPERIMENT=simd` and has no compatibility
+promise (its API changed between Go 1.26 and 1.27), so its code is written for
+the Go version it was tested with, 1.27, and a build calling it with another
+fails, naming the way out (`undefined: wasm2go_simd_needs_go1_27_or_GOEXPERIMENT_simd_off`):
+build with Go 1.27, or without `GOEXPERIMENT=simd`, which uses the portable code.
+On amd64 the archsimd code needs AVX (archsimd's 128-bit operations are AVX
+instructions) and uses nothing past AVX2, so it is for `GOAMD64=v3` builds;
+an amd64 build below v3 uses the portable code.
+With `-unsafe`, the portable file is an expanded and a generic file, as the
+other code is; the archsimd targets are among the expanded file's platforms.
+
+The archsimd code calls the method of each operation where the target has one
+that computes what WebAssembly defines, and writes the others lane by lane
+(through `GetElem` and `SetElem`): amd64's float-to-integer conversions do not
+saturate, for example, and its 64-bit multiplication is AVX-512.
+The portable code is written inline, operation by operation, never as calls
 of helper functions taking vectors, which the Go compiler would not inline
 (measured 3.4 times as slow as the module built without SIMD).
 
@@ -226,13 +249,27 @@ of helper functions taking vectors, which the Go compiler would not inline
 globals, as their 16 bytes in memory order, `[16]byte`.
 
 Float lanes follow the [deterministic profile](#determinism), canonicalized
-without branches (a NaN lane's bits are masked). Vector variables are
-deferred like float ones (`DeferCanon` in [internal/passes](internal/passes)):
-a vector of raw `f32x4` (or `f64x2`) results is canonicalized where a use reads
-its lanes in another way. Relaxed SIMD is refused.
+without branches: the portable code masks a NaN lane's bits, and the archsimd
+code blends the canonical NaN into the lanes that compare unordered.
+WebAssembly's `f32x4.min` and `max` order -0 below +0; amd64's `MINPS` and
+`MAXPS` return their second operand for two zeros (or a NaN), and the Go
+compiler takes `a.Min(b)` and `b.Min(a)` for one instruction
+([bugs/go-archsimd-min-commutative.md](bugs/go-archsimd-min-commutative.md)),
+so where the lanes compare equal the code takes the or (min) or the and (max)
+of their bits. Vector variables are deferred like float ones (`DeferCanon` in
+[internal/passes](internal/passes)): a vector of raw `f32x4` (or `f64x2`)
+results is canonicalized where a use reads its lanes in another way.
 
-The SIMD spec tests run in `internal/spectest/simd`, and the determinism tests
-include the float SIMD operations and vector locals.
+Measured on onnxruntime's basic-pitch build (inference, medians of
+interleaved runs on linux/amd64; outputs identical to the build without SIMD):
+781 ms without SIMD, 254 ms with SIMD on amd64 with archsimd, and 1,909 ms with
+SIMD in the portable code.
+
+The SIMD spec tests (`internal/spectest/simd`) run on the portable code, and
+[scripts/cross-targets.sh](scripts/cross-targets.sh) runs them with the
+determinism tests, which include the float SIMD operations and vector locals,
+on each archsimd target (`amd64-simd`, `arm64-simd` under qemu-user,
+`wasip1-simd`, and `js-simd`, with Go 1.27).
 
 ## Traps
 

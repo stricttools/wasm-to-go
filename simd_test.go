@@ -6,6 +6,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"os"
+	"os/exec"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -49,7 +51,8 @@ type simdAPIModule interface {
 
 // v128 values cross the Module's exports, imports, and globals as their
 // bytes, and pass through a closed table's indirect call, select, a
-// block's parameter and result, and a loop.
+// block's parameter and result, and a loop, on whichever SIMD code the
+// build selects (the portable code, or simd/archsimd's).
 func Test_regression_simd_api(t *testing.T) {
 	for name, newModule := range map[string]func(h *simdHost) (simdAPIModule, []byte){
 		"one package": func(h *simdHost) (simdAPIModule, []byte) {
@@ -136,6 +139,29 @@ func Test_simd_needs_output_files(t *testing.T) {
 	}
 	if err != nil {
 		t.Fatalf("with output files: %v", err)
+	}
+}
+
+// A build calling simd/archsimd with a Go version the SIMD code was not
+// written for fails, naming the ways out, which work: Go 1.27, or no
+// GOEXPERIMENT=simd.
+func Test_simd_untested_go_version(t *testing.T) {
+	build := func(env ...string) (string, error) {
+		cmd := exec.Command("go", "build", "-o", os.DevNull, "./testdata/regression/simd_api")
+		cmd.Env = append(os.Environ(), append([]string{"GOOS=linux", "GOARCH=amd64", "GOAMD64=v3", "GOFLAGS=", "GOTOOLCHAIN=local", "CGO_ENABLED=0"}, env...)...)
+		out, err := cmd.CombinedOutput()
+		return string(out), err
+	}
+	out, err := build("GOEXPERIMENT=simd")
+	if strings.HasPrefix(runtime.Version(), "go1.27") {
+		if err != nil {
+			t.Fatalf("GOEXPERIMENT=simd with %s: %v\n%s", runtime.Version(), err, out)
+		}
+	} else if err == nil || !strings.Contains(out, simdUntested) {
+		t.Fatalf("GOEXPERIMENT=simd with %s: got %v\n%s\nwant the build to fail naming %s", runtime.Version(), err, out, simdUntested)
+	}
+	if out, err := build("GOEXPERIMENT=nosimd"); err != nil {
+		t.Fatalf("without GOEXPERIMENT=simd: %v\n%s", err, out)
 	}
 }
 

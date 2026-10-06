@@ -6,7 +6,11 @@
 # where the CPU has fused multiply-add), amd64 with GODEBUG=cpu.sse41=off,
 # amd64 with GODEBUG=cpu.fma=off (math.FMA, which libc-gen's fma calls, then
 # computes in software), 386 natively, every other Linux GOARCH under
-# qemu-user, wasip1/wasm under wasmtime, and js/wasm under Node.js.
+# qemu-user, wasip1/wasm under wasmtime, and js/wasm under Node.js; and the
+# SIMD spec tests with the determinism tests on the targets whose SIMD code
+# calls simd/archsimd (GOEXPERIMENT=simd with Go 1.27: amd64 at GOAMD64=v3,
+# arm64 under qemu-user, wasip1 and js), which every other target builds as
+# portable code.
 #
 # Usage: scripts/cross-targets.sh [-all] [target...]
 #
@@ -14,6 +18,8 @@
 #   target    labels to run (default: all of them), from:
 #             amd64 amd64-v3 amd64-nosse41 amd64-nofma 386 arm arm64 loong64
 #             mips mipsle mips64 mips64le ppc64 ppc64le riscv64 s390x wasip1 js
+#             amd64-simd arm64-simd wasip1-simd js-simd (these need Go 1.27
+#             as the go on PATH, and are not run by default otherwise)
 #
 # Environment:
 #   QEMU_DIR  directory holding qemu-<arch>-static (or qemu-<arch>) binaries;
@@ -40,8 +46,15 @@ if [ "${1:-}" = -all ]; then
 	shift
 fi
 targets=("$@")
+simdgo=
+case $(go version) in
+*" go1.27"*) simdgo=1 ;;
+esac
 if [ ${#targets[@]} -eq 0 ]; then
 	targets=(amd64 amd64-v3 amd64-nosse41 amd64-nofma 386 arm arm64 loong64 mips mipsle mips64 mips64le ppc64 ppc64le riscv64 s390x wasip1 js)
+	if [ -n "$simdgo" ]; then
+		targets+=(amd64-simd arm64-simd wasip1-simd js-simd)
+	fi
 fi
 
 export CGO_ENABLED=0 GOTOOLCHAIN=local GOFLAGS= GODEBUG=
@@ -108,9 +121,23 @@ for t in "${targets[@]}"; do
 	s390x) exec=$(qemu s390x) || exit 1 ;;
 	wasip1) goos=wasip1 goarch=wasm exec="$wasmdir/go_wasip1_wasm_exec" ;;
 	js) goos=js goarch=wasm exec="$wasmdir/go_js_wasm_exec" ;;
+	amd64-simd) goarch=amd64 env=(GOEXPERIMENT=simd GOAMD64=v3) ;;
+	arm64-simd) goarch=arm64 env=(GOEXPERIMENT=simd) exec=$(qemu aarch64) || exit 1 ;;
+	wasip1-simd) goos=wasip1 goarch=wasm env=(GOEXPERIMENT=simd) exec="$wasmdir/go_wasip1_wasm_exec" ;;
+	js-simd) goos=js goarch=wasm env=(GOEXPERIMENT=simd) exec="$wasmdir/go_js_wasm_exec" ;;
 	*)
 		echo "cross-targets.sh: unknown target $t" >&2
 		exit 2
+		;;
+	esac
+	tpkgs=("${pkgs[@]}")
+	case $t in
+	*-simd)
+		if [ -z "$simdgo" ]; then
+			echo "cross-targets.sh: $t needs Go 1.27 as the go on PATH ($(go version)): its SIMD code calls simd/archsimd, written for Go 1.27" >&2
+			exit 2
+		fi
+		tpkgs=(./internal/spectest/simd/...)
 		;;
 	esac
 	args=(-p "$p" -count=1)
@@ -120,7 +147,7 @@ for t in "${targets[@]}"; do
 	echo "== $t"
 	log=$logdir/$t.txt
 	clean=()
-	if [ "$t" = js ]; then
+	if [ "$t" = js ] || [ "$t" = js-simd ]; then
 		# Go's js/wasm runtime refuses to start when its arguments and
 		# environment exceed a small limit, so the tests get only what go needs.
 		clean=(-i HOME="$HOME" GOCACHE="$(go env GOCACHE)" GOPATH="$(go env GOPATH)"
@@ -131,7 +158,7 @@ for t in "${targets[@]}"; do
 	{
 		run -run '^Test_(determinism|regression)_' . ./libc-gen/test_math/
 		determinism=$?
-		run "${pkgs[@]}"
+		run "${tpkgs[@]}"
 		spec=$?
 	} >"$log" 2>&1
 	if [ $determinism -eq 0 ] && [ $spec -eq 0 ]; then
