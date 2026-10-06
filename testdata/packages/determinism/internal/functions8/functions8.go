@@ -11,10 +11,10 @@ func Xop83(m *instance.Module, v0, v1 int64) int64 {
 	var v2, v3 float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
 	p0 := math.Float64frombits(uint64(v0))
 	if v1 < int64(0) {
-		p0 = v2
+		p0 = f64_canon(v2)
 	}
 	v3 = p0
 	return int64(math.Float64bits(f64_neg(v3)))

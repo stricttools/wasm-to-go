@@ -11,8 +11,8 @@ func Xop70(m *instance.Module, v0, v1 int64) int64 {
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
-	return int64(math.Float64bits(f64_abs(v2)))
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
+	return int64(math.Float64bits(f64_abs(f64_canon(v2))))
 }
 
 //go:nosplit

@@ -245,9 +245,10 @@ func storeBytes(ptr func() ast.Expr, v ast.Expr, size int) ast.Stmt {
 }
 
 // Reports whether a store's value may be evaluated once per byte: a
-// variable, a constant, or conversions and operations on them, and
-// math.Float32bits and math.Float64bits of those, none of which reads
-// memory or can panic.
+// variable, a constant, or conversions and operations on them, the
+// canonicalizing helpers of those, and math's reinterpretations of them
+// (math.Float32bits and the like), none of which reads memory or can
+// panic.
 func pureValue(e ast.Expr) bool {
 	switch e := e.(type) {
 	case *ast.Ident, *ast.BasicLit:
@@ -269,7 +270,7 @@ func pureValue(e ast.Expr) bool {
 		switch f := e.Fun.(type) {
 		case *ast.Ident:
 			_, ok := intRanges[f.Name]
-			return ok || f.Name == "i32" || f.Name == "i64"
+			return ok || f.Name == "i32" || f.Name == "i64" || canonHelpers[f.Name] != ""
 		case *ast.SelectorExpr:
 			pkg, ok := f.X.(*ast.Ident)
 			if !ok || pkg.Name != "math" {

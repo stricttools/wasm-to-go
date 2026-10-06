@@ -11,18 +11,10 @@ func Xop78(m *instance.Module, v0, v1 int64) int64 {
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
 	var p0 int32
 	if v2 < math.Float64frombits(0x0) {
 		p0 = 1
 	}
 	return int64(uint32(p0))
-}
-
-//go:nosplit
-func f64_canon(x float64) float64 {
-	if x != x {
-		return math.Float64frombits(0x7ff8000000000000)
-	}
-	return x
 }

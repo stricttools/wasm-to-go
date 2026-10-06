@@ -37,10 +37,10 @@ func (m *Module) Xbranch(v0 int32, v1 float64) float64 {
 	var v2 float64
 	var v2_1 float64
 	if v0 != 0 {
-		v2 = f64_canon(float64(v1 * math.Float64frombits(0x4000000000000000)))
+		v2 = float64(v1 * math.Float64frombits(0x4000000000000000))
 		v1 = f64_canon(float64(v2 + math.Float64frombits(0x3ff0000000000000)))
 	} else {
-		v2_1 = f64_canon(float64(v1 - math.Float64frombits(0x4008000000000000)))
+		v2_1 = float64(v1 - math.Float64frombits(0x4008000000000000))
 		_ = v2_1
 	}
 	return v1

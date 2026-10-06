@@ -267,44 +267,44 @@ func fn69(v0 float64) int64 {
 }
 func fn70(v0, v1 float64) float64 {
 	var v2 float64
-	v2 = f64_canon(float64(v0 + v1))
-	return v2
+	v2 = float64(v0 + v1)
+	return f64_canon(v2)
 }
 func (m *Module) Xop69(v0, v1 int64) int64 {
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
-	return int64(math.Float64bits(f64_neg(v2)))
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
+	return int64(math.Float64bits(f64_neg(f64_canon(v2))))
 }
 func (m *Module) Xop70(v0, v1 int64) int64 {
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
-	return int64(math.Float64bits(f64_abs(v2)))
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
+	return int64(math.Float64bits(f64_abs(f64_canon(v2))))
 }
 func (m *Module) Xop71(v0, v1 int64) int64 {
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
-	return int64(math.Float64bits(math.Copysign(v2, math.Float64frombits(uint64(v1)))))
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
+	return int64(math.Float64bits(math.Copysign(f64_canon(v2), math.Float64frombits(uint64(v1)))))
 }
 func (m *Module) Xop72(v0, v1 int64) int64 {
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
-	return int64(math.Float64bits(v2))
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
+	return int64(math.Float64bits(f64_canon(v2)))
 }
 func (m *Module) Xop73(v0, v1 int64) int64 {
 	mem := m.memory
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
-	binary.LittleEndian.PutUint64((*[8]byte)(mem[uint64(uint32(i32(8))) : uint64(uint32(i32(8)))+8])[:], math.Float64bits(v2))
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
+	binary.LittleEndian.PutUint64((*[8]byte)(mem[uint64(uint32(i32(8))) : uint64(uint32(i32(8)))+8])[:], math.Float64bits(f64_canon(v2)))
 	t0 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(8))) : uint64(uint32(i32(8)))+8])[:]))
 	return t0
 }
@@ -312,16 +312,16 @@ func (m *Module) Xop74(v0, v1 int64) int64 {
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
-	t0 := fn69(v2)
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
+	t0 := fn69(f64_canon(v2))
 	return t0
 }
 func (m *Module) Xop75(v0, v1 int64) int64 {
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
-	m.g0 = v2
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
+	m.g0 = f64_canon(v2)
 	t0 := m.g0
 	return int64(math.Float64bits(t0))
 }
@@ -336,15 +336,15 @@ func (m *Module) Xop77(v0, v1 int64) int64 {
 	var v2, v3 float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) * math.Float64frombits(uint64(v1))))
-	v3 = f64_canon(float64(v2 + math.Float64frombits(0xbff0000000000000)))
-	return int64(math.Float64bits(v3))
+	v2 = float64(math.Float64frombits(uint64(v0)) * math.Float64frombits(uint64(v1)))
+	v3 = float64(v2 + math.Float64frombits(0xbff0000000000000))
+	return int64(math.Float64bits(f64_canon(v3)))
 }
 func (m *Module) Xop78(v0, v1 int64) int64 {
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
 	var p0 int32
 	if v2 < math.Float64frombits(0x0) {
 		p0 = 1
@@ -355,7 +355,7 @@ func (m *Module) Xop79(v0, v1 int64) int64 {
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
 	var p0 int32
 	if v2 != v2 {
 		p0 = 1
@@ -366,31 +366,31 @@ func (m *Module) Xop80(v0, v1 int64) int64 {
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
 	return int64(math.Float64bits(f64_min(v2, math.Float64frombits(0x0))))
 }
 func (m *Module) Xop81(v0, v1 int64) int64 {
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
 	return i64_trunc_sat_f64_s(v2)
 }
 func (m *Module) Xop82(v0, v1 int64) int64 {
 	var v2, _ float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(math.Sqrt(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))))
-	return int64(math.Float64bits(f64_neg(v2)))
+	v2 = math.Sqrt(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	return int64(math.Float64bits(f64_neg(f64_canon(v2))))
 }
 func (m *Module) Xop83(v0, v1 int64) int64 {
 	var v2, v3 float64
 	var _, _ float32
 	var _ int32
-	v2 = f64_canon(float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1))))
+	v2 = float64(math.Float64frombits(uint64(v0)) + math.Float64frombits(uint64(v1)))
 	p0 := math.Float64frombits(uint64(v0))
 	if v1 < int64(0) {
-		p0 = v2
+		p0 = f64_canon(v2)
 	}
 	v3 = p0
 	return int64(math.Float64bits(f64_neg(v3)))
@@ -413,23 +413,23 @@ func (m *Module) Xop85(v0, v1 int64) int64 {
 	var _, _ float64
 	var v4, _ float32
 	var _ int32
-	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1)))))
-	return int64(uint32(int32(math.Float32bits(f32_neg(v4)))))
+	v4 = float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1))))
+	return int64(uint32(int32(math.Float32bits(f32_neg(f32_canon(v4))))))
 }
 func (m *Module) Xop86(v0, v1 int64) int64 {
 	var _, _ float64
 	var v4, _ float32
 	var _ int32
-	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1)))))
-	return int64(uint32(int32(math.Float32bits(f32_copysign(v4, math.Float32frombits(uint32(int32(v1))))))))
+	v4 = float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1))))
+	return int64(uint32(int32(math.Float32bits(f32_copysign(f32_canon(v4), math.Float32frombits(uint32(int32(v1))))))))
 }
 func (m *Module) Xop87(v0, v1 int64) int64 {
 	mem := m.memory
 	var _, _ float64
 	var v4, _ float32
 	var _ int32
-	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1)))))
-	binary.LittleEndian.PutUint32((*[4]byte)(mem[uint64(uint32(i32(16))) : uint64(uint32(i32(16)))+4])[:], math.Float32bits(v4))
+	v4 = float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1))))
+	binary.LittleEndian.PutUint32((*[4]byte)(mem[uint64(uint32(i32(16))) : uint64(uint32(i32(16)))+4])[:], math.Float32bits(f32_canon(v4)))
 	t0 := int64(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(i32(16))) : uint64(uint32(i32(16)))+4])[:]))
 	return t0
 }
@@ -437,23 +437,23 @@ func (m *Module) Xop88(v0, v1 int64) int64 {
 	var _, _ float64
 	var v4, _ float32
 	var _ int32
-	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1)))))
-	return int64(uint32(int32(math.Float32bits(v4))))
+	v4 = float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1))))
+	return int64(uint32(int32(math.Float32bits(f32_canon(v4)))))
 }
 func (m *Module) Xop89(v0, v1 int64) int64 {
 	var _, _ float64
 	var v4, _ float32
 	var _ int32
-	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1)))))
+	v4 = float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1))))
 	return int64(math.Float64bits(f64_neg(f64_canon(float64(v4)))))
 }
 func (m *Module) Xop90(v0, v1 int64) int64 {
 	var _, _ float64
 	var v4, v5 float32
 	var _ int32
-	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) * math.Float32frombits(uint32(int32(v1)))))
-	v5 = f32_canon(float32(v4 + math.Float32frombits(0xbf800000)))
-	return int64(uint32(int32(math.Float32bits(f32_neg(v5)))))
+	v4 = float32(math.Float32frombits(uint32(int32(v0))) * math.Float32frombits(uint32(int32(v1))))
+	v5 = float32(v4 + math.Float32frombits(0xbf800000))
+	return int64(uint32(int32(math.Float32bits(f32_neg(f32_canon(v5))))))
 }
 
 //go:nosplit

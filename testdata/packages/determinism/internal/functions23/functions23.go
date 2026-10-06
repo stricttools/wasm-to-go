@@ -6,8 +6,8 @@ import "math"
 
 func Fn70(v0, v1 float64) float64 {
 	var v2 float64
-	v2 = f64_canon(float64(v0 + v1))
-	return v2
+	v2 = float64(v0 + v1)
+	return f64_canon(v2)
 }
 
 //go:nosplit

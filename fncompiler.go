@@ -382,12 +382,11 @@ func (fn *funcCompiler) binOpF32(op token.Token) {
 // deterministic profile requires of every float operation other than
 // abs, neg, copysign, and the reinterpretations.
 func (fn *funcCompiler) pushCanon(typ string, expr ast.Expr) {
-	name := canonHelper[typ]
+	name := passes.CanonHelper[typ]
 	fn.helpers.add(name)
 	fn.pushPure(&ast.CallExpr{Fun: newID(name), Args: []ast.Expr{expr}})
 }
 
-var canonHelper = map[string]string{"float32": "f32_canon", "float64": "f64_canon"}
 
 // Pops the operand of an operation whose result does not depend on which
 // NaN an operand is: an operation that canonicalizes its own result, a
@@ -502,7 +501,7 @@ func (fn *funcCompiler) float64frombits() {
 func (fn *funcCompiler) uniHelper(name string) {
 	fn.helpers.add(name)
 	var x ast.Expr
-	if nanBlindHelpers.has(name) {
+	if passes.NaNBlind(name) {
 		x = fn.popNaNBlind()
 	} else {
 		x = fn.pop()
@@ -517,7 +516,7 @@ func (fn *funcCompiler) uniHelper(name string) {
 func (fn *funcCompiler) binHelper(name string) {
 	fn.helpers.add(name)
 	var x, y ast.Expr
-	if nanBlindHelpers.has(name) {
+	if passes.NaNBlind(name) {
 		y = fn.popNaNBlind()
 		x = fn.popNaNBlind()
 	} else {
@@ -657,6 +656,7 @@ func (fn *funcCompiler) cleanup() {
 		passes.InlineGotoEnd(fn.decl)
 		passes.InlineGotoReturn(fn.decl)
 		passes.UnnestSimple(fn.decl)
+		passes.DeferCanon(fn.decl)
 		if passes.RemoveReceiver(fn.decl) {
 			fn.call.(*ast.ParenExpr).X = fn.decl.Name
 		}

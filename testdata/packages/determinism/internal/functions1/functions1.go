@@ -11,9 +11,9 @@ func Xop90(m *instance.Module, v0, v1 int64) int64 {
 	var _, _ float64
 	var v4, v5 float32
 	var _ int32
-	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) * math.Float32frombits(uint32(int32(v1)))))
-	v5 = f32_canon(float32(v4 + math.Float32frombits(0xbf800000)))
-	return int64(uint32(int32(math.Float32bits(f32_neg(v5)))))
+	v4 = float32(math.Float32frombits(uint32(int32(v0))) * math.Float32frombits(uint32(int32(v1))))
+	v5 = float32(v4 + math.Float32frombits(0xbf800000))
+	return int64(uint32(int32(math.Float32bits(f32_neg(f32_canon(v5))))))
 }
 
 //go:nosplit

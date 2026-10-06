@@ -124,7 +124,12 @@ There is no option to turn this off.
   that returns the canonical NaN, for `min` and `max`); where its result is
   consumed directly by another such operation, a comparison, or a conversion to
   integer, the inner wrapper is left out, since it could only change NaN bits
-  the consumer ignores.
+  the consumer ignores. A float variable assigned only such results, constants
+  that are not other NaNs, `min` and `max`, integers converted to floats, or
+  other such variables holds the raw results instead, and is canonicalized
+  where it is used other than by such a consumer or another such variable
+  (a store, a reinterpretation, a call, a return, a global, `neg`, `abs`,
+  `copysign`): see `DeferCanon` in [internal/passes](internal/passes).
 - **Bitwise operations.** `abs`, `neg`, and `copysign` are integer bit operations,
   and loads, stores, and reinterpretations move bits, so they keep a NaN's bits
   (Go compiles `-x` and `math.Abs` to instructions that are arithmetic on legacy MIPS).
@@ -156,6 +161,7 @@ How this is tested:
 - The spec tests check the deterministic profile: where the spec allows a canonical
   or an arithmetic NaN, the result must be the positive canonical NaN.
 - `Test_determinism_expected` calls every float instruction, and chains of them,
+  directly and through float locals whose value then reaches each kind of use,
   with every kind of operand, as raw bits, and requires the results in
   [testdata/determinism/expected.txt](testdata/determinism/expected.txt) bit for bit;
   they are identical to wasmtime's with NaN canonicalization, trap messages included
@@ -186,6 +192,9 @@ in microbenchmarks, a polynomial evaluated one step per local variable was 68% s
 the same polynomial as one expression 20% slower, a float32 dot product 14% slower,
 and a loop of `sqrt`, `min`, `max`, `floor`, and `promote` 40% faster
 (the `min` and `max` helpers replaced Go's builtins).
+Deferring the canonicalization of float variables to their uses took an
+inference of onnxruntime's basic-pitch build from 1,098 to 781 ms
+(the same results, bit for bit).
 
 Compiling `libc-gen`'s math functions into the module instead of calling Go's `math`
 package changed their speed on amd64 as follows (nanoseconds per call in a loop,

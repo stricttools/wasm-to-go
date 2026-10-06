@@ -50,18 +50,6 @@ var pureHelpers = set[string]{
 	"i64_trunc_sat_f64_s": {}, "i64_trunc_sat_f64_u": {},
 }
 
-// These helpers give the same result for every NaN operand,
-// so their operands need not be canonical (see popNaNBlind).
-var nanBlindHelpers = set[string]{
-	"f32_min": {}, "f32_max": {}, "f64_min": {}, "f64_max": {},
-	"i32_trunc_f32_s": {}, "i32_trunc_f32_u": {}, "i32_trunc_f64_s": {}, "i32_trunc_f64_u": {},
-	"i64_trunc_f32_s": {}, "i64_trunc_f32_u": {}, "i64_trunc_f64_s": {}, "i64_trunc_f64_u": {},
-	"i32_trunc_sat_f32_s": {}, "i32_trunc_sat_f32_u": {},
-	"i32_trunc_sat_f64_s": {}, "i32_trunc_sat_f64_u": {},
-	"i64_trunc_sat_f32_s": {}, "i64_trunc_sat_f32_u": {},
-	"i64_trunc_sat_f64_s": {}, "i64_trunc_sat_f64_u": {},
-}
-
 // Standard library packages used by generated code.
 var stdlib = map[string]string{
 	"list":    "container/list",

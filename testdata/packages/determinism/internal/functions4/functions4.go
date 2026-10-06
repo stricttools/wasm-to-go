@@ -13,8 +13,8 @@ func Xop87(m *instance.Module, v0, v1 int64) int64 {
 	var _, _ float64
 	var v4, _ float32
 	var _ int32
-	v4 = f32_canon(float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1)))))
-	binary.LittleEndian.PutUint32((*[4]byte)(mem[uint64(uint32(i32(16))) : uint64(uint32(i32(16)))+4])[:], math.Float32bits(v4))
+	v4 = float32(math.Float32frombits(uint32(int32(v0))) + math.Float32frombits(uint32(int32(v1))))
+	binary.LittleEndian.PutUint32((*[4]byte)(mem[uint64(uint32(i32(16))) : uint64(uint32(i32(16)))+4])[:], math.Float32bits(f32_canon(v4)))
 	t0 := int64(binary.LittleEndian.Uint32((*[4]byte)(mem[uint64(uint32(i32(16))) : uint64(uint32(i32(16)))+4])[:]))
 	return t0
 }
