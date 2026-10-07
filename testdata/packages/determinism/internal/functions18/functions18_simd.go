@@ -27,13 +27,17 @@ func Xop138(m *instance.Module, v0, v1 int64) int64 {
 	t1 := vec128{uint32((t0)), uint32((t0)), uint32((t0)), uint32((t0))}
 	t2 := int32(v1)
 	t3 := vec128{t1.L0, uint32((t2)), t1.L2, t1.L3}
-	t4 := vec128f64{float64(t3.L0), float64(t3.L1)}
-	v2 = t4
-	t5 := v2
-	t6 := int64((uint64(uint32(math.Float64bits(t5.D0))) | uint64(uint32((math.Float64bits(t5.D0))>>32))<<32))
-	t7 := v2
-	t8 := int64((uint64(uint32(math.Float64bits(t7.D1))) | uint64(uint32((math.Float64bits(t7.D1))>>32))<<32))
-	return t6 + i64_rotl(t8, int64(17))
+	t4 := int32(v0) ^ int32(-0x80000000)
+	t5 := vec128{t3.L0, t3.L1, uint32((t4)), t3.L3}
+	t6 := int32(v1) ^ int32(-0x80000000)
+	t7 := vec128{t5.L0, t5.L1, t5.L2, uint32((t6))}
+	t8 := vec128f64{float64(t7.L0), float64(t7.L1)}
+	v2 = t8
+	t9 := v2
+	t10 := int64((uint64(uint32(math.Float64bits(t9.D0))) | uint64(uint32((math.Float64bits(t9.D0))>>32))<<32))
+	t11 := v2
+	t12 := int64((uint64(uint32(math.Float64bits(t11.D1))) | uint64(uint32((math.Float64bits(t11.D1))>>32))<<32))
+	return t10 + i64_rotl(t12, int64(17))
 }
 
 //go:nosplit

@@ -7,6 +7,7 @@ package functions20
 import (
 	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
 	"math"
+	"math/bits"
 	"simd/archsimd"
 )
 
@@ -18,12 +19,27 @@ func Xop136(m *instance.Module, v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(uint32((t0)))
 	t2 := int32(v1)
 	t3 := t1.SetElem(1, uint32((t2)))
-	t4 := vec128{}.SetElem(0, math.Float32bits(float32(t3.GetElem(0)))).SetElem(1, math.Float32bits(float32(t3.GetElem(1)))).SetElem(2, math.Float32bits(float32(t3.GetElem(2)))).SetElem(3, math.Float32bits(float32(t3.GetElem(3))))
-	v2 = t4
-	t5 := v2
-	t6 := int32(t5.GetElem(0))
-	t7 := int64(uint32(t6))
-	t8 := v2
-	t9 := int32(t8.GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t4 := int32(v0) ^ int32(-0x80000000)
+	t5 := t3.SetElem(2, uint32((t4)))
+	t6 := int32(v1) ^ int32(-0x80000000)
+	t7 := t5.SetElem(3, uint32((t6)))
+	t8 := vec128{}.SetElem(0, math.Float32bits(float32(t7.GetElem(0)))).SetElem(1, math.Float32bits(float32(t7.GetElem(1)))).SetElem(2, math.Float32bits(float32(t7.GetElem(2)))).SetElem(3, math.Float32bits(float32(t7.GetElem(3))))
+	v2 = t8
+	t9 := v2
+	t10 := int32(t9.GetElem(0))
+	t11 := int64(uint32(t10))
+	t12 := v2
+	t13 := int32(t12.GetElem(1))
+	t14 := t11 | int64(uint32(t13))<<32
+	t15 := v2
+	t16 := int32(t15.GetElem(2))
+	t17 := int64(uint32(t16))
+	t18 := v2
+	t19 := int32(t18.GetElem(3))
+	return t14 + i64_rotl(t17|int64(uint32(t19))<<32, int64(17))
+}
+
+//go:nosplit
+func i64_rotl(x, y int64) int64 {
+	return int64(bits.RotateLeft64(uint64(x), int(y)))
 }

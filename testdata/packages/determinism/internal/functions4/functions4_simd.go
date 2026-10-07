@@ -28,21 +28,29 @@ func Xop152(m *instance.Module, v0, v1 int64) int64 {
 	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128f32{(t4), (t4), (t4), (t4)}
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
-	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
-	v3 = t8
-	t9 := v3
-	t10 := vec128f64{float64(t9.F0), float64(t9.F1)}
-	t11 := vec128f64{math.Float64frombits(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t10.D0))))) ^ (1 << 63)), math.Float64frombits(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t10.D1))))) ^ (1 << 63))}
-	v2 = t11
-	t12 := v2
-	t13 := int64((uint64(uint32(math.Float64bits(t12.D0))) | uint64(uint32((math.Float64bits(t12.D0))>>32))<<32))
-	t14 := v2
-	t15 := int64((uint64(uint32(math.Float64bits(t14.D1))) | uint64(uint32((math.Float64bits(t14.D1))>>32))<<32))
-	return t13 + i64_rotl(t15, int64(17))
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := vec128f32{t3.F0, t3.F1, (t4), t3.F3}
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := vec128f32{t5.F0, t5.F1, t5.F2, (t6)}
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := vec128f32{(t8), (t8), (t8), (t8)}
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := vec128f32{t9.F0, (t10), t9.F2, t9.F3}
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := vec128f32{t11.F0, t11.F1, (t12), t11.F3}
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := vec128f32{t13.F0, t13.F1, t13.F2, (t14)}
+	t16 := vec128f32{float32(t7.F0 + t15.F0), float32(t7.F1 + t15.F1), float32(t7.F2 + t15.F2), float32(t7.F3 + t15.F3)}
+	v3 = t16
+	t17 := v3
+	t18 := vec128f64{float64(t17.F0), float64(t17.F1)}
+	t19 := vec128f64{math.Float64frombits(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t18.D0))))) ^ (1 << 63)), math.Float64frombits(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t18.D1))))) ^ (1 << 63))}
+	v2 = t19
+	t20 := v2
+	t21 := int64((uint64(uint32(math.Float64bits(t20.D0))) | uint64(uint32((math.Float64bits(t20.D0))>>32))<<32))
+	t22 := v2
+	t23 := int64((uint64(uint32(math.Float64bits(t22.D1))) | uint64(uint32((math.Float64bits(t22.D1))>>32))<<32))
+	return t21 + i64_rotl(t23, int64(17))
 }
 
 //go:nosplit

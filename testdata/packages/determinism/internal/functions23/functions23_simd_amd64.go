@@ -7,6 +7,7 @@ package functions23
 import (
 	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
 	"math"
+	"math/bits"
 	"simd/archsimd"
 )
 
@@ -25,5 +26,16 @@ func Xop133(m *instance.Module, v0, v1 int64) int64 {
 	t7 := int64(uint32(t6))
 	t8 := v2
 	t9 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t8.BitsToFloat32().NotEqual(t8.BitsToFloat32()), t8)).GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t10 := t7 | int64(uint32(t9))<<32
+	t11 := v2
+	t12 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t11.BitsToFloat32().NotEqual(t11.BitsToFloat32()), t11)).GetElem(2))
+	t13 := int64(uint32(t12))
+	t14 := v2
+	t15 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t14.BitsToFloat32().NotEqual(t14.BitsToFloat32()), t14)).GetElem(3))
+	return t10 + i64_rotl(t13|int64(uint32(t15))<<32, int64(17))
+}
+
+//go:nosplit
+func i64_rotl(x, y int64) int64 {
+	return int64(bits.RotateLeft64(uint64(x), int(y)))
 }

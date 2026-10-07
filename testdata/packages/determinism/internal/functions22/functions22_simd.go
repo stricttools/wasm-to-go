@@ -27,13 +27,17 @@ func Xop134(m *instance.Module, v0, v1 int64) int64 {
 	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
-	t4 := vec128f64{float64(t3.F0), float64(t3.F1)}
-	v2 = t4
-	t5 := v2
-	t6 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t5.D0))))))>>32))<<32))
-	t7 := v2
-	t8 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t7.D1))))))>>32))<<32))
-	return t6 + i64_rotl(t8, int64(17))
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := vec128f32{t3.F0, t3.F1, (t4), t3.F3}
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := vec128f32{t5.F0, t5.F1, t5.F2, (t6)}
+	t8 := vec128f64{float64(t7.F0), float64(t7.F1)}
+	v2 = t8
+	t9 := v2
+	t10 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t9.D0))))))>>32))<<32))
+	t11 := v2
+	t12 := int64((uint64(uint32(math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t11.D1))))))) | uint64(uint32((math.Float64bits((math.Float64frombits(lane_canon64(math.Float64bits(t11.D1))))))>>32))<<32))
+	return t10 + i64_rotl(t12, int64(17))
 }
 
 //go:nosplit

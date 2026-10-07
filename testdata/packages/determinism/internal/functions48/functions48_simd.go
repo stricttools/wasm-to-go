@@ -7,6 +7,7 @@ package functions48
 import (
 	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
 	"math"
+	"math/bits"
 )
 
 type vec128 = struct {
@@ -26,14 +27,29 @@ func Xop108(m *instance.Module, v0, v1 int64) int64 {
 	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
-	t4 := vec128f32{float32(math.Trunc(float64(t3.F0))), float32(math.Trunc(float64(t3.F1))), float32(math.Trunc(float64(t3.F2))), float32(math.Trunc(float64(t3.F3)))}
-	v2 = t4
-	t5 := v2
-	t6 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t5.F0))))))
-	t7 := int64(uint32(t6))
-	t8 := v2
-	t9 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t8.F1))))))
-	return t7 | int64(uint32(t9))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := vec128f32{t3.F0, t3.F1, (t4), t3.F3}
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := vec128f32{t5.F0, t5.F1, t5.F2, (t6)}
+	t8 := vec128f32{float32(math.Trunc(float64(t7.F0))), float32(math.Trunc(float64(t7.F1))), float32(math.Trunc(float64(t7.F2))), float32(math.Trunc(float64(t7.F3)))}
+	v2 = t8
+	t9 := v2
+	t10 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))))
+	t11 := int64(uint32(t10))
+	t12 := v2
+	t13 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t12.F1))))))
+	t14 := t11 | int64(uint32(t13))<<32
+	t15 := v2
+	t16 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t15.F2))))))
+	t17 := int64(uint32(t16))
+	t18 := v2
+	t19 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t18.F3))))))
+	return t14 + i64_rotl(t17|int64(uint32(t19))<<32, int64(17))
+}
+
+//go:nosplit
+func i64_rotl(x, y int64) int64 {
+	return int64(bits.RotateLeft64(uint64(x), int(y)))
 }
 
 // The bits of a float32 lane, with a NaN made the positive canonical NaN,

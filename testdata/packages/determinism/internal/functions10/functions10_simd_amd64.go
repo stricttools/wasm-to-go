@@ -8,6 +8,7 @@ import (
 	"encoding/binary"
 	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
 	"math"
+	"math/bits"
 	"simd/archsimd"
 )
 
@@ -21,18 +22,32 @@ func Xop146(m *instance.Module, v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
 	q16 = (*[16]byte)(mem[uint64(uint32(int32(32))) : uint64(uint32(int32(32)))+16])
-	(archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).ReshapeToUint8s().StoreArray(q16)
-	t10 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(32))) : uint64(uint32(i32(32)))+8])[:]))
-	return t10
+	(archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).ReshapeToUint8s().StoreArray(q16)
+	t18 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(32))) : uint64(uint32(i32(32)))+8])[:]))
+	t19 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(40))) : uint64(uint32(i32(40)))+8])[:]))
+	return t18 + i64_rotl(t19, int64(17))
 }
 
 //go:nosplit
 func i32(x int32) int32 { return x }
+
+//go:nosplit
+func i64_rotl(x, y int64) int64 {
+	return int64(bits.RotateLeft64(uint64(x), int(y)))
+}

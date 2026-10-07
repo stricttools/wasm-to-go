@@ -7,6 +7,7 @@ package functions7
 import (
 	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
 	"math"
+	"math/bits"
 )
 
 type vec128 = struct {
@@ -26,25 +27,48 @@ func Xop149(m *instance.Module, v0, v1 int64) int64 {
 	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128f32{(t4), (t4), (t4), (t4)}
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
-	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
-	v3 = t8
-	t9 := v3
-	t10 := math.Float32frombits(uint32(int32(v1)))
-	t11 := vec128f32{(t10), (t10), (t10), (t10)}
-	t12 := math.Float32frombits(uint32(int32(v0)))
-	t13 := vec128f32{t11.F0, (t12), t11.F2, t11.F3}
-	t14 := vec128f32{lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0)))), t13.F0), lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1)))), t13.F1), lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2)))), t13.F2), lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3)))), t13.F3)}
-	v2 = t14
-	t15 := v2
-	t16 := int32(math.Float32bits(t15.F0))
-	t17 := int64(uint32(t16))
-	t18 := v2
-	t19 := int32(math.Float32bits(t18.F1))
-	return t17 | int64(uint32(t19))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := vec128f32{t3.F0, t3.F1, (t4), t3.F3}
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := vec128f32{t5.F0, t5.F1, t5.F2, (t6)}
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := vec128f32{(t8), (t8), (t8), (t8)}
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := vec128f32{t9.F0, (t10), t9.F2, t9.F3}
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := vec128f32{t11.F0, t11.F1, (t12), t11.F3}
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := vec128f32{t13.F0, t13.F1, t13.F2, (t14)}
+	t16 := vec128f32{float32(t7.F0 + t15.F0), float32(t7.F1 + t15.F1), float32(t7.F2 + t15.F2), float32(t7.F3 + t15.F3)}
+	v3 = t16
+	t17 := v3
+	t18 := math.Float32frombits(uint32(int32(v1)))
+	t19 := vec128f32{(t18), (t18), (t18), (t18)}
+	t20 := math.Float32frombits(uint32(int32(v0)))
+	t21 := vec128f32{t19.F0, (t20), t19.F2, t19.F3}
+	t22 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t23 := vec128f32{t21.F0, t21.F1, (t22), t21.F3}
+	t24 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t25 := vec128f32{t23.F0, t23.F1, t23.F2, (t24)}
+	t26 := vec128f32{lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t17.F0)))), t25.F0), lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t17.F1)))), t25.F1), lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t17.F2)))), t25.F2), lane_pminf32((math.Float32frombits(lane_canon32(math.Float32bits(t17.F3)))), t25.F3)}
+	v2 = t26
+	t27 := v2
+	t28 := int32(math.Float32bits(t27.F0))
+	t29 := int64(uint32(t28))
+	t30 := v2
+	t31 := int32(math.Float32bits(t30.F1))
+	t32 := t29 | int64(uint32(t31))<<32
+	t33 := v2
+	t34 := int32(math.Float32bits(t33.F2))
+	t35 := int64(uint32(t34))
+	t36 := v2
+	t37 := int32(math.Float32bits(t36.F3))
+	return t32 + i64_rotl(t35|int64(uint32(t37))<<32, int64(17))
+}
+
+//go:nosplit
+func i64_rotl(x, y int64) int64 {
+	return int64(bits.RotateLeft64(uint64(x), int(y)))
 }
 
 // The bits of a float32 lane, with a NaN made the positive canonical NaN,

@@ -7,6 +7,7 @@ package functions53
 import (
 	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
 	"math"
+	"math/bits"
 )
 
 type vec128 = struct {
@@ -25,18 +26,37 @@ func Xop103(m *instance.Module, v0, v1 int64) int64 {
 	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128f32{(t4), (t4), (t4), (t4)}
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
-	t8 := vec128{lane_mask32(t3.F0 <= t7.F0), lane_mask32(t3.F1 <= t7.F1), lane_mask32(t3.F2 <= t7.F2), lane_mask32(t3.F3 <= t7.F3)}
-	v2 = t8
-	t9 := v2
-	t10 := int32(t9.L0)
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32(t12.L1)
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := vec128f32{t3.F0, t3.F1, (t4), t3.F3}
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := vec128f32{t5.F0, t5.F1, t5.F2, (t6)}
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := vec128f32{(t8), (t8), (t8), (t8)}
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := vec128f32{t9.F0, (t10), t9.F2, t9.F3}
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := vec128f32{t11.F0, t11.F1, (t12), t11.F3}
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := vec128f32{t13.F0, t13.F1, t13.F2, (t14)}
+	t16 := vec128{lane_mask32(t7.F0 <= t15.F0), lane_mask32(t7.F1 <= t15.F1), lane_mask32(t7.F2 <= t15.F2), lane_mask32(t7.F3 <= t15.F3)}
+	v2 = t16
+	t17 := v2
+	t18 := int32(t17.L0)
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32(t20.L1)
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32(t23.L2)
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32(t26.L3)
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
+}
+
+//go:nosplit
+func i64_rotl(x, y int64) int64 {
+	return int64(bits.RotateLeft64(uint64(x), int(y)))
 }
 
 //go:nosplit

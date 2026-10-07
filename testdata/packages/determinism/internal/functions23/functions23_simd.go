@@ -7,6 +7,7 @@ package functions23
 import (
 	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
 	"math"
+	"math/bits"
 )
 
 type vec128 = struct {
@@ -33,7 +34,18 @@ func Xop133(m *instance.Module, v0, v1 int64) int64 {
 	t7 := int64(uint32(t6))
 	t8 := v2
 	t9 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t8.F1))))))
-	return t7 | int64(uint32(t9))<<32
+	t10 := t7 | int64(uint32(t9))<<32
+	t11 := v2
+	t12 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t11.F2))))))
+	t13 := int64(uint32(t12))
+	t14 := v2
+	t15 := int32(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t14.F3))))))
+	return t10 + i64_rotl(t13|int64(uint32(t15))<<32, int64(17))
+}
+
+//go:nosplit
+func i64_rotl(x, y int64) int64 {
+	return int64(bits.RotateLeft64(uint64(x), int(y)))
 }
 
 // The bits of a float32 lane, with a NaN made the positive canonical NaN,

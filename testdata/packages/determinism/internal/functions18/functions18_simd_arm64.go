@@ -19,13 +19,17 @@ func Xop138(m *instance.Module, v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(uint32((t0)))
 	t2 := int32(v1)
 	t3 := t1.SetElem(1, uint32((t2)))
-	t4 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(t3.GetElem(0))))).SetElem(1, uint32((math.Float64bits(float64(t3.GetElem(0))))>>32)).SetElem(2, uint32(math.Float64bits(float64(t3.GetElem(1))))).SetElem(3, uint32((math.Float64bits(float64(t3.GetElem(1))))>>32))
-	v2 = t4
-	t5 := v2
-	t6 := int64(t5.ReshapeToUint64s().GetElem(0))
-	t7 := v2
-	t8 := int64(t7.ReshapeToUint64s().GetElem(1))
-	return t6 + i64_rotl(t8, int64(17))
+	t4 := int32(v0) ^ int32(-0x80000000)
+	t5 := t3.SetElem(2, uint32((t4)))
+	t6 := int32(v1) ^ int32(-0x80000000)
+	t7 := t5.SetElem(3, uint32((t6)))
+	t8 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(t7.GetElem(0))))).SetElem(1, uint32((math.Float64bits(float64(t7.GetElem(0))))>>32)).SetElem(2, uint32(math.Float64bits(float64(t7.GetElem(1))))).SetElem(3, uint32((math.Float64bits(float64(t7.GetElem(1))))>>32))
+	v2 = t8
+	t9 := v2
+	t10 := int64(t9.ReshapeToUint64s().GetElem(0))
+	t11 := v2
+	t12 := int64(t11.ReshapeToUint64s().GetElem(1))
+	return t10 + i64_rotl(t12, int64(17))
 }
 
 //go:nosplit

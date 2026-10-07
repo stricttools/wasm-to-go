@@ -7,6 +7,7 @@ package functions12
 import (
 	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
 	"math"
+	"math/bits"
 	"simd/archsimd"
 )
 
@@ -18,19 +19,38 @@ func Xop144(m *instance.Module, v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
-	t10 := (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).AndNot(archsimd.BroadcastUint32x4(1 << 31))
-	v2 = t10
-	t11 := v2
-	t12 := int32(t11.GetElem(0))
-	t13 := int64(uint32(t12))
-	t14 := v2
-	t15 := int32(t14.GetElem(1))
-	return t13 | int64(uint32(t15))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
+	t18 := (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).AndNot(archsimd.BroadcastUint32x4(1 << 31))
+	v2 = t18
+	t19 := v2
+	t20 := int32(t19.GetElem(0))
+	t21 := int64(uint32(t20))
+	t22 := v2
+	t23 := int32(t22.GetElem(1))
+	t24 := t21 | int64(uint32(t23))<<32
+	t25 := v2
+	t26 := int32(t25.GetElem(2))
+	t27 := int64(uint32(t26))
+	t28 := v2
+	t29 := int32(t28.GetElem(3))
+	return t24 + i64_rotl(t27|int64(uint32(t29))<<32, int64(17))
+}
+
+//go:nosplit
+func i64_rotl(x, y int64) int64 {
+	return int64(bits.RotateLeft64(uint64(x), int(y)))
 }

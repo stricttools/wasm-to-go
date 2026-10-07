@@ -7,6 +7,7 @@ package functions7
 import (
 	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
 	"math"
+	"math/bits"
 	"simd/archsimd"
 )
 
@@ -18,23 +19,46 @@ func Xop149(m *instance.Module, v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
-	t10 := math.Float32frombits(uint32(int32(v1)))
-	t11 := archsimd.BroadcastUint32x4(math.Float32bits((t10)))
-	t12 := math.Float32frombits(uint32(int32(v0)))
-	t13 := t11.SetElem(1, math.Float32bits((t12)))
-	t14 := t13.IfElse(t13.BitsToFloat32().Less((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).BitsToFloat32()), (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)))
-	v2 = t14
-	t15 := v2
-	t16 := int32(t15.GetElem(0))
-	t17 := int64(uint32(t16))
-	t18 := v2
-	t19 := int32(t18.GetElem(1))
-	return t17 | int64(uint32(t19))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
+	t18 := math.Float32frombits(uint32(int32(v1)))
+	t19 := archsimd.BroadcastUint32x4(math.Float32bits((t18)))
+	t20 := math.Float32frombits(uint32(int32(v0)))
+	t21 := t19.SetElem(1, math.Float32bits((t20)))
+	t22 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t23 := t21.SetElem(2, math.Float32bits((t22)))
+	t24 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t25 := t23.SetElem(3, math.Float32bits((t24)))
+	t26 := t25.IfElse(t25.BitsToFloat32().Less((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).BitsToFloat32()), (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)))
+	v2 = t26
+	t27 := v2
+	t28 := int32(t27.GetElem(0))
+	t29 := int64(uint32(t28))
+	t30 := v2
+	t31 := int32(t30.GetElem(1))
+	t32 := t29 | int64(uint32(t31))<<32
+	t33 := v2
+	t34 := int32(t33.GetElem(2))
+	t35 := int64(uint32(t34))
+	t36 := v2
+	t37 := int32(t36.GetElem(3))
+	return t32 + i64_rotl(t35|int64(uint32(t37))<<32, int64(17))
+}
+
+//go:nosplit
+func i64_rotl(x, y int64) int64 {
+	return int64(bits.RotateLeft64(uint64(x), int(y)))
 }

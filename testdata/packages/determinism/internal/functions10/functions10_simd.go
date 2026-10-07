@@ -8,6 +8,7 @@ import (
 	"encoding/binary"
 	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
 	"math"
+	"math/bits"
 )
 
 type vec128 = struct {
@@ -29,36 +30,50 @@ func Xop146(m *instance.Module, v0, v1 int64) int64 {
 	t1 := vec128f32{(t0), (t0), (t0), (t0)}
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := vec128f32{t1.F0, (t2), t1.F2, t1.F3}
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := vec128f32{(t4), (t4), (t4), (t4)}
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := vec128f32{t5.F0, (t6), t5.F2, t5.F3}
-	t8 := vec128f32{float32(t3.F0 + t7.F0), float32(t3.F1 + t7.F1), float32(t3.F2 + t7.F2), float32(t3.F3 + t7.F3)}
-	v3 = t8
-	t9 := v3
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := vec128f32{t3.F0, t3.F1, (t4), t3.F3}
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := vec128f32{t5.F0, t5.F1, t5.F2, (t6)}
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := vec128f32{(t8), (t8), (t8), (t8)}
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := vec128f32{t9.F0, (t10), t9.F2, t9.F3}
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := vec128f32{t11.F0, t11.F1, (t12), t11.F3}
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := vec128f32{t13.F0, t13.F1, t13.F2, (t14)}
+	t16 := vec128f32{float32(t7.F0 + t15.F0), float32(t7.F1 + t15.F1), float32(t7.F2 + t15.F2), float32(t7.F3 + t15.F3)}
+	v3 = t16
+	t17 := v3
 	q16 = (*[16]byte)(mem[uint64(uint32(int32(32))) : uint64(uint32(int32(32)))+16])
-	q16[0] = byte(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))))
-	q16[1] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))) >> 8))
-	q16[2] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))) >> 16))
-	q16[3] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F0))))) >> 24))
-	q16[4] = byte(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1))))))
-	q16[5] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1))))) >> 8))
-	q16[6] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1))))) >> 16))
-	q16[7] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F1))))) >> 24))
-	q16[8] = byte(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2))))))
-	q16[9] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2))))) >> 8))
-	q16[10] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2))))) >> 16))
-	q16[11] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F2))))) >> 24))
-	q16[12] = byte(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3))))))
-	q16[13] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3))))) >> 8))
-	q16[14] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3))))) >> 16))
-	q16[15] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t9.F3))))) >> 24))
-	t10 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(32))) : uint64(uint32(i32(32)))+8])[:]))
-	return t10
+	q16[0] = byte(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F0))))))
+	q16[1] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F0))))) >> 8))
+	q16[2] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F0))))) >> 16))
+	q16[3] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F0))))) >> 24))
+	q16[4] = byte(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F1))))))
+	q16[5] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F1))))) >> 8))
+	q16[6] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F1))))) >> 16))
+	q16[7] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F1))))) >> 24))
+	q16[8] = byte(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F2))))))
+	q16[9] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F2))))) >> 8))
+	q16[10] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F2))))) >> 16))
+	q16[11] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F2))))) >> 24))
+	q16[12] = byte(math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F3))))))
+	q16[13] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F3))))) >> 8))
+	q16[14] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F3))))) >> 16))
+	q16[15] = byte((math.Float32bits((math.Float32frombits(lane_canon32(math.Float32bits(t17.F3))))) >> 24))
+	t18 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(32))) : uint64(uint32(i32(32)))+8])[:]))
+	t19 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(40))) : uint64(uint32(i32(40)))+8])[:]))
+	return t18 + i64_rotl(t19, int64(17))
 }
 
 //go:nosplit
 func i32(x int32) int32 { return x }
+
+//go:nosplit
+func i64_rotl(x, y int64) int64 {
+	return int64(bits.RotateLeft64(uint64(x), int(y)))
+}
 
 // The bits of a float32 lane, with a NaN made the positive canonical NaN,
 // without a branch: the mask is all ones exactly when the magnitude is

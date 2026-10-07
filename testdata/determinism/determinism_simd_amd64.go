@@ -18,18 +18,32 @@ func (m *Module) Xop91(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v2 = t8
-	t9 := v2
-	t10 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t12.BitsToFloat32().NotEqual(t12.BitsToFloat32()), t12)).GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v2 = t16
+	t17 := v2
+	t18 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t20.BitsToFloat32().NotEqual(t20.BitsToFloat32()), t20)).GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t23.BitsToFloat32().NotEqual(t23.BitsToFloat32()), t23)).GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t26.BitsToFloat32().NotEqual(t26.BitsToFloat32()), t26)).GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop92(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -37,18 +51,32 @@ func (m *Module) Xop92(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Sub(t7.BitsToFloat32()).ToBits()
-	v2 = t8
-	t9 := v2
-	t10 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t12.BitsToFloat32().NotEqual(t12.BitsToFloat32()), t12)).GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Sub(t15.BitsToFloat32()).ToBits()
+	v2 = t16
+	t17 := v2
+	t18 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t20.BitsToFloat32().NotEqual(t20.BitsToFloat32()), t20)).GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t23.BitsToFloat32().NotEqual(t23.BitsToFloat32()), t23)).GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t26.BitsToFloat32().NotEqual(t26.BitsToFloat32()), t26)).GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop93(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -56,18 +84,32 @@ func (m *Module) Xop93(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Mul(t7.BitsToFloat32()).ToBits()
-	v2 = t8
-	t9 := v2
-	t10 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t12.BitsToFloat32().NotEqual(t12.BitsToFloat32()), t12)).GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Mul(t15.BitsToFloat32()).ToBits()
+	v2 = t16
+	t17 := v2
+	t18 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t20.BitsToFloat32().NotEqual(t20.BitsToFloat32()), t20)).GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t23.BitsToFloat32().NotEqual(t23.BitsToFloat32()), t23)).GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t26.BitsToFloat32().NotEqual(t26.BitsToFloat32()), t26)).GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop94(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -75,18 +117,32 @@ func (m *Module) Xop94(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Div(t7.BitsToFloat32()).ToBits()
-	v2 = t8
-	t9 := v2
-	t10 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t12.BitsToFloat32().NotEqual(t12.BitsToFloat32()), t12)).GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Div(t15.BitsToFloat32()).ToBits()
+	v2 = t16
+	t17 := v2
+	t18 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t20.BitsToFloat32().NotEqual(t20.BitsToFloat32()), t20)).GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t23.BitsToFloat32().NotEqual(t23.BitsToFloat32()), t23)).GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t26.BitsToFloat32().NotEqual(t26.BitsToFloat32()), t26)).GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop95(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -94,18 +150,32 @@ func (m *Module) Xop95(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t3.BitsToFloat32().NotEqual(t3.BitsToFloat32()).Or(t7.BitsToFloat32().NotEqual(t7.BitsToFloat32())), t3.Or(t7).IfElse(t3.BitsToFloat32().Equal(t7.BitsToFloat32()), t3.BitsToFloat32().Min(t7.BitsToFloat32()).ToBits()))
-	v2 = t8
-	t9 := v2
-	t10 := int32(t9.GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32(t12.GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t7.BitsToFloat32().NotEqual(t7.BitsToFloat32()).Or(t15.BitsToFloat32().NotEqual(t15.BitsToFloat32())), t7.Or(t15).IfElse(t7.BitsToFloat32().Equal(t15.BitsToFloat32()), t7.BitsToFloat32().Min(t15.BitsToFloat32()).ToBits()))
+	v2 = t16
+	t17 := v2
+	t18 := int32(t17.GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32(t20.GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32(t23.GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32(t26.GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop96(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -113,18 +183,32 @@ func (m *Module) Xop96(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t3.BitsToFloat32().NotEqual(t3.BitsToFloat32()).Or(t7.BitsToFloat32().NotEqual(t7.BitsToFloat32())), t3.And(t7).IfElse(t3.BitsToFloat32().Equal(t7.BitsToFloat32()), t3.BitsToFloat32().Max(t7.BitsToFloat32()).ToBits()))
-	v2 = t8
-	t9 := v2
-	t10 := int32(t9.GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32(t12.GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t7.BitsToFloat32().NotEqual(t7.BitsToFloat32()).Or(t15.BitsToFloat32().NotEqual(t15.BitsToFloat32())), t7.And(t15).IfElse(t7.BitsToFloat32().Equal(t15.BitsToFloat32()), t7.BitsToFloat32().Max(t15.BitsToFloat32()).ToBits()))
+	v2 = t16
+	t17 := v2
+	t18 := int32(t17.GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32(t20.GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32(t23.GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32(t26.GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop97(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -132,18 +216,32 @@ func (m *Module) Xop97(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t7.IfElse(t7.BitsToFloat32().Less(t3.BitsToFloat32()), t3)
-	v2 = t8
-	t9 := v2
-	t10 := int32(t9.GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32(t12.GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t15.IfElse(t15.BitsToFloat32().Less(t7.BitsToFloat32()), t7)
+	v2 = t16
+	t17 := v2
+	t18 := int32(t17.GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32(t20.GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32(t23.GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32(t26.GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop98(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -151,18 +249,32 @@ func (m *Module) Xop98(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t7.IfElse(t3.BitsToFloat32().Less(t7.BitsToFloat32()), t3)
-	v2 = t8
-	t9 := v2
-	t10 := int32(t9.GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32(t12.GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t15.IfElse(t7.BitsToFloat32().Less(t15.BitsToFloat32()), t7)
+	v2 = t16
+	t17 := v2
+	t18 := int32(t17.GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32(t20.GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32(t23.GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32(t26.GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop99(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -170,18 +282,32 @@ func (m *Module) Xop99(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Equal(t7.BitsToFloat32()).ToInt32x4().ToBits()
-	v2 = t8
-	t9 := v2
-	t10 := int32(t9.GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32(t12.GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Equal(t15.BitsToFloat32()).ToInt32x4().ToBits()
+	v2 = t16
+	t17 := v2
+	t18 := int32(t17.GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32(t20.GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32(t23.GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32(t26.GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop100(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -189,18 +315,32 @@ func (m *Module) Xop100(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().NotEqual(t7.BitsToFloat32()).ToInt32x4().ToBits()
-	v2 = t8
-	t9 := v2
-	t10 := int32(t9.GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32(t12.GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().NotEqual(t15.BitsToFloat32()).ToInt32x4().ToBits()
+	v2 = t16
+	t17 := v2
+	t18 := int32(t17.GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32(t20.GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32(t23.GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32(t26.GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop101(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -208,18 +348,32 @@ func (m *Module) Xop101(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Less(t7.BitsToFloat32()).ToInt32x4().ToBits()
-	v2 = t8
-	t9 := v2
-	t10 := int32(t9.GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32(t12.GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Less(t15.BitsToFloat32()).ToInt32x4().ToBits()
+	v2 = t16
+	t17 := v2
+	t18 := int32(t17.GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32(t20.GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32(t23.GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32(t26.GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop102(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -227,18 +381,32 @@ func (m *Module) Xop102(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Greater(t7.BitsToFloat32()).ToInt32x4().ToBits()
-	v2 = t8
-	t9 := v2
-	t10 := int32(t9.GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32(t12.GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Greater(t15.BitsToFloat32()).ToInt32x4().ToBits()
+	v2 = t16
+	t17 := v2
+	t18 := int32(t17.GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32(t20.GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32(t23.GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32(t26.GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop103(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -246,18 +414,32 @@ func (m *Module) Xop103(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().LessEqual(t7.BitsToFloat32()).ToInt32x4().ToBits()
-	v2 = t8
-	t9 := v2
-	t10 := int32(t9.GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32(t12.GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().LessEqual(t15.BitsToFloat32()).ToInt32x4().ToBits()
+	v2 = t16
+	t17 := v2
+	t18 := int32(t17.GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32(t20.GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32(t23.GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32(t26.GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop104(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -265,18 +447,32 @@ func (m *Module) Xop104(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().GreaterEqual(t7.BitsToFloat32()).ToInt32x4().ToBits()
-	v2 = t8
-	t9 := v2
-	t10 := int32(t9.GetElem(0))
-	t11 := int64(uint32(t10))
-	t12 := v2
-	t13 := int32(t12.GetElem(1))
-	return t11 | int64(uint32(t13))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().GreaterEqual(t15.BitsToFloat32()).ToInt32x4().ToBits()
+	v2 = t16
+	t17 := v2
+	t18 := int32(t17.GetElem(0))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32(t20.GetElem(1))
+	t22 := t19 | int64(uint32(t21))<<32
+	t23 := v2
+	t24 := int32(t23.GetElem(2))
+	t25 := int64(uint32(t24))
+	t26 := v2
+	t27 := int32(t26.GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(t27))<<32, int64(17))
 }
 func (m *Module) Xop105(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -284,14 +480,24 @@ func (m *Module) Xop105(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := t3.BitsToFloat32().Sqrt().ToBits()
-	v2 = t4
-	t5 := v2
-	t6 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t5.BitsToFloat32().NotEqual(t5.BitsToFloat32()), t5)).GetElem(0))
-	t7 := int64(uint32(t6))
-	t8 := v2
-	t9 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t8.BitsToFloat32().NotEqual(t8.BitsToFloat32()), t8)).GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := t7.BitsToFloat32().Sqrt().ToBits()
+	v2 = t8
+	t9 := v2
+	t10 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).GetElem(0))
+	t11 := int64(uint32(t10))
+	t12 := v2
+	t13 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t12.BitsToFloat32().NotEqual(t12.BitsToFloat32()), t12)).GetElem(1))
+	t14 := t11 | int64(uint32(t13))<<32
+	t15 := v2
+	t16 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t15.BitsToFloat32().NotEqual(t15.BitsToFloat32()), t15)).GetElem(2))
+	t17 := int64(uint32(t16))
+	t18 := v2
+	t19 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t18.BitsToFloat32().NotEqual(t18.BitsToFloat32()), t18)).GetElem(3))
+	return t14 + i64_rotl(t17|int64(uint32(t19))<<32, int64(17))
 }
 func (m *Module) Xop106(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -299,14 +505,24 @@ func (m *Module) Xop106(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := t3.BitsToFloat32().Ceil().ToBits()
-	v2 = t4
-	t5 := v2
-	t6 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t5.BitsToFloat32().NotEqual(t5.BitsToFloat32()), t5)).GetElem(0))
-	t7 := int64(uint32(t6))
-	t8 := v2
-	t9 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t8.BitsToFloat32().NotEqual(t8.BitsToFloat32()), t8)).GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := t7.BitsToFloat32().Ceil().ToBits()
+	v2 = t8
+	t9 := v2
+	t10 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).GetElem(0))
+	t11 := int64(uint32(t10))
+	t12 := v2
+	t13 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t12.BitsToFloat32().NotEqual(t12.BitsToFloat32()), t12)).GetElem(1))
+	t14 := t11 | int64(uint32(t13))<<32
+	t15 := v2
+	t16 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t15.BitsToFloat32().NotEqual(t15.BitsToFloat32()), t15)).GetElem(2))
+	t17 := int64(uint32(t16))
+	t18 := v2
+	t19 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t18.BitsToFloat32().NotEqual(t18.BitsToFloat32()), t18)).GetElem(3))
+	return t14 + i64_rotl(t17|int64(uint32(t19))<<32, int64(17))
 }
 func (m *Module) Xop107(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -314,14 +530,24 @@ func (m *Module) Xop107(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := t3.BitsToFloat32().Floor().ToBits()
-	v2 = t4
-	t5 := v2
-	t6 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t5.BitsToFloat32().NotEqual(t5.BitsToFloat32()), t5)).GetElem(0))
-	t7 := int64(uint32(t6))
-	t8 := v2
-	t9 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t8.BitsToFloat32().NotEqual(t8.BitsToFloat32()), t8)).GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := t7.BitsToFloat32().Floor().ToBits()
+	v2 = t8
+	t9 := v2
+	t10 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).GetElem(0))
+	t11 := int64(uint32(t10))
+	t12 := v2
+	t13 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t12.BitsToFloat32().NotEqual(t12.BitsToFloat32()), t12)).GetElem(1))
+	t14 := t11 | int64(uint32(t13))<<32
+	t15 := v2
+	t16 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t15.BitsToFloat32().NotEqual(t15.BitsToFloat32()), t15)).GetElem(2))
+	t17 := int64(uint32(t16))
+	t18 := v2
+	t19 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t18.BitsToFloat32().NotEqual(t18.BitsToFloat32()), t18)).GetElem(3))
+	return t14 + i64_rotl(t17|int64(uint32(t19))<<32, int64(17))
 }
 func (m *Module) Xop108(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -329,14 +555,24 @@ func (m *Module) Xop108(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := t3.BitsToFloat32().Trunc().ToBits()
-	v2 = t4
-	t5 := v2
-	t6 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t5.BitsToFloat32().NotEqual(t5.BitsToFloat32()), t5)).GetElem(0))
-	t7 := int64(uint32(t6))
-	t8 := v2
-	t9 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t8.BitsToFloat32().NotEqual(t8.BitsToFloat32()), t8)).GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := t7.BitsToFloat32().Trunc().ToBits()
+	v2 = t8
+	t9 := v2
+	t10 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).GetElem(0))
+	t11 := int64(uint32(t10))
+	t12 := v2
+	t13 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t12.BitsToFloat32().NotEqual(t12.BitsToFloat32()), t12)).GetElem(1))
+	t14 := t11 | int64(uint32(t13))<<32
+	t15 := v2
+	t16 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t15.BitsToFloat32().NotEqual(t15.BitsToFloat32()), t15)).GetElem(2))
+	t17 := int64(uint32(t16))
+	t18 := v2
+	t19 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t18.BitsToFloat32().NotEqual(t18.BitsToFloat32()), t18)).GetElem(3))
+	return t14 + i64_rotl(t17|int64(uint32(t19))<<32, int64(17))
 }
 func (m *Module) Xop109(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -344,14 +580,24 @@ func (m *Module) Xop109(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := t3.BitsToFloat32().Round().ToBits()
-	v2 = t4
-	t5 := v2
-	t6 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t5.BitsToFloat32().NotEqual(t5.BitsToFloat32()), t5)).GetElem(0))
-	t7 := int64(uint32(t6))
-	t8 := v2
-	t9 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t8.BitsToFloat32().NotEqual(t8.BitsToFloat32()), t8)).GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := t7.BitsToFloat32().Round().ToBits()
+	v2 = t8
+	t9 := v2
+	t10 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).GetElem(0))
+	t11 := int64(uint32(t10))
+	t12 := v2
+	t13 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t12.BitsToFloat32().NotEqual(t12.BitsToFloat32()), t12)).GetElem(1))
+	t14 := t11 | int64(uint32(t13))<<32
+	t15 := v2
+	t16 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t15.BitsToFloat32().NotEqual(t15.BitsToFloat32()), t15)).GetElem(2))
+	t17 := int64(uint32(t16))
+	t18 := v2
+	t19 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t18.BitsToFloat32().NotEqual(t18.BitsToFloat32()), t18)).GetElem(3))
+	return t14 + i64_rotl(t17|int64(uint32(t19))<<32, int64(17))
 }
 func (m *Module) Xop110(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -359,14 +605,24 @@ func (m *Module) Xop110(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := t3.AndNot(archsimd.BroadcastUint32x4(1 << 31))
-	v2 = t4
-	t5 := v2
-	t6 := int32(t5.GetElem(0))
-	t7 := int64(uint32(t6))
-	t8 := v2
-	t9 := int32(t8.GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := t7.AndNot(archsimd.BroadcastUint32x4(1 << 31))
+	v2 = t8
+	t9 := v2
+	t10 := int32(t9.GetElem(0))
+	t11 := int64(uint32(t10))
+	t12 := v2
+	t13 := int32(t12.GetElem(1))
+	t14 := t11 | int64(uint32(t13))<<32
+	t15 := v2
+	t16 := int32(t15.GetElem(2))
+	t17 := int64(uint32(t16))
+	t18 := v2
+	t19 := int32(t18.GetElem(3))
+	return t14 + i64_rotl(t17|int64(uint32(t19))<<32, int64(17))
 }
 func (m *Module) Xop111(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -374,14 +630,24 @@ func (m *Module) Xop111(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := t3.Xor(archsimd.BroadcastUint32x4(1 << 31))
-	v2 = t4
-	t5 := v2
-	t6 := int32(t5.GetElem(0))
-	t7 := int64(uint32(t6))
-	t8 := v2
-	t9 := int32(t8.GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := t7.Xor(archsimd.BroadcastUint32x4(1 << 31))
+	v2 = t8
+	t9 := v2
+	t10 := int32(t9.GetElem(0))
+	t11 := int64(uint32(t10))
+	t12 := v2
+	t13 := int32(t12.GetElem(1))
+	t14 := t11 | int64(uint32(t13))<<32
+	t15 := v2
+	t16 := int32(t15.GetElem(2))
+	t17 := int64(uint32(t16))
+	t18 := v2
+	t19 := int32(t18.GetElem(3))
+	return t14 + i64_rotl(t17|int64(uint32(t19))<<32, int64(17))
 }
 func (m *Module) Xop112(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -746,7 +1012,13 @@ func (m *Module) Xop133(v0, v1 int64) int64 {
 	t7 := int64(uint32(t6))
 	t8 := v2
 	t9 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t8.BitsToFloat32().NotEqual(t8.BitsToFloat32()), t8)).GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t10 := t7 | int64(uint32(t9))<<32
+	t11 := v2
+	t12 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t11.BitsToFloat32().NotEqual(t11.BitsToFloat32()), t11)).GetElem(2))
+	t13 := int64(uint32(t12))
+	t14 := v2
+	t15 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t14.BitsToFloat32().NotEqual(t14.BitsToFloat32()), t14)).GetElem(3))
+	return t10 + i64_rotl(t13|int64(uint32(t15))<<32, int64(17))
 }
 func (m *Module) Xop134(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -754,13 +1026,17 @@ func (m *Module) Xop134(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(math.Float32frombits(t3.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(math.Float32frombits(t3.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(math.Float32frombits(t3.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(math.Float32frombits(t3.GetElem(1)))))>>32))
-	v2 = t4
-	t5 := v2
-	t6 := int64((archsimd.BroadcastUint64x2(0x7ff8000000000000).IfElse(t5.ReshapeToUint64s().BitsToFloat64().NotEqual(t5.ReshapeToUint64s().BitsToFloat64()), t5.ReshapeToUint64s()).ReshapeToUint32s()).ReshapeToUint64s().GetElem(0))
-	t7 := v2
-	t8 := int64((archsimd.BroadcastUint64x2(0x7ff8000000000000).IfElse(t7.ReshapeToUint64s().BitsToFloat64().NotEqual(t7.ReshapeToUint64s().BitsToFloat64()), t7.ReshapeToUint64s()).ReshapeToUint32s()).ReshapeToUint64s().GetElem(1))
-	return t6 + i64_rotl(t8, int64(17))
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(math.Float32frombits(t7.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(math.Float32frombits(t7.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(math.Float32frombits(t7.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(math.Float32frombits(t7.GetElem(1)))))>>32))
+	v2 = t8
+	t9 := v2
+	t10 := int64((archsimd.BroadcastUint64x2(0x7ff8000000000000).IfElse(t9.ReshapeToUint64s().BitsToFloat64().NotEqual(t9.ReshapeToUint64s().BitsToFloat64()), t9.ReshapeToUint64s()).ReshapeToUint32s()).ReshapeToUint64s().GetElem(0))
+	t11 := v2
+	t12 := int64((archsimd.BroadcastUint64x2(0x7ff8000000000000).IfElse(t11.ReshapeToUint64s().BitsToFloat64().NotEqual(t11.ReshapeToUint64s().BitsToFloat64()), t11.ReshapeToUint64s()).ReshapeToUint32s()).ReshapeToUint64s().GetElem(1))
+	return t10 + i64_rotl(t12, int64(17))
 }
 func (m *Module) Xop135(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -768,14 +1044,24 @@ func (m *Module) Xop135(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(uint32((t0)))
 	t2 := int32(v1)
 	t3 := t1.SetElem(1, uint32((t2)))
-	t4 := t3.BitsToInt32().ConvertToFloat32().ToBits()
-	v2 = t4
-	t5 := v2
-	t6 := int32(t5.GetElem(0))
-	t7 := int64(uint32(t6))
-	t8 := v2
-	t9 := int32(t8.GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t4 := int32(v0) ^ int32(-0x80000000)
+	t5 := t3.SetElem(2, uint32((t4)))
+	t6 := int32(v1) ^ int32(-0x80000000)
+	t7 := t5.SetElem(3, uint32((t6)))
+	t8 := t7.BitsToInt32().ConvertToFloat32().ToBits()
+	v2 = t8
+	t9 := v2
+	t10 := int32(t9.GetElem(0))
+	t11 := int64(uint32(t10))
+	t12 := v2
+	t13 := int32(t12.GetElem(1))
+	t14 := t11 | int64(uint32(t13))<<32
+	t15 := v2
+	t16 := int32(t15.GetElem(2))
+	t17 := int64(uint32(t16))
+	t18 := v2
+	t19 := int32(t18.GetElem(3))
+	return t14 + i64_rotl(t17|int64(uint32(t19))<<32, int64(17))
 }
 func (m *Module) Xop136(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -783,14 +1069,24 @@ func (m *Module) Xop136(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(uint32((t0)))
 	t2 := int32(v1)
 	t3 := t1.SetElem(1, uint32((t2)))
-	t4 := vec128{}.SetElem(0, math.Float32bits(float32(t3.GetElem(0)))).SetElem(1, math.Float32bits(float32(t3.GetElem(1)))).SetElem(2, math.Float32bits(float32(t3.GetElem(2)))).SetElem(3, math.Float32bits(float32(t3.GetElem(3))))
-	v2 = t4
-	t5 := v2
-	t6 := int32(t5.GetElem(0))
-	t7 := int64(uint32(t6))
-	t8 := v2
-	t9 := int32(t8.GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t4 := int32(v0) ^ int32(-0x80000000)
+	t5 := t3.SetElem(2, uint32((t4)))
+	t6 := int32(v1) ^ int32(-0x80000000)
+	t7 := t5.SetElem(3, uint32((t6)))
+	t8 := vec128{}.SetElem(0, math.Float32bits(float32(t7.GetElem(0)))).SetElem(1, math.Float32bits(float32(t7.GetElem(1)))).SetElem(2, math.Float32bits(float32(t7.GetElem(2)))).SetElem(3, math.Float32bits(float32(t7.GetElem(3))))
+	v2 = t8
+	t9 := v2
+	t10 := int32(t9.GetElem(0))
+	t11 := int64(uint32(t10))
+	t12 := v2
+	t13 := int32(t12.GetElem(1))
+	t14 := t11 | int64(uint32(t13))<<32
+	t15 := v2
+	t16 := int32(t15.GetElem(2))
+	t17 := int64(uint32(t16))
+	t18 := v2
+	t19 := int32(t18.GetElem(3))
+	return t14 + i64_rotl(t17|int64(uint32(t19))<<32, int64(17))
 }
 func (m *Module) Xop137(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -798,13 +1094,17 @@ func (m *Module) Xop137(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(uint32((t0)))
 	t2 := int32(v1)
 	t3 := t1.SetElem(1, uint32((t2)))
-	t4 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(int32(t3.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(int32(t3.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(int32(t3.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(int32(t3.GetElem(1)))))>>32))
-	v2 = t4
-	t5 := v2
-	t6 := int64(t5.ReshapeToUint64s().GetElem(0))
-	t7 := v2
-	t8 := int64(t7.ReshapeToUint64s().GetElem(1))
-	return t6 + i64_rotl(t8, int64(17))
+	t4 := int32(v0) ^ int32(-0x80000000)
+	t5 := t3.SetElem(2, uint32((t4)))
+	t6 := int32(v1) ^ int32(-0x80000000)
+	t7 := t5.SetElem(3, uint32((t6)))
+	t8 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(int32(t7.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(int32(t7.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(int32(t7.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(int32(t7.GetElem(1)))))>>32))
+	v2 = t8
+	t9 := v2
+	t10 := int64(t9.ReshapeToUint64s().GetElem(0))
+	t11 := v2
+	t12 := int64(t11.ReshapeToUint64s().GetElem(1))
+	return t10 + i64_rotl(t12, int64(17))
 }
 func (m *Module) Xop138(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -812,13 +1112,17 @@ func (m *Module) Xop138(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(uint32((t0)))
 	t2 := int32(v1)
 	t3 := t1.SetElem(1, uint32((t2)))
-	t4 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(t3.GetElem(0))))).SetElem(1, uint32((math.Float64bits(float64(t3.GetElem(0))))>>32)).SetElem(2, uint32(math.Float64bits(float64(t3.GetElem(1))))).SetElem(3, uint32((math.Float64bits(float64(t3.GetElem(1))))>>32))
-	v2 = t4
-	t5 := v2
-	t6 := int64(t5.ReshapeToUint64s().GetElem(0))
-	t7 := v2
-	t8 := int64(t7.ReshapeToUint64s().GetElem(1))
-	return t6 + i64_rotl(t8, int64(17))
+	t4 := int32(v0) ^ int32(-0x80000000)
+	t5 := t3.SetElem(2, uint32((t4)))
+	t6 := int32(v1) ^ int32(-0x80000000)
+	t7 := t5.SetElem(3, uint32((t6)))
+	t8 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(t7.GetElem(0))))).SetElem(1, uint32((math.Float64bits(float64(t7.GetElem(0))))>>32)).SetElem(2, uint32(math.Float64bits(float64(t7.GetElem(1))))).SetElem(3, uint32((math.Float64bits(float64(t7.GetElem(1))))>>32))
+	v2 = t8
+	t9 := v2
+	t10 := int64(t9.ReshapeToUint64s().GetElem(0))
+	t11 := v2
+	t12 := int64(t11.ReshapeToUint64s().GetElem(1))
+	return t10 + i64_rotl(t12, int64(17))
 }
 func (m *Module) Xop139(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -826,14 +1130,24 @@ func (m *Module) Xop139(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := vec128{}.SetElem(0, uint32(i32_trunc_sat_f32_s(math.Float32frombits(t3.GetElem(0))))).SetElem(1, uint32(i32_trunc_sat_f32_s(math.Float32frombits(t3.GetElem(1))))).SetElem(2, uint32(i32_trunc_sat_f32_s(math.Float32frombits(t3.GetElem(2))))).SetElem(3, uint32(i32_trunc_sat_f32_s(math.Float32frombits(t3.GetElem(3)))))
-	v2 = t4
-	t5 := v2
-	t6 := int32(t5.GetElem(0))
-	t7 := int64(uint32(t6))
-	t8 := v2
-	t9 := int32(t8.GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := vec128{}.SetElem(0, uint32(i32_trunc_sat_f32_s(math.Float32frombits(t7.GetElem(0))))).SetElem(1, uint32(i32_trunc_sat_f32_s(math.Float32frombits(t7.GetElem(1))))).SetElem(2, uint32(i32_trunc_sat_f32_s(math.Float32frombits(t7.GetElem(2))))).SetElem(3, uint32(i32_trunc_sat_f32_s(math.Float32frombits(t7.GetElem(3)))))
+	v2 = t8
+	t9 := v2
+	t10 := int32(t9.GetElem(0))
+	t11 := int64(uint32(t10))
+	t12 := v2
+	t13 := int32(t12.GetElem(1))
+	t14 := t11 | int64(uint32(t13))<<32
+	t15 := v2
+	t16 := int32(t15.GetElem(2))
+	t17 := int64(uint32(t16))
+	t18 := v2
+	t19 := int32(t18.GetElem(3))
+	return t14 + i64_rotl(t17|int64(uint32(t19))<<32, int64(17))
 }
 func (m *Module) Xop140(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -841,14 +1155,24 @@ func (m *Module) Xop140(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := vec128{}.SetElem(0, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t3.GetElem(0))))).SetElem(1, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t3.GetElem(1))))).SetElem(2, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t3.GetElem(2))))).SetElem(3, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t3.GetElem(3)))))
-	v2 = t4
-	t5 := v2
-	t6 := int32(t5.GetElem(0))
-	t7 := int64(uint32(t6))
-	t8 := v2
-	t9 := int32(t8.GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := vec128{}.SetElem(0, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t7.GetElem(0))))).SetElem(1, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t7.GetElem(1))))).SetElem(2, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t7.GetElem(2))))).SetElem(3, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t7.GetElem(3)))))
+	v2 = t8
+	t9 := v2
+	t10 := int32(t9.GetElem(0))
+	t11 := int64(uint32(t10))
+	t12 := v2
+	t13 := int32(t12.GetElem(1))
+	t14 := t11 | int64(uint32(t13))<<32
+	t15 := v2
+	t16 := int32(t15.GetElem(2))
+	t17 := int64(uint32(t16))
+	t18 := v2
+	t19 := int32(t18.GetElem(3))
+	return t14 + i64_rotl(t17|int64(uint32(t19))<<32, int64(17))
 }
 func (m *Module) Xop141(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -863,7 +1187,13 @@ func (m *Module) Xop141(v0, v1 int64) int64 {
 	t7 := int64(uint32(t6))
 	t8 := v2
 	t9 := int32(t8.GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t10 := t7 | int64(uint32(t9))<<32
+	t11 := v2
+	t12 := int32(t11.GetElem(2))
+	t13 := int64(uint32(t12))
+	t14 := v2
+	t15 := int32(t14.GetElem(3))
+	return t10 + i64_rotl(t13|int64(uint32(t15))<<32, int64(17))
 }
 func (m *Module) Xop142(v0, v1 int64) int64 {
 	var v2, _, _ vec128
@@ -878,7 +1208,13 @@ func (m *Module) Xop142(v0, v1 int64) int64 {
 	t7 := int64(uint32(t6))
 	t8 := v2
 	t9 := int32(t8.GetElem(1))
-	return t7 | int64(uint32(t9))<<32
+	t10 := t7 | int64(uint32(t9))<<32
+	t11 := v2
+	t12 := int32(t11.GetElem(2))
+	t13 := int64(uint32(t12))
+	t14 := v2
+	t15 := int32(t14.GetElem(3))
+	return t10 + i64_rotl(t13|int64(uint32(t15))<<32, int64(17))
 }
 func (m *Module) Xop143(v0, v1 int64) int64 {
 	var v2, v3, _ vec128
@@ -886,21 +1222,35 @@ func (m *Module) Xop143(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
-	t10 := (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).Xor(archsimd.BroadcastUint32x4(1 << 31))
-	v2 = t10
-	t11 := v2
-	t12 := int32(t11.GetElem(0))
-	t13 := int64(uint32(t12))
-	t14 := v2
-	t15 := int32(t14.GetElem(1))
-	return t13 | int64(uint32(t15))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
+	t18 := (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).Xor(archsimd.BroadcastUint32x4(1 << 31))
+	v2 = t18
+	t19 := v2
+	t20 := int32(t19.GetElem(0))
+	t21 := int64(uint32(t20))
+	t22 := v2
+	t23 := int32(t22.GetElem(1))
+	t24 := t21 | int64(uint32(t23))<<32
+	t25 := v2
+	t26 := int32(t25.GetElem(2))
+	t27 := int64(uint32(t26))
+	t28 := v2
+	t29 := int32(t28.GetElem(3))
+	return t24 + i64_rotl(t27|int64(uint32(t29))<<32, int64(17))
 }
 func (m *Module) Xop144(v0, v1 int64) int64 {
 	var v2, v3, _ vec128
@@ -908,21 +1258,35 @@ func (m *Module) Xop144(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
-	t10 := (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).AndNot(archsimd.BroadcastUint32x4(1 << 31))
-	v2 = t10
-	t11 := v2
-	t12 := int32(t11.GetElem(0))
-	t13 := int64(uint32(t12))
-	t14 := v2
-	t15 := int32(t14.GetElem(1))
-	return t13 | int64(uint32(t15))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
+	t18 := (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).AndNot(archsimd.BroadcastUint32x4(1 << 31))
+	v2 = t18
+	t19 := v2
+	t20 := int32(t19.GetElem(0))
+	t21 := int64(uint32(t20))
+	t22 := v2
+	t23 := int32(t22.GetElem(1))
+	t24 := t21 | int64(uint32(t23))<<32
+	t25 := v2
+	t26 := int32(t25.GetElem(2))
+	t27 := int64(uint32(t26))
+	t28 := v2
+	t29 := int32(t28.GetElem(3))
+	return t24 + i64_rotl(t27|int64(uint32(t29))<<32, int64(17))
 }
 func (m *Module) Xop145(v0, v1 int64) int64 {
 	var _, v3, _ vec128
@@ -930,15 +1294,32 @@ func (m *Module) Xop145(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
-	t10 := math.Float32frombits((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).GetElem(1))
-	return int64(uint32(int32(math.Float32bits(t10))))
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
+	t18 := math.Float32frombits((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).GetElem(0))
+	t19 := int64(uint32(int32(math.Float32bits(t18))))
+	t20 := v3
+	t21 := math.Float32frombits((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t20.BitsToFloat32().NotEqual(t20.BitsToFloat32()), t20)).GetElem(1))
+	t22 := t19 | int64(uint32(int32(math.Float32bits(t21))))<<32
+	t23 := v3
+	t24 := math.Float32frombits((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t23.BitsToFloat32().NotEqual(t23.BitsToFloat32()), t23)).GetElem(2))
+	t25 := int64(uint32(int32(math.Float32bits(t24))))
+	t26 := v3
+	t27 := math.Float32frombits((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t26.BitsToFloat32().NotEqual(t26.BitsToFloat32()), t26)).GetElem(3))
+	return t22 + i64_rotl(t25|int64(uint32(int32(math.Float32bits(t27))))<<32, int64(17))
 }
 func (m *Module) Xop146(v0, v1 int64) int64 {
 	var q16 *[16]byte
@@ -948,17 +1329,26 @@ func (m *Module) Xop146(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
 	q16 = (*[16]byte)(mem[uint64(uint32(int32(32))) : uint64(uint32(int32(32)))+16])
-	(archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).ReshapeToUint8s().StoreArray(q16)
-	t10 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(32))) : uint64(uint32(i32(32)))+8])[:]))
-	return t10
+	(archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).ReshapeToUint8s().StoreArray(q16)
+	t18 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(32))) : uint64(uint32(i32(32)))+8])[:]))
+	t19 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(40))) : uint64(uint32(i32(40)))+8])[:]))
+	return t18 + i64_rotl(t19, int64(17))
 }
 func (m *Module) Xop147(v0, v1 int64) int64 {
 	var v2, v3, _ vec128
@@ -966,22 +1356,36 @@ func (m *Module) Xop147(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
-	t10 := v3
-	t11 := ((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).ReshapeToUint8s().BitsToInt8().PermuteOrZero(archsimd.LoadInt8x16Array(&[16]int8{4, 5, 6, 7, 0, 1, 2, 3, 8, 9, 10, 11, 12, 13, 14, 15})).Or((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t10.BitsToFloat32().NotEqual(t10.BitsToFloat32()), t10)).ReshapeToUint8s().BitsToInt8().PermuteOrZero(archsimd.LoadInt8x16Array(&[16]int8{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1})))).ToBits().ReshapeToUint32s()
-	v2 = t11
-	t12 := v2
-	t13 := int32(t12.GetElem(0))
-	t14 := int64(uint32(t13))
-	t15 := v2
-	t16 := int32(t15.GetElem(1))
-	return t14 | int64(uint32(t16))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
+	t18 := v3
+	t19 := ((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).ReshapeToUint8s().BitsToInt8().PermuteOrZero(archsimd.LoadInt8x16Array(&[16]int8{4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11})).Or((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t18.BitsToFloat32().NotEqual(t18.BitsToFloat32()), t18)).ReshapeToUint8s().BitsToInt8().PermuteOrZero(archsimd.LoadInt8x16Array(&[16]int8{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1})))).ToBits().ReshapeToUint32s()
+	v2 = t19
+	t20 := v2
+	t21 := int32(t20.GetElem(0))
+	t22 := int64(uint32(t21))
+	t23 := v2
+	t24 := int32(t23.GetElem(1))
+	t25 := t22 | int64(uint32(t24))<<32
+	t26 := v2
+	t27 := int32(t26.GetElem(2))
+	t28 := int64(uint32(t27))
+	t29 := v2
+	t30 := int32(t29.GetElem(3))
+	return t25 + i64_rotl(t28|int64(uint32(t30))<<32, int64(17))
 }
 func (m *Module) Xop148(v0, v1 int64) int64 {
 	var v2, v3, _ vec128
@@ -989,21 +1393,35 @@ func (m *Module) Xop148(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
-	t10 := (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).Xor((archsimd.LoadUint32x4Array(&[4]uint32{0x0, 0x80000000, 0x0, 0x0})))
-	v2 = t10
-	t11 := v2
-	t12 := int32(t11.GetElem(0))
-	t13 := int64(uint32(t12))
-	t14 := v2
-	t15 := int32(t14.GetElem(1))
-	return t13 | int64(uint32(t15))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
+	t18 := (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).Xor((archsimd.LoadUint32x4Array(&[4]uint32{0x0, 0x80000000, 0x80000000, 0x0})))
+	v2 = t18
+	t19 := v2
+	t20 := int32(t19.GetElem(0))
+	t21 := int64(uint32(t20))
+	t22 := v2
+	t23 := int32(t22.GetElem(1))
+	t24 := t21 | int64(uint32(t23))<<32
+	t25 := v2
+	t26 := int32(t25.GetElem(2))
+	t27 := int64(uint32(t26))
+	t28 := v2
+	t29 := int32(t28.GetElem(3))
+	return t24 + i64_rotl(t27|int64(uint32(t29))<<32, int64(17))
 }
 func (m *Module) Xop149(v0, v1 int64) int64 {
 	var v2, v3, _ vec128
@@ -1011,25 +1429,43 @@ func (m *Module) Xop149(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
-	t10 := math.Float32frombits(uint32(int32(v1)))
-	t11 := archsimd.BroadcastUint32x4(math.Float32bits((t10)))
-	t12 := math.Float32frombits(uint32(int32(v0)))
-	t13 := t11.SetElem(1, math.Float32bits((t12)))
-	t14 := t13.IfElse(t13.BitsToFloat32().Less((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).BitsToFloat32()), (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)))
-	v2 = t14
-	t15 := v2
-	t16 := int32(t15.GetElem(0))
-	t17 := int64(uint32(t16))
-	t18 := v2
-	t19 := int32(t18.GetElem(1))
-	return t17 | int64(uint32(t19))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
+	t18 := math.Float32frombits(uint32(int32(v1)))
+	t19 := archsimd.BroadcastUint32x4(math.Float32bits((t18)))
+	t20 := math.Float32frombits(uint32(int32(v0)))
+	t21 := t19.SetElem(1, math.Float32bits((t20)))
+	t22 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t23 := t21.SetElem(2, math.Float32bits((t22)))
+	t24 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t25 := t23.SetElem(3, math.Float32bits((t24)))
+	t26 := t25.IfElse(t25.BitsToFloat32().Less((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).BitsToFloat32()), (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)))
+	v2 = t26
+	t27 := v2
+	t28 := int32(t27.GetElem(0))
+	t29 := int64(uint32(t28))
+	t30 := v2
+	t31 := int32(t30.GetElem(1))
+	t32 := t29 | int64(uint32(t31))<<32
+	t33 := v2
+	t34 := int32(t33.GetElem(2))
+	t35 := int64(uint32(t34))
+	t36 := v2
+	t37 := int32(t36.GetElem(3))
+	return t32 + i64_rotl(t35|int64(uint32(t37))<<32, int64(17))
 }
 func (m *Module) Xop150(v0, v1 int64) int64 {
 	var v2, v3, _ vec128
@@ -1037,21 +1473,35 @@ func (m *Module) Xop150(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
-	t10 := (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t9.BitsToFloat32().NotEqual(t9.BitsToFloat32()), t9)).SetElem(0, math.Float32bits((math.Float32frombits(0x3f800000))))
-	v2 = t10
-	t11 := v2
-	t12 := int32(t11.GetElem(0))
-	t13 := int64(uint32(t12))
-	t14 := v2
-	t15 := int32(t14.GetElem(1))
-	return t13 | int64(uint32(t15))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
+	t18 := (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).SetElem(0, math.Float32bits((math.Float32frombits(0x3f800000))))
+	v2 = t18
+	t19 := v2
+	t20 := int32(t19.GetElem(0))
+	t21 := int64(uint32(t20))
+	t22 := v2
+	t23 := int32(t22.GetElem(1))
+	t24 := t21 | int64(uint32(t23))<<32
+	t25 := v2
+	t26 := int32(t25.GetElem(2))
+	t27 := int64(uint32(t26))
+	t28 := v2
+	t29 := int32(t28.GetElem(3))
+	return t24 + i64_rotl(t27|int64(uint32(t29))<<32, int64(17))
 }
 func (m *Module) Xop151(v0, v1 int64) int64 {
 	var v2, v3, v4 vec128
@@ -1059,24 +1509,38 @@ func (m *Module) Xop151(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Mul(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
-	t10 := t9.BitsToFloat32().Add((archsimd.LoadUint32x4Array(&[4]uint32{0xbf800000, 0xbf800000, 0xbf800000, 0xbf800000})).BitsToFloat32()).ToBits()
-	v4 = t10
-	t11 := v4
-	t12 := (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t11.BitsToFloat32().NotEqual(t11.BitsToFloat32()), t11)).Xor(archsimd.BroadcastUint32x4(1 << 31))
-	v2 = t12
-	t13 := v2
-	t14 := int32(t13.GetElem(0))
-	t15 := int64(uint32(t14))
-	t16 := v2
-	t17 := int32(t16.GetElem(1))
-	return t15 | int64(uint32(t17))<<32
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Mul(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
+	t18 := t17.BitsToFloat32().Add((archsimd.LoadUint32x4Array(&[4]uint32{0xbf800000, 0xbf800000, 0xbf800000, 0xbf800000})).BitsToFloat32()).ToBits()
+	v4 = t18
+	t19 := v4
+	t20 := (archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t19.BitsToFloat32().NotEqual(t19.BitsToFloat32()), t19)).Xor(archsimd.BroadcastUint32x4(1 << 31))
+	v2 = t20
+	t21 := v2
+	t22 := int32(t21.GetElem(0))
+	t23 := int64(uint32(t22))
+	t24 := v2
+	t25 := int32(t24.GetElem(1))
+	t26 := t23 | int64(uint32(t25))<<32
+	t27 := v2
+	t28 := int32(t27.GetElem(2))
+	t29 := int64(uint32(t28))
+	t30 := v2
+	t31 := int32(t30.GetElem(3))
+	return t26 + i64_rotl(t29|int64(uint32(t31))<<32, int64(17))
 }
 func (m *Module) Xop152(v0, v1 int64) int64 {
 	var v2, v3, _ vec128
@@ -1084,21 +1548,29 @@ func (m *Module) Xop152(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
-	t10 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(math.Float32frombits(t9.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(math.Float32frombits(t9.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(math.Float32frombits(t9.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(math.Float32frombits(t9.GetElem(1)))))>>32))
-	t11 := (archsimd.BroadcastUint64x2(0x7ff8000000000000).IfElse(t10.ReshapeToUint64s().BitsToFloat64().NotEqual(t10.ReshapeToUint64s().BitsToFloat64()), t10.ReshapeToUint64s()).ReshapeToUint32s()).ReshapeToUint64s().Xor(archsimd.BroadcastUint64x2(1 << 63)).ReshapeToUint32s()
-	v2 = t11
-	t12 := v2
-	t13 := int64(t12.ReshapeToUint64s().GetElem(0))
-	t14 := v2
-	t15 := int64(t14.ReshapeToUint64s().GetElem(1))
-	return t13 + i64_rotl(t15, int64(17))
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
+	t18 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(math.Float32frombits(t17.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(math.Float32frombits(t17.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(math.Float32frombits(t17.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(math.Float32frombits(t17.GetElem(1)))))>>32))
+	t19 := (archsimd.BroadcastUint64x2(0x7ff8000000000000).IfElse(t18.ReshapeToUint64s().BitsToFloat64().NotEqual(t18.ReshapeToUint64s().BitsToFloat64()), t18.ReshapeToUint64s()).ReshapeToUint32s()).ReshapeToUint64s().Xor(archsimd.BroadcastUint64x2(1 << 63)).ReshapeToUint32s()
+	v2 = t19
+	t20 := v2
+	t21 := int64(t20.ReshapeToUint64s().GetElem(0))
+	t22 := v2
+	t23 := int64(t22.ReshapeToUint64s().GetElem(1))
+	return t21 + i64_rotl(t23, int64(17))
 }
 func (m *Module) Xop153(v0, v1 int64) int64 {
 	var v2, v3, _ vec128
@@ -1162,5 +1634,11 @@ func (m *Module) Xop155(v0, v1 int64) int64 {
 	t13 := int64(uint32(t12))
 	t14 := v2
 	t15 := int32(t14.GetElem(1))
-	return t13 | int64(uint32(t15))<<32
+	t16 := t13 | int64(uint32(t15))<<32
+	t17 := v2
+	t18 := int32(t17.GetElem(2))
+	t19 := int64(uint32(t18))
+	t20 := v2
+	t21 := int32(t20.GetElem(3))
+	return t16 + i64_rotl(t19|int64(uint32(t21))<<32, int64(17))
 }

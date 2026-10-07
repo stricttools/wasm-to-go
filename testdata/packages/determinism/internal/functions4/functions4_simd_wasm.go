@@ -19,21 +19,29 @@ func Xop152(m *instance.Module, v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint32x4(math.Float32bits((t0)))
 	t2 := math.Float32frombits(uint32(int32(v1)))
 	t3 := t1.SetElem(1, math.Float32bits((t2)))
-	t4 := math.Float32frombits(uint32(int32(v1)))
-	t5 := archsimd.BroadcastUint32x4(math.Float32bits((t4)))
-	t6 := math.Float32frombits(uint32(int32(v0)))
-	t7 := t5.SetElem(1, math.Float32bits((t6)))
-	t8 := t3.BitsToFloat32().Add(t7.BitsToFloat32()).ToBits()
-	v3 = t8
-	t9 := v3
-	t10 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(math.Float32frombits(t9.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(math.Float32frombits(t9.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(math.Float32frombits(t9.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(math.Float32frombits(t9.GetElem(1)))))>>32))
-	t11 := (archsimd.BroadcastUint64x2(0x7ff8000000000000).IfElse(t10.ReshapeToUint64s().BitsToFloat64().NotEqual(t10.ReshapeToUint64s().BitsToFloat64()), t10.ReshapeToUint64s()).ReshapeToUint32s()).ReshapeToUint64s().Xor(archsimd.BroadcastUint64x2(1 << 63)).ReshapeToUint32s()
-	v2 = t11
-	t12 := v2
-	t13 := int64(t12.ReshapeToUint64s().GetElem(0))
-	t14 := v2
-	t15 := int64(t14.ReshapeToUint64s().GetElem(1))
-	return t13 + i64_rotl(t15, int64(17))
+	t4 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t5 := t3.SetElem(2, math.Float32bits((t4)))
+	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t7 := t5.SetElem(3, math.Float32bits((t6)))
+	t8 := math.Float32frombits(uint32(int32(v1)))
+	t9 := archsimd.BroadcastUint32x4(math.Float32bits((t8)))
+	t10 := math.Float32frombits(uint32(int32(v0)))
+	t11 := t9.SetElem(1, math.Float32bits((t10)))
+	t12 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
+	t13 := t11.SetElem(2, math.Float32bits((t12)))
+	t14 := math.Float32frombits(uint32(int32(v0) ^ int32(-0x80000000)))
+	t15 := t13.SetElem(3, math.Float32bits((t14)))
+	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
+	v3 = t16
+	t17 := v3
+	t18 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(math.Float32frombits(t17.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(math.Float32frombits(t17.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(math.Float32frombits(t17.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(math.Float32frombits(t17.GetElem(1)))))>>32))
+	t19 := (archsimd.BroadcastUint64x2(0x7ff8000000000000).IfElse(t18.ReshapeToUint64s().BitsToFloat64().NotEqual(t18.ReshapeToUint64s().BitsToFloat64()), t18.ReshapeToUint64s()).ReshapeToUint32s()).ReshapeToUint64s().Xor(archsimd.BroadcastUint64x2(1 << 63)).ReshapeToUint32s()
+	v2 = t19
+	t20 := v2
+	t21 := int64(t20.ReshapeToUint64s().GetElem(0))
+	t22 := v2
+	t23 := int64(t22.ReshapeToUint64s().GetElem(1))
+	return t21 + i64_rotl(t23, int64(17))
 }
 
 //go:nosplit
