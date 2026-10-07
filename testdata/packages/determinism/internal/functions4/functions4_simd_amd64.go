@@ -34,7 +34,7 @@ func Xop152(m *instance.Module, v0, v1 int64) int64 {
 	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
 	v3 = t16
 	t17 := v3
-	t18 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(math.Float32frombits(t17.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(math.Float32frombits(t17.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(math.Float32frombits(t17.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(math.Float32frombits(t17.GetElem(1)))))>>32))
+	t18 := t17.BitsToFloat32().ConvertToFloat64().GetLo().ToBits().ReshapeToUint32s()
 	t19 := (archsimd.BroadcastUint64x2(0x7ff8000000000000).IfElse(t18.ReshapeToUint64s().BitsToFloat64().NotEqual(t18.ReshapeToUint64s().BitsToFloat64()), t18.ReshapeToUint64s()).ReshapeToUint32s()).ReshapeToUint64s().Xor(archsimd.BroadcastUint64x2(1 << 63)).ReshapeToUint32s()
 	v2 = t19
 	t20 := v2

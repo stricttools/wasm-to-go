@@ -6,7 +6,6 @@ package functions19
 
 import (
 	"github.com/stricttools/wasm-to-go/testdata/packages/determinism/internal/instance"
-	"math"
 	"math/bits"
 	"simd/archsimd"
 )
@@ -23,7 +22,7 @@ func Xop137(m *instance.Module, v0, v1 int64) int64 {
 	t5 := t3.SetElem(2, uint32((t4)))
 	t6 := int32(v1) ^ int32(-0x80000000)
 	t7 := t5.SetElem(3, uint32((t6)))
-	t8 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(int32(t7.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(int32(t7.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(int32(t7.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(int32(t7.GetElem(1)))))>>32))
+	t8 := t7.BitsToInt32().ExtendLo2ToInt64().ConvertToFloat64().ToBits().ReshapeToUint32s()
 	v2 = t8
 	t9 := v2
 	t10 := int64(t9.ReshapeToUint64s().GetElem(0))

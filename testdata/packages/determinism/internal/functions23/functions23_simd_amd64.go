@@ -19,7 +19,7 @@ func Xop133(m *instance.Module, v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint64x2(math.Float64bits((t0))).ReshapeToUint32s()
 	t2 := math.Float64frombits(uint64(v1))
 	t3 := t1.ReshapeToUint64s().SetElem(1, math.Float64bits((t2))).ReshapeToUint32s()
-	t4 := vec128{}.SetElem(0, math.Float32bits(float32(math.Float64frombits((uint64(t3.GetElem(0))|uint64(t3.GetElem(1))<<32))))).SetElem(1, math.Float32bits(float32(math.Float64frombits((uint64(t3.GetElem(2))|uint64(t3.GetElem(3))<<32))))).SetElem(2, math.Float32bits(0)).SetElem(3, math.Float32bits(0))
+	t4 := t3.ReshapeToUint64s().BitsToFloat64().ConvertToFloat32().ToBits()
 	v2 = t4
 	t5 := v2
 	t6 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t5.BitsToFloat32().NotEqual(t5.BitsToFloat32()), t5)).GetElem(0))

@@ -11,7 +11,7 @@ type vec128 = archsimd.Uint32x4
 func fn0(v0 vec128, v1 int32) vec128 {
 	t0 := v0
 	t1 := v1
-	t2 := vec128{}.SetElem(0, uint32(uint8(int32(int8(uint8(t0.GetElem(0))))>>(uint32((t1))&7)))|uint32(uint8(int32(int8(uint8((t0.GetElem(0)>>8))))>>(uint32((t1))&7)))<<8|uint32(uint8(int32(int8(uint8((t0.GetElem(0)>>16))))>>(uint32((t1))&7)))<<16|uint32(uint8(int32(int8(uint8((t0.GetElem(0)>>24))))>>(uint32((t1))&7)))<<24).SetElem(1, uint32(uint8(int32(int8(uint8(t0.GetElem(1))))>>(uint32((t1))&7)))|uint32(uint8(int32(int8(uint8((t0.GetElem(1)>>8))))>>(uint32((t1))&7)))<<8|uint32(uint8(int32(int8(uint8((t0.GetElem(1)>>16))))>>(uint32((t1))&7)))<<16|uint32(uint8(int32(int8(uint8((t0.GetElem(1)>>24))))>>(uint32((t1))&7)))<<24).SetElem(2, uint32(uint8(int32(int8(uint8(t0.GetElem(2))))>>(uint32((t1))&7)))|uint32(uint8(int32(int8(uint8((t0.GetElem(2)>>8))))>>(uint32((t1))&7)))<<8|uint32(uint8(int32(int8(uint8((t0.GetElem(2)>>16))))>>(uint32((t1))&7)))<<16|uint32(uint8(int32(int8(uint8((t0.GetElem(2)>>24))))>>(uint32((t1))&7)))<<24).SetElem(3, uint32(uint8(int32(int8(uint8(t0.GetElem(3))))>>(uint32((t1))&7)))|uint32(uint8(int32(int8(uint8((t0.GetElem(3)>>8))))>>(uint32((t1))&7)))<<8|uint32(uint8(int32(int8(uint8((t0.GetElem(3)>>16))))>>(uint32((t1))&7)))<<16|uint32(uint8(int32(int8(uint8((t0.GetElem(3)>>24))))>>(uint32((t1))&7)))<<24)
+	t2 := t0.ReshapeToUint8s().ReshapeToUint16s().ShiftAllRight(uint64(uint32((t1)) & 7)).ReshapeToUint8s().And(archsimd.BroadcastUint8x16(uint8(0xff) >> uint64(uint32((t1))&7))).Xor(archsimd.BroadcastUint8x16(uint8(0x80) >> uint64(uint32((t1))&7))).Sub(archsimd.BroadcastUint8x16(uint8(0x80) >> uint64(uint32((t1))&7))).ReshapeToUint32s()
 	return t2
 }
 func fn1(v0 vec128, v1 int32) vec128 {
@@ -29,7 +29,7 @@ func fn2(v0 vec128, v1 int32) vec128 {
 func fn3(v0 vec128, v1 int32) vec128 {
 	t0 := v0
 	t1 := v1
-	t2 := vec128{}.SetElem(0, uint32(uint64(int64((uint64(t0.GetElem(0))|uint64(t0.GetElem(1))<<32))>>(uint32((t1))&63)))).SetElem(1, uint32((uint64(int64((uint64(t0.GetElem(0))|uint64(t0.GetElem(1))<<32))>>(uint32((t1))&63)))>>32)).SetElem(2, uint32(uint64(int64((uint64(t0.GetElem(2))|uint64(t0.GetElem(3))<<32))>>(uint32((t1))&63)))).SetElem(3, uint32((uint64(int64((uint64(t0.GetElem(2))|uint64(t0.GetElem(3))<<32))>>(uint32((t1))&63)))>>32))
+	t2 := t0.ReshapeToUint64s().ShiftAllRight(uint64(uint32((t1)) & 63)).Xor(archsimd.BroadcastUint64x2(uint64(1) << 63 >> uint64(uint32((t1))&63))).Sub(archsimd.BroadcastUint64x2(uint64(1) << 63 >> uint64(uint32((t1))&63))).ReshapeToUint32s()
 	return t2
 }
 func (m *Module) Xi16x8(v0 [16]byte, v1 int32) [16]byte {

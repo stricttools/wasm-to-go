@@ -19,7 +19,7 @@ func Xop141(m *instance.Module, v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint64x2(math.Float64bits((t0))).ReshapeToUint32s()
 	t2 := math.Float64frombits(uint64(v1))
 	t3 := t1.ReshapeToUint64s().SetElem(1, math.Float64bits((t2))).ReshapeToUint32s()
-	t4 := vec128{}.SetElem(0, uint32(i32_trunc_sat_f64_s(math.Float64frombits((uint64(t3.GetElem(0))|uint64(t3.GetElem(1))<<32))))).SetElem(1, uint32(i32_trunc_sat_f64_s(math.Float64frombits((uint64(t3.GetElem(2))|uint64(t3.GetElem(3))<<32))))).SetElem(2, 0).SetElem(3, 0)
+	t4 := t3.ReshapeToUint64s().BitsToFloat64().ConvertToInt64().SaturateToInt32().ToBits()
 	v2 = t4
 	t5 := v2
 	t6 := int32(t5.GetElem(0))
@@ -38,27 +38,4 @@ func Xop141(m *instance.Module, v0, v1 int64) int64 {
 //go:nosplit
 func i64_rotl(x, y int64) int64 {
 	return int64(bits.RotateLeft64(uint64(x), int(y)))
-}
-
-// Returns x, an integer of magnitude below 2^51 (the caller has checked
-// it), as an int64. Adding 1.5 * 2^52 is exact for such an x, and leaves it
-// in the significand's low bits, offset by the constant's own bits: two
-// instructions beside the addition, fewer than a shift by the exponent.
-//
-//go:nosplit
-func trunc_small(x float64) int64 {
-	return int64(math.Float64bits(x+0x1.8p52)) - 0x4338000000000000
-}
-
-//go:nosplit
-func i32_trunc_sat_f64_s(f float64) int32 {
-	switch {
-	case f <= math.MinInt32:
-		return math.MinInt32
-	case f >= math.MaxInt32:
-		return math.MaxInt32
-	case f != f:
-		return 0
-	}
-	return int32(trunc_small(math.Trunc(f)))
 }

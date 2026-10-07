@@ -23,7 +23,7 @@ func Xop134(m *instance.Module, v0, v1 int64) int64 {
 	t5 := t3.SetElem(2, math.Float32bits((t4)))
 	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
 	t7 := t5.SetElem(3, math.Float32bits((t6)))
-	t8 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(math.Float32frombits(t7.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(math.Float32frombits(t7.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(math.Float32frombits(t7.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(math.Float32frombits(t7.GetElem(1)))))>>32))
+	t8 := t7.BitsToFloat32().ConvertToFloat64().GetLo().ToBits().ReshapeToUint32s()
 	v2 = t8
 	t9 := v2
 	t10 := int64((archsimd.BroadcastUint64x2(0x7ff8000000000000).IfElse(t9.ReshapeToUint64s().BitsToFloat64().NotEqual(t9.ReshapeToUint64s().BitsToFloat64()), t9.ReshapeToUint64s()).ReshapeToUint32s()).ReshapeToUint64s().GetElem(0))

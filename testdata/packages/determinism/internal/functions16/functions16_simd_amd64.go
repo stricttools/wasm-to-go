@@ -23,7 +23,7 @@ func Xop140(m *instance.Module, v0, v1 int64) int64 {
 	t5 := t3.SetElem(2, math.Float32bits((t4)))
 	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
 	t7 := t5.SetElem(3, math.Float32bits((t6)))
-	t8 := vec128{}.SetElem(0, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t7.GetElem(0))))).SetElem(1, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t7.GetElem(1))))).SetElem(2, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t7.GetElem(2))))).SetElem(3, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t7.GetElem(3)))))
+	t8 := t7.BitsToFloat32().IfElse(t7.BitsToFloat32().Greater(archsimd.Float32x4{}), archsimd.Float32x4{}).Sub(archsimd.BroadcastFloat32x4(2147483648)).ConvertToInt32().Xor(archsimd.BroadcastInt32x4(math.MinInt32)).IfElse(t7.BitsToFloat32().IfElse(t7.BitsToFloat32().Greater(archsimd.Float32x4{}), archsimd.Float32x4{}).GreaterEqual(archsimd.BroadcastFloat32x4(2147483648)), t7.BitsToFloat32().IfElse(t7.BitsToFloat32().Greater(archsimd.Float32x4{}), archsimd.Float32x4{}).ConvertToInt32()).Or(t7.BitsToFloat32().IfElse(t7.BitsToFloat32().Greater(archsimd.Float32x4{}), archsimd.Float32x4{}).GreaterEqual(archsimd.BroadcastFloat32x4(4294967296)).ToInt32x4()).ToBits()
 	v2 = t8
 	t9 := v2
 	t10 := int32(t9.GetElem(0))
@@ -42,25 +42,4 @@ func Xop140(m *instance.Module, v0, v1 int64) int64 {
 //go:nosplit
 func i64_rotl(x, y int64) int64 {
 	return int64(bits.RotateLeft64(uint64(x), int(y)))
-}
-
-// Returns x, an integer of magnitude below 2^51 (the caller has checked
-// it), as an int64. Adding 1.5 * 2^52 is exact for such an x, and leaves it
-// in the significand's low bits, offset by the constant's own bits: two
-// instructions beside the addition, fewer than a shift by the exponent.
-//
-//go:nosplit
-func trunc_small(x float64) int64 {
-	return int64(math.Float64bits(x+0x1.8p52)) - 0x4338000000000000
-}
-
-//go:nosplit
-func i32_trunc_sat_f32_u(f float32) int32 {
-	switch {
-	case f <= 0 || f != f:
-		return 0
-	case f >= math.MaxUint32:
-		return -1
-	}
-	return int32(trunc_small(math.Trunc(float64(f))))
 }

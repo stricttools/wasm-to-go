@@ -1005,7 +1005,7 @@ func (m *Module) Xop133(v0, v1 int64) int64 {
 	t1 := archsimd.BroadcastUint64x2(math.Float64bits((t0))).ReshapeToUint32s()
 	t2 := math.Float64frombits(uint64(v1))
 	t3 := t1.ReshapeToUint64s().SetElem(1, math.Float64bits((t2))).ReshapeToUint32s()
-	t4 := vec128{}.SetElem(0, math.Float32bits(float32(math.Float64frombits((uint64(t3.GetElem(0))|uint64(t3.GetElem(1))<<32))))).SetElem(1, math.Float32bits(float32(math.Float64frombits((uint64(t3.GetElem(2))|uint64(t3.GetElem(3))<<32))))).SetElem(2, math.Float32bits(0)).SetElem(3, math.Float32bits(0))
+	t4 := t3.ReshapeToUint64s().BitsToFloat64().ConvertToFloat32().ToBits()
 	v2 = t4
 	t5 := v2
 	t6 := int32((archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t5.BitsToFloat32().NotEqual(t5.BitsToFloat32()), t5)).GetElem(0))
@@ -1030,7 +1030,7 @@ func (m *Module) Xop134(v0, v1 int64) int64 {
 	t5 := t3.SetElem(2, math.Float32bits((t4)))
 	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
 	t7 := t5.SetElem(3, math.Float32bits((t6)))
-	t8 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(math.Float32frombits(t7.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(math.Float32frombits(t7.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(math.Float32frombits(t7.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(math.Float32frombits(t7.GetElem(1)))))>>32))
+	t8 := t7.BitsToFloat32().ConvertToFloat64().GetLo().ToBits().ReshapeToUint32s()
 	v2 = t8
 	t9 := v2
 	t10 := int64((archsimd.BroadcastUint64x2(0x7ff8000000000000).IfElse(t9.ReshapeToUint64s().BitsToFloat64().NotEqual(t9.ReshapeToUint64s().BitsToFloat64()), t9.ReshapeToUint64s()).ReshapeToUint32s()).ReshapeToUint64s().GetElem(0))
@@ -1073,7 +1073,7 @@ func (m *Module) Xop136(v0, v1 int64) int64 {
 	t5 := t3.SetElem(2, uint32((t4)))
 	t6 := int32(v1) ^ int32(-0x80000000)
 	t7 := t5.SetElem(3, uint32((t6)))
-	t8 := vec128{}.SetElem(0, math.Float32bits(float32(t7.GetElem(0)))).SetElem(1, math.Float32bits(float32(t7.GetElem(1)))).SetElem(2, math.Float32bits(float32(t7.GetElem(2)))).SetElem(3, math.Float32bits(float32(t7.GetElem(3))))
+	t8 := t7.ShiftAllRight(16).BitsToInt32().ConvertToFloat32().MulAdd(archsimd.BroadcastFloat32x4(65536), t7.And(archsimd.BroadcastUint32x4(0xffff)).BitsToInt32().ConvertToFloat32()).ToBits()
 	v2 = t8
 	t9 := v2
 	t10 := int32(t9.GetElem(0))
@@ -1098,7 +1098,7 @@ func (m *Module) Xop137(v0, v1 int64) int64 {
 	t5 := t3.SetElem(2, uint32((t4)))
 	t6 := int32(v1) ^ int32(-0x80000000)
 	t7 := t5.SetElem(3, uint32((t6)))
-	t8 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(int32(t7.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(int32(t7.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(int32(t7.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(int32(t7.GetElem(1)))))>>32))
+	t8 := t7.BitsToInt32().ConvertToFloat64().GetLo().ToBits().ReshapeToUint32s()
 	v2 = t8
 	t9 := v2
 	t10 := int64(t9.ReshapeToUint64s().GetElem(0))
@@ -1116,7 +1116,7 @@ func (m *Module) Xop138(v0, v1 int64) int64 {
 	t5 := t3.SetElem(2, uint32((t4)))
 	t6 := int32(v1) ^ int32(-0x80000000)
 	t7 := t5.SetElem(3, uint32((t6)))
-	t8 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(t7.GetElem(0))))).SetElem(1, uint32((math.Float64bits(float64(t7.GetElem(0))))>>32)).SetElem(2, uint32(math.Float64bits(float64(t7.GetElem(1))))).SetElem(3, uint32((math.Float64bits(float64(t7.GetElem(1))))>>32))
+	t8 := t7.InterleaveLo(archsimd.BroadcastUint32x4(0x43300000)).ReshapeToUint64s().BitsToFloat64().Sub(archsimd.BroadcastFloat64x2(4503599627370496)).ToBits().ReshapeToUint32s()
 	v2 = t8
 	t9 := v2
 	t10 := int64(t9.ReshapeToUint64s().GetElem(0))
@@ -1134,7 +1134,7 @@ func (m *Module) Xop139(v0, v1 int64) int64 {
 	t5 := t3.SetElem(2, math.Float32bits((t4)))
 	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
 	t7 := t5.SetElem(3, math.Float32bits((t6)))
-	t8 := vec128{}.SetElem(0, uint32(i32_trunc_sat_f32_s(math.Float32frombits(t7.GetElem(0))))).SetElem(1, uint32(i32_trunc_sat_f32_s(math.Float32frombits(t7.GetElem(1))))).SetElem(2, uint32(i32_trunc_sat_f32_s(math.Float32frombits(t7.GetElem(2))))).SetElem(3, uint32(i32_trunc_sat_f32_s(math.Float32frombits(t7.GetElem(3)))))
+	t8 := t7.BitsToFloat32().IfElse(t7.BitsToFloat32().Equal(t7.BitsToFloat32()), archsimd.Float32x4{}).ConvertToInt32().Xor(t7.BitsToFloat32().IfElse(t7.BitsToFloat32().Equal(t7.BitsToFloat32()), archsimd.Float32x4{}).GreaterEqual(archsimd.BroadcastFloat32x4(2147483648)).ToInt32x4()).ToBits()
 	v2 = t8
 	t9 := v2
 	t10 := int32(t9.GetElem(0))
@@ -1159,7 +1159,7 @@ func (m *Module) Xop140(v0, v1 int64) int64 {
 	t5 := t3.SetElem(2, math.Float32bits((t4)))
 	t6 := math.Float32frombits(uint32(int32(v1) ^ int32(-0x80000000)))
 	t7 := t5.SetElem(3, math.Float32bits((t6)))
-	t8 := vec128{}.SetElem(0, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t7.GetElem(0))))).SetElem(1, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t7.GetElem(1))))).SetElem(2, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t7.GetElem(2))))).SetElem(3, uint32(i32_trunc_sat_f32_u(math.Float32frombits(t7.GetElem(3)))))
+	t8 := t7.BitsToFloat32().IfElse(t7.BitsToFloat32().Greater(archsimd.Float32x4{}), archsimd.Float32x4{}).Sub(archsimd.BroadcastFloat32x4(2147483648)).ConvertToInt32().Xor(archsimd.BroadcastInt32x4(math.MinInt32)).IfElse(t7.BitsToFloat32().IfElse(t7.BitsToFloat32().Greater(archsimd.Float32x4{}), archsimd.Float32x4{}).GreaterEqual(archsimd.BroadcastFloat32x4(2147483648)), t7.BitsToFloat32().IfElse(t7.BitsToFloat32().Greater(archsimd.Float32x4{}), archsimd.Float32x4{}).ConvertToInt32()).Or(t7.BitsToFloat32().IfElse(t7.BitsToFloat32().Greater(archsimd.Float32x4{}), archsimd.Float32x4{}).GreaterEqual(archsimd.BroadcastFloat32x4(4294967296)).ToInt32x4()).ToBits()
 	v2 = t8
 	t9 := v2
 	t10 := int32(t9.GetElem(0))
@@ -1563,7 +1563,7 @@ func (m *Module) Xop152(v0, v1 int64) int64 {
 	t16 := t7.BitsToFloat32().Add(t15.BitsToFloat32()).ToBits()
 	v3 = t16
 	t17 := v3
-	t18 := vec128{}.SetElem(0, uint32(math.Float64bits(float64(math.Float32frombits(t17.GetElem(0)))))).SetElem(1, uint32((math.Float64bits(float64(math.Float32frombits(t17.GetElem(0)))))>>32)).SetElem(2, uint32(math.Float64bits(float64(math.Float32frombits(t17.GetElem(1)))))).SetElem(3, uint32((math.Float64bits(float64(math.Float32frombits(t17.GetElem(1)))))>>32))
+	t18 := t17.BitsToFloat32().ConvertToFloat64().GetLo().ToBits().ReshapeToUint32s()
 	t19 := (archsimd.BroadcastUint64x2(0x7ff8000000000000).IfElse(t18.ReshapeToUint64s().BitsToFloat64().NotEqual(t18.ReshapeToUint64s().BitsToFloat64()), t18.ReshapeToUint64s()).ReshapeToUint32s()).ReshapeToUint64s().Xor(archsimd.BroadcastUint64x2(1 << 63)).ReshapeToUint32s()
 	v2 = t19
 	t20 := v2

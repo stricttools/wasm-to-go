@@ -239,9 +239,14 @@ With `-unsafe`, the portable file is an expanded and a generic file, as the
 other code is; the archsimd targets are among the expanded file's platforms.
 
 The archsimd code calls the method of each operation where the target has one
-that computes what WebAssembly defines, and writes the others lane by lane
-(through `GetElem` and `SetElem`): amd64's float-to-integer conversions do not
-saturate, for example, and its 64-bit multiplication is AVX-512.
+that computes what WebAssembly defines. Where it has none, it composes a few
+methods that do (`archsimdComposed` in [internal/passes](internal/passes)):
+amd64's float-to-integer conversions do not saturate, so its `trunc_sat`
+zeroes the NaN lanes and corrects the lanes out of range; its 64-bit
+multiplication is AVX-512, so `i64x2.mul` adds 32-bit products; and it has
+no byte shifts, so the `i8x16` shifts shift 16-bit lanes and mask the bits
+each byte took from its neighbor. It writes the other operations lane by lane
+(through `GetElem` and `SetElem`).
 The portable code is written inline, operation by operation, never as calls
 of helper functions taking vectors, which the Go compiler would not inline
 (measured 3.4 times as slow as the module built without SIMD). It holds a
