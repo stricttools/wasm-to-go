@@ -16,7 +16,7 @@ import (
 // least peaks measured (see the README's
 // compile cost section). A change that makes the translator hold more
 // fails the test.
-const translateMemoryBound = 250
+const translateMemoryBound = 175
 
 // The translate mode of the test binary: "test.binary -wasm2go-translate
 // args..." runs the translator's command with args.

@@ -769,15 +769,19 @@ take tens of times the module's size, so it keeps one tree of each function
 as several packages, and the copy shares the identifiers and literals,
 the tree's most frequent nodes), and lowers each package's memory accesses
 only when it writes the package, dropping the package's trees once written.
+Once a function is translated, the translator also drops the state it
+translated it with (its stacks of operands and blocks), whose backing arrays
+would otherwise keep the function's first tree alive after a package's copy
+replaces it.
 Translating onnxruntime's basic-pitch build (a module of 1.6 MB) peaked at
 2.8 GB before these and the dispatch bound (see
-[closed tables](#closed-tables-and-indirect-calls)), and peaks at 430 to
-460 MB with them, less than the largest compile of its translation then
+[closed tables](#closed-tables-and-indirect-calls)), and peaks at about
+280 MiB with them, less than the largest compile of its translation then
 takes (650 MB); its translation went from 84 MB of Go to 22 MB.
-Translating QuickJS-ng went from 454 to about 240 MB.
+Translating QuickJS-ng went from 454 MB to 157 to 173 MiB.
 `Test_translate_memory` (in `translatemem_test.go`) runs the translator on
 QuickJS-ng three times and fails if the least of the peaks is above
-`translateMemoryBound`, just above the 225 to 244 MiB measured
+`translateMemoryBound`, just above the least peaks measured, 157 and 159 MiB
 (the collector's timing moves a single run's peak by up to a seventh).
 
 ## Usage

@@ -37,7 +37,11 @@ func (t *translator) readCodeSection() error {
 		err = t.readCodeForFunction(&t.functions[i], body, at)
 		read := t.in.Offset() - at
 		t.in = outer
-		t.functions[i].localRefs = nil // translated: nothing reads them again
+		// Translated: nothing reads the compile state again, and the
+		// stacks' backing arrays would keep the function's original tree
+		// alive after a package's copy replaces it.
+		t.functions[i].localRefs = nil
+		t.functions[i].stack, t.functions[i].blocks = nil, nil
 		if err != nil {
 			return err
 		}
