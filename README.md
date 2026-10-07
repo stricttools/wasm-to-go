@@ -278,9 +278,13 @@ of their bits. Vector variables are deferred like float ones (`DeferCanon` in
 results is canonicalized where a use reads its lanes in another way.
 
 Measured on onnxruntime's basic-pitch build (inference, medians of
-interleaved runs on linux/amd64; outputs identical to the build without SIMD):
-781 ms without SIMD, 254 ms with SIMD on amd64 with archsimd, and 1,033 ms with
-SIMD in the portable code (1,896 ms with every vector held as words).
+interleaved runs on linux/amd64, built with Go 1.27.1 at `GOAMD64=v3`;
+outputs identical, bit for bit, to the build without SIMD and to Node.js
+running either module): 778 ms without SIMD, 255 ms with SIMD with archsimd,
+and 944 ms with SIMD in the portable code. Built with Go 1.26.8 at
+`GOAMD64=v1`, the portable code took 1,060 ms where the build without SIMD
+took 815 ms (in another round, on a busier machine); before it held float
+vectors as float lanes, the portable code took 1,896 ms.
 
 The SIMD spec tests (`internal/spectest/simd`) run on the portable code, and
 [scripts/cross-targets.sh](scripts/cross-targets.sh) runs them with the
