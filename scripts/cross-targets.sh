@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-# cross-targets.sh: runs the floating-point spec tests and the determinism
-# tests (Test_determinism_expected, with the regression tests of NaN results,
+# cross-targets.sh: runs the floating-point spec tests, all the SIMD spec
+# tests (internal/spectest/simd, which test the portable SIMD code on every
+# target without archsimd), and the determinism tests
+# (Test_determinism_expected, with the regression tests of NaN results,
 # conversions, and constants, and Test_determinism_libm, libc-gen's C math
 # functions) on every Go target: amd64 natively (at GOAMD64=v1, and at v3,
 # where the CPU has fused multiply-add), amd64 with GODEBUG=cpu.sse41=off,
@@ -9,12 +11,13 @@
 # qemu-user, wasip1/wasm under wasmtime, and js/wasm under Node.js; and the
 # SIMD spec tests with the determinism tests on the targets whose SIMD code
 # calls simd/archsimd (GOEXPERIMENT=simd with Go 1.27: amd64 at GOAMD64=v3,
-# arm64 under qemu-user, wasip1 and js), which every other target builds as
+# arm64 under qemu-user, wasip1, and js), which every other target builds as
 # portable code.
 #
 # Usage: scripts/cross-targets.sh [-all] [target...]
 #
-#   -all      run the whole spec suite, not only its floating-point part
+#   -all      run the whole spec suite, not only its floating-point and SIMD
+#             parts
 #   target    labels to run (default: all of them), from:
 #             amd64 amd64-v3 amd64-nosse41 amd64-nofma 386 arm arm64 loong64
 #             mips mipsle mips64 mips64le ppc64 ppc64le riscv64 s390x wasip1 js
@@ -66,13 +69,12 @@ if [ -n "$all" ]; then
 else
 	pkgs=()
 	for d in conversions const f32 f32_bitwise f32_cmp f64 f64_bitwise f64_cmp \
-		float_exprs float_literals float_memory float_misc memory64/float_memory64 \
-		simd/simd_conversions simd/simd_f32x4 simd/simd_f32x4_arith simd/simd_f32x4_cmp \
-		simd/simd_f32x4_pmin_pmax simd/simd_f32x4_rounding simd/simd_f64x2 simd/simd_f64x2_arith \
-		simd/simd_f64x2_cmp simd/simd_f64x2_pmin_pmax simd/simd_f64x2_rounding \
-		simd/simd_i32x4_trunc_sat_f32x4 simd/simd_i32x4_trunc_sat_f64x2; do
+		float_exprs float_literals float_memory float_misc memory64/float_memory64; do
 		pkgs+=("./internal/spectest/$d/...")
 	done
+	# Every SIMD spec test, not only the float ones: on targets without
+	# archsimd, they test the portable SIMD code.
+	pkgs+=(./internal/spectest/simd/...)
 fi
 
 qemu() { # qemu <qemu arch name>: prints the qemu-user binary

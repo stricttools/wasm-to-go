@@ -175,9 +175,10 @@ How this is tested:
   ([scripts/libm-reference.sh](scripts/libm-reference.sh) checks this, with `fma`
   linked to musl's, corrected for the canonical NaN).
 - [scripts/cross-targets.sh](scripts/cross-targets.sh) runs these, with the regression
-  tests, on each target it lists: amd64 (also with fused multiply-add available,
-  without SSE4.1, and with `math.FMA` in software), 386, wasip1 and js wasm,
-  and the other Linux architectures under qemu-user.
+  tests, the floating-point spec tests, and all the SIMD spec tests, on each target
+  it lists: amd64 (also with fused multiply-add available, without SSE4.1, and with
+  `math.FMA` in software), 386, wasip1 and js wasm, and the other Linux architectures
+  under qemu-user.
 
 Limits:
 - The guarantee covers the translated module and `libc-gen`'s `fma`. Other imports,
@@ -274,8 +275,9 @@ SIMD in the portable code (1,896 ms with every vector held as words).
 The SIMD spec tests (`internal/spectest/simd`) run on the portable code, and
 [scripts/cross-targets.sh](scripts/cross-targets.sh) runs them with the
 determinism tests, which include the float SIMD operations and vector locals,
-on each archsimd target (`amd64-simd`, `arm64-simd` under qemu-user,
-`wasip1-simd`, and `js-simd`, with Go 1.27).
+on every target it lists: in the portable code on each target without archsimd
+(big-endian ones included), and in the archsimd code on each archsimd target
+(`amd64-simd`, `arm64-simd` under qemu-user, `wasip1-simd`, and `js-simd`, with Go 1.27).
 
 ## Traps
 
