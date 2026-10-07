@@ -53,3 +53,4 @@
 {"format_version":1,"id":"18dc10dc63abad539618f2d1c7134bafaa8ab5575ffbc49f","commits":["531f73b91ec22bb43b237e0e1fd52afbab0f342d"],"user_facing":false}
 {"format_version":1,"id":"18dc12037dd63f69cf72e0e016c6450cb1295e0b7892d301","commits":["248bcbdcebaf29cfaa74066fffe63e8b7a5f1b1d"],"user_facing":false}
 {"format_version":1,"id":"18dc410ace0dbb0f6f56c93149a549c594492a85eb8796e8","commits":["6de9bd81f064f351328f216c9f406789ef619849"],"user_facing":true,"description":"**The stack-weight pass weighs a module with a `v128` global.** A global initialized by `v128.const` was refused with \"instruction 0xfd in a constant expression is not one the pass decodes\".","type":"fix"}
+{"format_version":1,"id":"18dc413b2bd782ba09fcb43682974c3ab0305a1e1ee00a5e","commits":["de7cec4bef1af7bf910c6691dfcf2afb82d48512","9ca22053123245412fd5a03f7ae8f42538387578","38a1e7515bdd74e087a095654c962cac8e92fa90"],"user_facing":false}
