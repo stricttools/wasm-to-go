@@ -334,6 +334,12 @@ func (p simdPortable) op(op string, args []ast.Expr) string {
 			case "shl":
 				return a[0] + "<<" + s
 			case "shr_s":
+				if width == 8 {
+					// Shifted as an int32, the same bits: Go's mips and
+					// mipsle compilers sign-extend an int8 shifted by a
+					// variable from 16 bits (MIPS.rules' Rsh8x32).
+					return "int32(" + signed(a[0], width) + ")>>" + s
+				}
 				return signed(a[0], width) + ">>" + s
 			}
 			return a[0] + ">>" + s

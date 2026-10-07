@@ -14,6 +14,7 @@ import (
 	bytes_simd_api "github.com/stricttools/wasm-to-go/testdata/bytes/simd_api"
 	packages_simd_api "github.com/stricttools/wasm-to-go/testdata/packages/simd_api"
 	simd_api_test "github.com/stricttools/wasm-to-go/testdata/regression/simd_api"
+	simd_shr_s_test "github.com/stricttools/wasm-to-go/testdata/regression/simd_shr_s"
 	unsafe_simd_api "github.com/stricttools/wasm-to-go/testdata/unsafe/simd_api"
 )
 
@@ -116,6 +117,49 @@ func Test_regression_simd_api(t *testing.T) {
 				t.Errorf("sum(16) = %d, want %d", got, want)
 			}
 		})
+	}
+}
+
+// The arithmetic right shift of every lane width by a variable count keeps
+// each lane's sign, whatever the bits of the neighboring lanes: Go's mips
+// and mipsle compilers sign-extend an int8 shifted by a variable from 16
+// bits instead of 8 (MIPS.rules' Rsh8x32), so int8(x)>>s there shifts the
+// next lane's byte into the result.
+func Test_regression_simd_shr_s(t *testing.T) {
+	m := simd_shr_s_test.New()
+	shifts := []func(v [16]byte, s int32) [16]byte{m.Xi8x16, m.Xi16x8, m.Xi32x4, m.Xi64x2}
+	for i, width := range []int{8, 16, 32, 64} {
+		bytes := width / 8
+		for _, s := range []int32{0, 1, 3, int32(width) - 1, int32(width) + 1, -1} {
+			for b := range 256 {
+				// Every other lane's top byte is b, and the other bytes
+				// are 0x01, 0x80, and 0x7f: no lane's sign extends
+				// through its neighbor.
+				var v [16]byte
+				for j := range v {
+					v[j] = [...]byte{0x01, 0x80, 0x7f}[j%3]
+					if j%bytes == bytes-1 && j/bytes%2 == 0 {
+						v[j] = byte(b)
+					}
+				}
+				got := shifts[i](v, s)
+				var want [16]byte
+				for l := 0; l < 16; l += bytes {
+					var x uint64
+					for k := bytes - 1; k >= 0; k-- {
+						x = x<<8 | uint64(v[l+k])
+					}
+					n := uint(64 - width)
+					y := uint64(int64(x<<n)>>n>>(uint(s)&uint(width-1))) // sign-extended, shifted
+					for k := range bytes {
+						want[l+k] = byte(y >> (8 * k))
+					}
+				}
+				if got != want {
+					t.Fatalf("i%dx%d.shr_s(%x, %d) = %x, want %x", width, 128/width, v, s, got, want)
+				}
+			}
+		}
 	}
 }
 
