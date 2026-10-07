@@ -150,7 +150,7 @@ func Test_regression_simd_shr_s(t *testing.T) {
 						x = x<<8 | uint64(v[l+k])
 					}
 					n := uint(64 - width)
-					y := uint64(int64(x<<n)>>n>>(uint(s)&uint(width-1))) // sign-extended, shifted
+					y := uint64(int64(x<<n) >> n >> (uint(s) & uint(width-1))) // sign-extended, shifted
 					for k := range bytes {
 						want[l+k] = byte(y >> (8 * k))
 					}
