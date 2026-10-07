@@ -249,6 +249,12 @@ func (r *reader) constExpr(refs func(uint32)) (value int32, plain bool) {
 		case 0xd2: // ref.func
 			refs(r.u32())
 		case 0x6a, 0x6b, 0x6c, 0x7c, 0x7d, 0x7e: // extended constant arithmetic
+		case 0xfd: // v128.const: its opcode 12, then the 16 bytes of the value
+			if code := r.u32(); code != 12 {
+				r.fail(fmt.Errorf("instruction 0xfd %d in a constant expression is not one the pass decodes", code))
+				break
+			}
+			r.bytes(16)
 		default:
 			r.fail(fmt.Errorf("instruction 0x%02x in a constant expression is not one the pass decodes", op))
 		}

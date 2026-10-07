@@ -99,3 +99,14 @@ func TestSIMD(t *testing.T) {
 		t.Fatalf("got estimate %d, recursive %t; want 288, true", f.Estimate, f.Recursive)
 	}
 }
+
+// A module with a v128 global initialized by v128.const is weighed.
+func TestV128ConstGlobal(t *testing.T) {
+	res, err := Weigh(read(t, "simd-global"), opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.Functions) != 1 || !res.Functions[0].Recursive {
+		t.Fatalf("got %+v, want the one recursive function", res.Functions)
+	}
+}
