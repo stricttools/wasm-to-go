@@ -251,6 +251,11 @@ result of a float operation of one lane shape, as four `float32` or two
 through variables, a loop's accumulator, stays in float registers instead of
 moving each lane between integer and float registers at every operation;
 other uses convert.
+Its `i8x16.shr_s` shifts each byte lane as an `int32`, the same bits as
+an `int8` shift: Go's mips and mipsle compilers sign-extend an `int8`
+shifted by a variable from 16 bits instead of 8 (the `Rsh8x32` rules of
+`MIPS.rules`, in Go 1.26, 1.27, and tip), so a lane took bits of its
+neighbor (`Test_regression_simd_shr_s`).
 
 `v128` values cross the `Module`'s exports and imports, and live in its
 globals, as their 16 bytes in memory order, `[16]byte`.
