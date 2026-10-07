@@ -770,7 +770,10 @@ With the pointer written at each byte, it took 540 to 604 MiB and 526 to
 linux/amd64 and js/wasm one package at a time with `GOMAXPROCS=4`,
 and fails if any compile process of its packages takes more than
 `compileMemoryBound` (in `compilemem_test.go`), just above the largest
-it has measured; it then runs `testdata/quickjs/test.js` on it and
+it has measured, three times: a compile over the bound is measured twice
+more and the least of its peaks counts, since the collector's timing moves
+one compile's peak by a tenth (the interpreter loop's took 244 to 301 MiB
+in nine compiles). It then runs `testdata/quickjs/test.js` on it and
 compares the result with a native build's.
 
 The translator itself holds the module's code as Go syntax trees, which
