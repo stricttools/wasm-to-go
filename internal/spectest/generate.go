@@ -394,6 +394,8 @@ var files = map[string]byte{
 	"memory64/table_set64.wast":         30,
 	"memory64/table_size64.wast":        30,
 
+	// simd/simd_memory-multi.wast is left out: its module declares two
+	// memories, and the translator refuses multiple memories.
 	"simd/simd_address.wast":                     30,
 	"simd/simd_align.wast":                       30,
 	"simd/simd_bit_shift.wast":                   30,
