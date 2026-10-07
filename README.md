@@ -773,7 +773,7 @@ and fails if any compile process of its packages takes more than
 it has measured, three times: a compile over the bound is measured twice
 more and the least of its peaks counts, since the collector's timing moves
 one compile's peak by a tenth (the interpreter loop's took 244 to 301 MiB
-in nine compiles). It then runs `testdata/quickjs/test.js` on it and
+across repeated compiles). It then runs `testdata/quickjs/test.js` on it and
 compares the result with a native build's.
 
 The translator itself holds the module's code as Go syntax trees, which
