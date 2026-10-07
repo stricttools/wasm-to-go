@@ -786,8 +786,21 @@ replaces it.
 Translating onnxruntime's basic-pitch build (a module of 1.6 MB) peaked at
 2.8 GB before these and the dispatch bound (see
 [closed tables](#closed-tables-and-indirect-calls)), and peaks at about
-280 MiB with them, less than the largest compile of its translation then
-takes (650 MB); its translation went from 84 MB of Go to 22 MB.
+280 MiB with them, less than the largest compile of its translation, which
+takes 304 MiB (`GOAMD64=v3`, with archsimd); its translation went from 84 MB
+of Go to 22 MB.
+
+The output package's `New` writes each element segment of more than
+`maxElementsPerFunc` entries (in [module.go](module.go)) as chunks, each
+returned by a function literal called in place: the Go compiler's memory
+grows faster than the function it compiles, and basic-pitch's segment of
+2,295 entries, each a function literal binding a function to the instance,
+took the output package's compile to 632 MiB in one literal and to
+145 MiB in chunks of 128. `Test_elements_compile_memory` (in
+`elementsmem_test.go`) compiles the output package of a module whose segment
+holds 2,400 such entries, and fails if it takes more than
+`elementsCompileBound`, just above the 138 to 143 MiB measured
+(710 to 734 MiB in one literal).
 Translating QuickJS-ng went from 454 MB to 157 to 173 MiB.
 `Test_translate_memory` (in `translatemem_test.go`) runs the translator on
 QuickJS-ng three times and fails if the least of the peaks is above

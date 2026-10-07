@@ -274,7 +274,7 @@ func (t *translator) createNewFunc() ast.Decl {
 			if elem.declive {
 				elts[i] = newID("nil")
 			} else {
-				elts[i] = &ast.CompositeLit{Elts: elem.init}
+				elts[i] = elementsExpr(elem.init)
 			}
 		}
 		body.List = append(body.List, &ast.AssignStmt{
@@ -687,4 +687,37 @@ func (t *translator) createDylinkConstants() ast.Decl {
 					&ast.BasicLit{Kind: token.INT, Value: formatInt(1 << t.dylink.memoryAlignment)},
 					&ast.BasicLit{Kind: token.INT, Value: formatInt(t.dylink.tableSize)},
 					&ast.BasicLit{Kind: token.INT, Value: formatInt(1 << t.dylink.tableAlignment)}}}}}}
+}
+
+// maxElementsPerFunc is the most entries of an element segment written in
+// one function. The Go compiler's memory grows faster than the function
+// it compiles, and New holds the segments: onnxruntime's basic-pitch
+// build, with 2,295 entries in one segment, compiled its output package
+// in 632 MiB in one literal and in 127 to 144 MiB in chunks of 64 to 256
+// entries (each entry a function literal binding a function to the
+// module's instance).
+const maxElementsPerFunc = 128
+
+// The []any of an element segment's entries: a literal, or for a segment
+// of more than maxElementsPerFunc entries, the literals of its chunks,
+// each returned by a function literal called in place, appended.
+func elementsExpr(entries []ast.Expr) ast.Expr {
+	if len(entries) <= maxElementsPerFunc {
+		return &ast.CompositeLit{Elts: entries}
+	}
+	anys := func() ast.Expr { return &ast.ArrayType{Elt: newID("any")} }
+	var out ast.Expr
+	for i := 0; i < len(entries); i += maxElementsPerFunc {
+		chunk := &ast.CallExpr{Fun: &ast.FuncLit{
+			Type: &ast.FuncType{Params: &ast.FieldList{}, Results: &ast.FieldList{List: []*ast.Field{{Type: anys()}}}},
+			Body: &ast.BlockStmt{List: []ast.Stmt{&ast.ReturnStmt{Results: []ast.Expr{
+				&ast.CompositeLit{Type: anys(), Elts: entries[i:min(i+maxElementsPerFunc, len(entries))]}}}}},
+		}}
+		if out == nil {
+			out = chunk
+		} else {
+			out = &ast.CallExpr{Fun: newID("append"), Args: []ast.Expr{out, chunk}, Ellipsis: 1}
+		}
+	}
+	return out
 }
