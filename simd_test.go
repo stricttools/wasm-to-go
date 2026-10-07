@@ -142,6 +142,25 @@ func Test_simd_needs_output_files(t *testing.T) {
 	}
 }
 
+// A module with a relaxed SIMD instruction is refused, naming the build
+// flag that brings it in.
+func Test_simd_relaxed_refused(t *testing.T) {
+	// (func (param v128) (result v128) (i32x4.relaxed_trunc_f32x4_s (local.get 0)))
+	src := []byte{
+		0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00,
+		0x01, 0x06, 0x01, 0x60, 0x01, 0x7b, 0x01, 0x7b, // type section
+		0x03, 0x02, 0x01, 0x00, // function section
+		0x0a, 0x09, 0x01, 0x07, 0x00, 0x20, 0x00, 0xfd, 0x81, 0x02, 0x0b, // code section
+	}
+	files := newPackageFiles(t.TempDir())
+	var out bytes.Buffer
+	err := translate(bytes.NewReader(src), &out, nil, files.create, "relaxed.go")
+	files.close()
+	if err == nil || !strings.Contains(err.Error(), "relaxed SIMD") || !strings.Contains(err.Error(), "build without -mrelaxed-simd") {
+		t.Fatalf("got %v, want a relaxed SIMD refusal naming -mrelaxed-simd", err)
+	}
+}
+
 // A build calling simd/archsimd with a Go version the SIMD code was not
 // written for fails, naming the ways out, which work: Go 1.27, or no
 // GOEXPERIMENT=simd.
