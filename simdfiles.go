@@ -6,7 +6,6 @@ import (
 	"go/build/constraint"
 	"go/token"
 	"io"
-	"path"
 	"strings"
 
 	"github.com/stricttools/wasm-to-go/internal/passes"
@@ -171,5 +170,3 @@ func (t *translator) codeFuncs(decls []ast.Decl) []*ast.FuncDecl {
 	}
 	return out
 }
-
-var _ = path.Join
