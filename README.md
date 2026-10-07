@@ -798,9 +798,9 @@ grows faster than the function it compiles, and basic-pitch's segment of
 took the output package's compile to 632 MiB in one literal and to
 145 MiB in chunks of 128. `Test_elements_compile_memory` (in
 `elementsmem_test.go`) compiles the output package of a module whose segment
-holds 2,400 such entries, and fails if it takes more than
-`elementsCompileBound`, just above the 138 to 143 MiB measured
-(710 to 734 MiB in one literal).
+holds 2,400 such entries three times, and fails if the least of the peaks
+is above `elementsCompileBound`, above the 141 to 145 MiB measured by the
+margin a loaded machine needs (710 to 734 MiB in one literal).
 Translating QuickJS-ng went from 454 MB to 157 to 173 MiB.
 `Test_translate_memory` (in `translatemem_test.go`) runs the translator on
 QuickJS-ng three times and fails if the least of the peaks is above
