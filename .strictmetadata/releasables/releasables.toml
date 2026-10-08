@@ -1,0 +1,22 @@
+format_version = 1
+repository_layout = "standalone"
+release_branches = ["main", "master"]
+
+[[releasables]]
+name = "wasm-to-go"
+tag_format = "v{version}"
+publish_mode = "ci"
+
+[[members]]
+path = "."
+name = "root"
+releasable = "wasm-to-go"
+targets = [{ name = "go" }]
+
+[[members.pipelines]]
+name = "go"
+type = "go"
+target = "go"
+local = false
+artifact = "binary"
+install_paths = ["."]

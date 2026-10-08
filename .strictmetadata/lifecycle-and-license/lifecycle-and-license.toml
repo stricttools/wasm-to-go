@@ -1,0 +1,19 @@
+format_version = 1
+[[lifecycle]]
+subject = "wasm-to-go"
+status = "active"
+from = 2026-10-08
+reason = "active when rlsbl's records moved to the .strictmetadata layout"
+[[licenses]]
+subject = "wasm-to-go"
+license = "MIT"
+from = 2026-10-08
+reason = "declared by the owner when rlsbl's records moved to the .strictmetadata layout"
+[[identities]]
+subject = "wasm-to-go"
+facet = "releasable-name"
+value = "wasm-to-go"
+registry = ""
+tag_patterns = ["v*"]
+from = 2026-02-13
+reason = "recorded when rlsbl's records moved to the .strictmetadata layout"
