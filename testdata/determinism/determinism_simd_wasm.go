@@ -5,9 +5,9 @@
 package wasm2go
 
 import (
-	"encoding/binary"
 	"math"
 	"simd/archsimd"
+	"unsafe"
 )
 
 type vec128 = archsimd.Uint32x4
@@ -1346,8 +1346,8 @@ func (m *Module) Xop146(v0, v1 int64) int64 {
 	t17 := v3
 	q16 = (*[16]byte)(mem[uint64(uint32(int32(32))) : uint64(uint32(int32(32)))+16])
 	(archsimd.BroadcastUint32x4(0x7fc00000).IfElse(t17.BitsToFloat32().NotEqual(t17.BitsToFloat32()), t17)).ReshapeToUint8s().StoreArray(q16)
-	t18 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(32))) : uint64(uint32(i32(32)))+8])[:]))
-	t19 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(40))) : uint64(uint32(i32(40)))+8])[:]))
+	t18 := int64(*(*uint64)(unsafe.Add(unsafe.Pointer(&mem[uint64(uint32(i32(32)))+7]), -7)))
+	t19 := int64(*(*uint64)(unsafe.Add(unsafe.Pointer(&mem[uint64(uint32(i32(40)))+7]), -7)))
 	return t18 + i64_rotl(t19, int64(17))
 }
 func (m *Module) Xop147(v0, v1 int64) int64 {
@@ -1610,8 +1610,8 @@ func (m *Module) Xop154(v0, v1 int64) int64 {
 	t9 := v3
 	q16 = (*[16]byte)(mem[uint64(uint32(int32(48))) : uint64(uint32(int32(48)))+16])
 	(archsimd.BroadcastUint64x2(0x7ff8000000000000).IfElse(t9.ReshapeToUint64s().BitsToFloat64().NotEqual(t9.ReshapeToUint64s().BitsToFloat64()), t9.ReshapeToUint64s()).ReshapeToUint32s()).ReshapeToUint8s().StoreArray(q16)
-	t10 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(48))) : uint64(uint32(i32(48)))+8])[:]))
-	t11 := int64(binary.LittleEndian.Uint64((*[8]byte)(mem[uint64(uint32(i32(56))) : uint64(uint32(i32(56)))+8])[:]))
+	t10 := int64(*(*uint64)(unsafe.Add(unsafe.Pointer(&mem[uint64(uint32(i32(48)))+7]), -7)))
+	t11 := int64(*(*uint64)(unsafe.Add(unsafe.Pointer(&mem[uint64(uint32(i32(56)))+7]), -7)))
 	return t10 + i64_rotl(t11, int64(17))
 }
 func (m *Module) Xop155(v0, v1 int64) int64 {

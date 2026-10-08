@@ -2,7 +2,9 @@
 
 # Changelog
 
-## Unreleased
+## 0.5.0
+
+The first release of the stricttools fork of ncruces/wasm2go, under the module path github.com/stricttools/wasm-to-go: SIMD translation, deterministic float results on every CPU, a bounded Go stack for recursion, large modules written as several packages, faster memory access and calls, and a translator that takes a fraction of the memory.
 
 ### Breaking
 
@@ -10,6 +12,7 @@
 - **`libc-gen`'s C math functions are musl's libm, compiled into the module.** `sin`, `exp`, `pow`, and the other `math.h` functions that are not compiler builtins now compute the same bits on every CPU; they were host functions calling Go's `math` package, whose results differ by CPU. Rebuild the C code with the new `libc.c` and regenerate the host functions: a module built with the old `libc.c` imports functions `libc-gen` no longer provides. `ilogb` of a NaN returns `FP_ILOGBNAN` (`INT_MIN`).
 - **`-provided` files are translator input, copied into the output.** The translator writes the declarations of every `-provided` file into its own output, with their imports, so the file itself must not be built: begin it with `//go:build ignore`, as `libc-gen`'s output now does. Regenerate `libc-gen` output and retranslate; a provided file whose imports are renamed is refused.
 - **Memory accesses in safe translations are about a third faster, and `-byte-accesses` is gone.** Every checked load and store of more than one byte now goes through an array pointer, `(*[4]byte)(mem[a : a+4])`, whose slice holds the whole bounds check: in functions the Go compiler considers big it is written as bytes (what `-byte-accesses` did, over `mem[a:]`), elsewhere as an `encoding/binary` call on the array. QuickJS-ng's game frame went from 7.9 to 5.3 ms. Remove `-byte-accesses` from your wasm2go command line; the translation behaves as it did with it. The largest compile of a big function takes more memory (QuickJS-ng's interpreter loop: 540 to 604 MiB, where calls took 170 to 245 MiB).
+- **From the upstream, ncruces/wasm2go: `libc-gen` supports Emscripten-style setjmp/longjmp, and `-pkg` defaults to the module's name.** C code using `setjmp` and `longjmp`, built with `-mllvm -enable-emscripten-sjlj` against `libc-gen`'s `setjmp.h` and `setjmp_em.c`, translates: `libc-gen` writes the `invoke_*` host functions the module imports. Without `-pkg`, the output's package is named for the module's name section, or `wasm2go` when it has none, instead of `main`; pass `-pkg main` to keep the old name.
 
 ### Features
 
