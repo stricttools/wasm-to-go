@@ -1,4 +1,7 @@
 *.[0-9]*.go
-gen_test.go
+# gen_test.go and the copies of the hand-written _<name>_test.go files are
+# written by the translate tests.
+*_test.go
+!_*_test.go
 wasm-tools
 wast2json
