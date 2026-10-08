@@ -1,0 +1,18 @@
+# Materialized by `rlsbl release backfill`: this version shipped before rlsbl
+# archived a release file per version, so no archive existed. A description
+# is recovered from the first source that yields one: an operator-reviewed
+# --overrides file, the version's GitHub Release body, its CHANGELOG.md
+# section, the commit subjects in its tag range, and otherwise a placeholder
+# naming the recovery obligation. bump is derived by version arithmetic
+# against the predecessor, and include is the targets detected at backfill
+# time (the historical target set is not recoverable).
+# This archive's description came from: commit-subjects:50b8a95c2a42..8bddff5d7ed0.
+format_version = 2
+bump = "minor"
+include = ["go"]
+exclude = []
+description = "Reconstructed from this version's commit subjects: Portable unsafe (#8)."
+release_commit = "8bddff5d7ed00a475c05a7b90c2810f8e7e001ec"
+
+[released_trees]
+"." = "3f35999fdbc20eda7672f41eb174d958d0796154"

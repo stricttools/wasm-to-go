@@ -1,0 +1,18 @@
+# Materialized by `rlsbl release backfill`: this version shipped before rlsbl
+# archived a release file per version, so no archive existed. A description
+# is recovered from the first source that yields one: an operator-reviewed
+# --overrides file, the version's GitHub Release body, its CHANGELOG.md
+# section, the commit subjects in its tag range, and otherwise a placeholder
+# naming the recovery obligation. bump is derived by version arithmetic
+# against the predecessor, and include is the targets detected at backfill
+# time (the historical target set is not recoverable).
+# This archive's description came from: commit-subjects:e031e0f354ca..00d2c870b886.
+format_version = 2
+bump = "patch"
+include = ["go"]
+exclude = []
+description = "Reconstructed from this version's commit subjects: Input Wasm; Internal; Fix dups (#24); Tail calls."
+release_commit = "00d2c870b8861c7d007ed67d94e345a97f528824"
+
+[released_trees]
+"." = "6b99430db8f6c161e58ebe1b72c057f628e2a4cd"
