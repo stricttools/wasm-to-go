@@ -6,6 +6,7 @@ release_branches = ["main", "master"]
 name = "wasm-to-go"
 tag_format = "v{version}"
 publish_mode = "ci"
+hooks = { pre_release = ["sh .strictmetadata/release-hooks/wasm-to-go/pre-release.sh"] }
 
 [[members]]
 path = "."
