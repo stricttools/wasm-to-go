@@ -1,9 +1,9 @@
 # The next release of wasm-to-go. Fill in bump and description, then run `rlsbl release run --watch`.
 format_version = 2
 # How the release moves the version: patch, minor, major, or infra (moved as a patch, recorded as infra).
-bump = ""
+bump = "minor"
 # What this release is, in a sentence or two. Required.
-description = ""
+description = "The first release of the stricttools fork of ncruces/wasm2go, under the module path github.com/stricttools/wasm-to-go: SIMD translation, deterministic float results on every CPU, a bounded Go stack for recursion, large modules written as several packages, faster memory access and calls, and a translator that takes a fraction of the memory."
 # Why these changes were made. Optional.
 context = ""
 # The targets released, and the ones left out; between them they name every target of the releasable's members.
